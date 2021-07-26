@@ -11,7 +11,7 @@
     "start": "node index.js",
     "server": "nodemon index.js",
     "client": "npm run start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "concurrently \"sass client/src/css/index.scss client/src/css/index.css\" \"npm run server\" \"npm run client\"",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "author": "",
@@ -19,6 +19,7 @@
   "dependencies": {
     "@babel/core": "^7.13.16",
     "@sendgrid/mail": "^7.4.5",
+    "bootstrap": "^5.0.2",
     "concurrently": "^6.2.0",
     "cookie-session": "^1.4.0",
     "express": "^4.17.1",

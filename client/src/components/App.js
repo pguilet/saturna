@@ -7,6 +7,9 @@ import * as actions from '../actions';
 import Header from "./Header";
 import Landing from './Landing';
 import Dashboard from './Dashboard';
+import About from './About';
+import Contact from './Contact';
+import Services from './Services';
 import SurveyNew from './surveys/SurveyNew';
 
 class App extends Component{
@@ -15,18 +18,19 @@ class App extends Component{
     }
     
    render(){
-
-    return (
-           
-                <BrowserRouter>
-                     <div className="container">
-                        <Header/>
-                        <Route exact path="/" component={Landing}/>
-                        <Route exact path="/surveys" component={Dashboard}/>
-                        <Route path="/surveys/new" component={SurveyNew}/>
-                    </div>
-                </BrowserRouter>
-        );
+     return (
+       <BrowserRouter>
+           <Header />
+        <div className="container">
+           <Route exact path="/" component={Landing} />
+           <Route exact path="/surveys" component={Dashboard} />
+           <Route path="/surveys/new" component={SurveyNew} />
+           <Route exact path="/about" component={About} />
+           <Route exact path="/contact" component={Contact} />
+           <Route exact path="/services" component={Services} />
+         </div>
+       </BrowserRouter>
+     );
    }
 };
 

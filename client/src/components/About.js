@@ -2,18 +2,20 @@ import React,{Component} from "react";
 import {connect} from "react-redux";
 import { fetchPage } from '../actions';
 
-class Landing extends Component{
+class About extends Component{
     componentDidMount(){
         console.log(this.props);
-        this.props.fetchPage("landing");
+        this.props.fetchPage("about");
     }
    render(){ 
         return (
           <div style={{ textAlign: 'center' }}>
-            <h1>Viva la revolution</h1>
-              A bas les vaccins!
+            <h1>About</h1>
+            <p>
+                Agence qui rocks sa race.    
+            </p>    
           </div>
         );
    }
 };
-export default (connect (null,{fetchPage})) (Landing);
+export default connect (null,{fetchPage}) (About);
