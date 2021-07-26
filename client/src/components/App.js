@@ -4,13 +4,9 @@ import {BrowserRouter, Route} from 'react-router-dom';
 import {connect} from 'react-redux';
 import * as actions from '../actions';
 
-import Header from "./Header";
-import Landing from './Landing';
-import Dashboard from './Dashboard';
-import About from './About';
-import Contact from './Contact';
-import Services from './Services';
-import SurveyNew from './surveys/SurveyNew';
+import Front from "./front/Front";
+import AgentInterface from './agentInterface/AgentInterface';
+
 
 class App extends Component{
     componentDidMount(){
@@ -19,16 +15,9 @@ class App extends Component{
     
    render(){
      return (
-       <BrowserRouter>
-           <Header />
-        <div className="container">
-           <Route exact path="/" component={Landing} />
-           <Route exact path="/surveys" component={Dashboard} />
-           <Route path="/surveys/new" component={SurveyNew} />
-           <Route exact path="/about" component={About} />
-           <Route exact path="/contact" component={Contact} />
-           <Route exact path="/services" component={Services} />
-         </div>
+       <BrowserRouter>        
+           <Route exact path="/" component={Front} />
+           <Route exact path="/back" component={AgentInterface} />        
        </BrowserRouter>
      );
    }

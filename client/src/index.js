@@ -1,6 +1,4 @@
 //Data Layer control (Redux content)
-import './css/index.css';
-import 'bootstrap/dist/css/bootstrap.min.css';//we have to precise extension when not importing js files
 import React from 'react';
 import ReactDom from 'react-dom';
 import {Provider} from 'react-redux';

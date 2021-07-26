@@ -1,6 +1,6 @@
 import React,{Component} from "react";
 import {connect} from "react-redux";
-import { fetchPage } from '../actions';
+import { fetchPage } from '../../actions';
 
 class About extends Component{
     componentDidMount(){
