@@ -4,7 +4,10 @@ import {BrowserRouter, Route} from 'react-router-dom';
 import {connect} from 'react-redux';
 import * as actions from '../actions';
 
-import Front from "./front/Front";
+import Home from "./front/Home";
+import Dashboard from "./front/Dashboard";
+import GuardedRoute from "./GuardedRoute";
+import Login from "./agentInterface/Login";
 import AgentInterface from './agentInterface/AgentInterface';
 
 
@@ -16,8 +19,13 @@ class App extends Component{
    render(){
      return (
        <BrowserRouter>        
-           <Route exact path="/" component={Front} />
-           <Route exact path="/back" component={AgentInterface} />        
+           <Route exact path="/" component={Home} />
+           <Route exact path="/about" component={Home} />
+           <Route exact path="/login" component={Login} />
+           <Route exact path="/surveys" component={Dashboard} />
+           <Route exact path="/contact" component={Home} />
+           <Route exact path="/services" component={Home} />
+           <GuardedRoute exact path="/agentInterface" component={AgentInterface}/>        
        </BrowserRouter>
      );
    }

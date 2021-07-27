@@ -4,7 +4,6 @@ import { fetchPage } from '../../actions';
 
 class About extends Component{
     componentDidMount(){
-        console.log(this.props);
         this.props.fetchPage("about");
     }
    render(){ 

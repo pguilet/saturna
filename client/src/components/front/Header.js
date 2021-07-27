@@ -5,6 +5,7 @@ import Payments from './Payments';
 
 class Header extends Component{
     renderContent(){
+       
         switch(this.props.auth){
             case null:
                 return;//we don't want to see any button while loading the page to avoid flashes.

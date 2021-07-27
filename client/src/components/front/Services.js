@@ -4,7 +4,6 @@ import { fetchPage } from '../../actions';
 
 class Services extends Component{
     componentDidMount(){
-        console.log(this.props);
         this.props.fetchPage("services");
     }
    render(){ 

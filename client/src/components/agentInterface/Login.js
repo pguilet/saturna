@@ -9,19 +9,12 @@ import * as actions from '../../actions';
 import InterfaceHeader from "./InterfaceHeader";
 
 
-class AgentInterface extends Component{
-    componentDidMount(){
-        this.props.fetchUser();
-    }
+class Login extends Component{
     
    render(){
      return (
        <BrowserRouter>
            <InterfaceHeader />
-           <div>
-              YATAAAAAAAAA!!!!!!!
-
-           </div>
         {/* <div className="container">
            <Route exact path="/" component={Landing} />
            <Route exact path="/surveys" component={Dashboard} />
@@ -35,4 +28,4 @@ class AgentInterface extends Component{
    }
 };
 
-export default connect(null,actions)(AgentInterface);
+export default connect(null,actions)(Login);

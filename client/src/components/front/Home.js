@@ -24,9 +24,7 @@ class Front extends Component{
        <BrowserRouter>
            <Header />
         <div className="container">
-           <Route exact path="/" component={Landing} />
-           <Route exact path="/surveys" component={Dashboard} />
-           <Route path="/surveys/new" component={SurveyNew} />
+          <Route exact path="/" component={Landing} />
            <Route exact path="/about" component={About} />
            <Route exact path="/contact" component={Contact} />
            <Route exact path="/services" component={Services} />
