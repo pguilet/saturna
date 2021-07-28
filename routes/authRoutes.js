@@ -24,5 +24,7 @@ module.exports = app => {
     res.send(req.user);
   });
 
-
+  app.get('/api/loginUser', passport.authenticate('login'), (req, res, next) => {
+    res.redirect('/agentInterface');
+  });
 };

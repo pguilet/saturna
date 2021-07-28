@@ -4,15 +4,17 @@ import {connect} from 'react-redux';
 import * as actions from '../actions';
 
 class GuardedRoute extends Component{
+
     renderContent(props){
-        // console.log('fuckkk');
         let Component=this.props.component;
-        if( this.props.auth===false){
+       //auth is either null when not initialized, false when initialized but user is not identified and is true when identified.
+        if(!this.props.auth&&this.props.auth!==null){
             return (<Redirect to='/login' />);
-        }else if(this.props.auth!=undefined){
+        }
+       else if(this.props.auth){
             return (<Component {...props} />);
         }
-        return null;
+        return '';
     }
    render(){ 
         return (
@@ -24,7 +26,7 @@ class GuardedRoute extends Component{
         );
    }
 };
-function mapStateToProps({auth}){
-    return {auth};
+function mapStateToProps(props){
+    return props;
   }
   export default connect(mapStateToProps,actions) (GuardedRoute);

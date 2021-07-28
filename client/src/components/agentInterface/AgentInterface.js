@@ -10,18 +10,18 @@ import InterfaceHeader from "./InterfaceHeader";
 
 
 class AgentInterface extends Component{
-    componentDidMount(){
-        this.props.fetchUser();
-    }
     
+    renderContent(){
+        return(<div>Authenticated</div>);            
+    }
+
    render(){
      return (
        <BrowserRouter>
            <InterfaceHeader />
-           <div>
-              YATAAAAAAAAA!!!!!!!
 
-           </div>
+          {this.renderContent()}
+           
         {/* <div className="container">
            <Route exact path="/" component={Landing} />
            <Route exact path="/surveys" component={Dashboard} />
