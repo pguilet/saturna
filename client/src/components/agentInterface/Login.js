@@ -29,7 +29,7 @@ class Login extends Component{
      } 
 
      renderContent(){
-        if(this.props.auth===null||!this.props.auth.name){
+        if(this.props.auth===null||!this.props.auth.username){
             return (
               <BrowserRouter>
                 <InterfaceHeader />
@@ -76,7 +76,7 @@ class Login extends Component{
               </BrowserRouter>
             );
         }else{
-            return (<Redirect to='/agentInterface' />);
+            return (<Redirect to='/agentsHome' />);
         }
      }
    render(){

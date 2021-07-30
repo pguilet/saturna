@@ -2,18 +2,21 @@
 import '../../css/index.css';
 import 'materialize-css/dist/css/materialize.min.css'; //we have to precise extension when not importing js files
 import React, { Component } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
+import GuardedRoute from '../GuardedRoute';
 
-import InterfaceHeader from './InterfaceHeader';
+import NewAgentForm from './NewAgentForm';
 
 class AgentsList extends Component {
+  state = { showNewAgentForm: false };
   componentDidMount() {
     this.props.fetchPage('agentsList');
     this.props.fetchUsers();
   }
   renderContent() {
+    var key = 0;
     return (
       <div>
         <h4>Liste des comptes des agents</h4>
@@ -22,15 +25,14 @@ class AgentsList extends Component {
             <tr>
               <th>Identifiant</th>
               <th>Rôle</th>
-              <th></th>
             </tr>
           </thead>
-
           <tbody>
             {this.props.users
               ? this.props.users.map((user) => {
+                  key += 4;
                   return (
-                    <tr>
+                    <tr key={key + 1}>
                       <td>
                         {user.username}
                         {user.googleId}
@@ -47,23 +49,35 @@ class AgentsList extends Component {
                     </tr>
                   );
                 })
-              : ''}
+              : null}
           </tbody>
         </table>
       </div>
     );
   }
-
+  renderNewAgentForm() {
+    if (this.state.showNewAgentForm === true) {
+      return (
+        <NewAgentForm
+          onCancel={() => this.setState({ showNewAgentForm: false })}
+        />
+      );
+    }
+  }
   render() {
     return (
       <div>
+        {this.renderNewAgentForm()}
         {this.renderContent()}
         <div className="fixed-action-btn">
-          <a className="btn-floating btn-large teal" href="/surveys/new">
+          <Link
+            to="/agentsList"
+            className="btn-floating btn-large teal"
+            onClick={() => this.setState({ showNewAgentForm: true })}
+          >
             <i className="material-icons">add</i>
-          </a>
+          </Link>
         </div>
-        
       </div>
     );
   }

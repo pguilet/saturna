@@ -39,7 +39,7 @@ export const login =
     });
     if (!res.data.message) {
       dispatch({ type: FETCH_USER, payload: res.data });
-      history.push('/agentInterface');
+      history.push('/agentsHome');
     } else {
       dispatch({ type: FLASH, payload: res.data });
     }

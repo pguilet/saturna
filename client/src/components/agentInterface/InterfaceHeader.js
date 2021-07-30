@@ -7,7 +7,7 @@ class InterfaceHeader extends Component {
   renderAgentList() {
     if (this.props.auth !== null && this.props.auth.role === Roles.ADMIN) {
       return (
-        <li class="nav-item">
+        <li className="nav-item">
           <Link
             to="/agentsList"
             className={
@@ -26,7 +26,7 @@ class InterfaceHeader extends Component {
   renderLogoutLink() {
     if (this.props.auth) {
       return (
-        <li class="nav-item">
+        <li className="nav-item">
           <a href="/api/logout" className="nav-link">
             Logout
           </a>
@@ -47,8 +47,8 @@ class InterfaceHeader extends Component {
             Béni par le dieu Pierre Guilet.
           </p>
 
-          <ul class="nav nav-fill">
-            <li class="nav-item">
+          <ul className="nav nav-fill">
+            <li className="nav-item">
               <Link
                 to="/agentsHome"
                 className={
