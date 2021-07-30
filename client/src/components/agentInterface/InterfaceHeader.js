@@ -2,8 +2,22 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import {Roles} from '../../actions/types.js';
 class InterfaceHeader extends Component {
-  renderContent() {
+    renderAgentList() {
+    if (this.props.auth!==null && this.props.auth.role === Roles.ADMIN) {
+      return (
+        <li class="nav-item">
+          <a href="/agentsList" className="nav-link">
+            Agents list
+          </a>
+        </li>
+      );
+    }
+
+  }
+
+  renderLogoutLink() {
     if (this.props.auth) {
       return (
         <li class="nav-item">
@@ -30,7 +44,8 @@ class InterfaceHeader extends Component {
                 Accueil
               </a>
             </li>
-            {this.renderContent()}
+            {this.renderAgentList()}
+            {this.renderLogoutLink()}
           </ul>
 
           {/* <nav>

@@ -29,11 +29,15 @@ class Login extends Component{
      } 
 
      renderContent(){
-        if(this.props.auth===null||!this.props.auth){
-            return( 
-                <BrowserRouter>
+        if(this.props.auth===null||!this.props.auth.name){
+            return (
+              <BrowserRouter>
                 <InterfaceHeader />
-                <form className="container"  method="get" action="/api/loginUser">
+                <form
+                  className="container"
+                  onSubmit={this.props.handleSubmit(()=>this.props.login(this.props.history,this.props.form.loginForm.values))}
+                  // onSubmit={this.props.handleSubmit(()=>console.log(this.props.form.loginForm.values))}
+                >
                   <Field
                     key="username"
                     label="Username"
@@ -50,11 +54,16 @@ class Login extends Component{
                     component={SurveyField}
                     onChange={this.handlePasswordChange}
                   />
-                  <button className="teal btn-flat right white-text" type="submit" >
-                    Log-in 
+                  <div className="red-text" style={{ marginBottom: '20px' }}>
+                      {this.props.flash?this.props.flash.message:''}
+                  </div>
+                  <button
+                    className="teal btn-flat right white-text"
+                    type="submit"
+                  >
+                    Log-in
                     <i className="material-icons right">done</i>
                   </button>
-
                 </form>
                 {/* <div className="container">
                   <Route exact path="/" component={Landing} />
@@ -64,7 +73,8 @@ class Login extends Component{
                   <Route exact path="/contact" component={Contact} />
                   <Route exact path="/services" component={Services} />
                 </div> */}
-              </BrowserRouter>);
+              </BrowserRouter>
+            );
         }else{
             return (<Redirect to='/agentInterface' />);
         }

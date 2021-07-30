@@ -9,10 +9,15 @@ import * as actions from '../../actions';
 import InterfaceHeader from "./InterfaceHeader";
 
 
-class AgentInterface extends Component{
+class AgentsList extends Component{
     
-    renderContent(){  
-        return(<div>Authenticated</div>);            
+    renderContent(){
+        return(
+        
+        
+        
+        <div className="container" >Agents list</div>
+        );            
     }
 
    render(){
@@ -35,4 +40,4 @@ class AgentInterface extends Component{
    }
 };
 
-export default connect(null,actions)(AgentInterface);
+export default connect(null,actions)(AgentsList);

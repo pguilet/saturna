@@ -15,6 +15,7 @@ passport.serializeUser((user, done) => {//let's put it in a cookie
   done(null, user.id); //we use record id and not profile id for when we will have many identification modes.
 });
 passport.deserializeUser(async (userId,done) => {//lets get user from cookie and set it into req.user in route controller entry.
+  
     var user= await User.findById(userId)
     if(user){
       done(null,user);
@@ -63,16 +64,15 @@ passport.use(
             // console.log(hash);
   
           
-            return done(null, false, { message: 'bad username' });
+            return done(null, false, { message: 'Username or password is incorrect.' });
           } else {
            
             bcrypt.compare(password, user.password).then(response => {
               if (response !== true) {
-                console.log('passwords do not match');
-                return done(null, false, { message: 'passwords do not match' });
+                return done(null, false, { message: 'Username or password is incorrect.' });
               }
-              console.log('user found & authenticated');
               // note the return needed with passport local - remove this return for passport JWT
+              
               return done(null, user);
             });
           }
