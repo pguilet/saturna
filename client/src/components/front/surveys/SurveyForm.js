@@ -3,7 +3,7 @@ import _ from 'lodash';
 import React,{Component} from "react";
 import { reduxForm, Field} from 'redux-form';
 import {Link} from 'react-router-dom';
-import SurveyField from "./SurveyField";
+import SurveyField from "../../customs/CustomField";
 import validateEmails from '../../../utils/validateEmails';
 import formFields from './formFields';
 

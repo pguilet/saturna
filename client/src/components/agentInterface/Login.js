@@ -9,7 +9,7 @@ import { reduxForm, Field} from 'redux-form';
 import {withRouter} from 'react-router-dom';
 
 import InterfaceHeader from "./InterfaceHeader";
-import SurveyField from "../front/surveys/SurveyField";
+import SurveyField from "../customs/CustomField";
 
 
 class Login extends Component{

@@ -11,11 +11,15 @@ const Users = mongoose.model('users');//for testing purpose with node and mongoo
 
 module.exports= app =>{
     app.get('/api/allUsers',requireLogin, async (req,res)=>{
-        const users = await Users.find().sort({ username: -1 });
+        const users = await Users.find().sort({ username: 1 });
         res.send(users);
     });
     
 
-
+    app.post('/api/newUser',requireLogin, async (req,res)=>{
+        const user = await new Users({ username: req.body.Username,password: req.body.Password}).save();
+        const users = await Users.find().sort({ username: 1 });
+        res.send(users);
+    });
   
 };

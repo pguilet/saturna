@@ -59,7 +59,7 @@ class AgentsList extends Component {
     if (this.state.showNewAgentForm === true) {
       return (
         <NewAgentForm
-          onCancel={() => this.setState({ showNewAgentForm: false })}
+        doOpen={this.state.showNewAgentForm} onTheClose={() => this.setState({ showNewAgentForm: false })}
         />
       );
     }
@@ -70,13 +70,12 @@ class AgentsList extends Component {
         {this.renderNewAgentForm()}
         {this.renderContent()}
         <div className="fixed-action-btn">
-          <Link
-            to="/agentsList"
+          <div
             className="btn-floating btn-large teal"
             onClick={() => this.setState({ showNewAgentForm: true })}
           >
             <i className="material-icons">add</i>
-          </Link>
+          </div>
         </div>
       </div>
     );
