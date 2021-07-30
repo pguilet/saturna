@@ -5,11 +5,13 @@ import {reducer as reduxForm} from 'redux-form';
 import surveysReducer from './surveysReducer';
 import pageSelectedReducer from './pageSelectedReducer';
 import flashReducer from './flashReducer';
+import allUsers from './agentsInterfaceReducers';
 
 export default combineReducers({
     auth: authReducer,
     form:reduxForm,
     surveys: surveysReducer,
     pageSelected: pageSelectedReducer,
-    flash:flashReducer
+    flash:flashReducer,
+    users:allUsers
 });
