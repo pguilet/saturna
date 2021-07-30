@@ -7,29 +7,23 @@ import {connect} from 'react-redux';
 import * as actions from '../../actions';
 
 import InterfaceHeader from "./InterfaceHeader";
+import AgentsHome from "./AgentsHome";
+import AgentsList from "./AgentsList";
+import GuardedRoute from "../GuardedRoute";
 
 
 class AgentInterface extends Component{
     
-    renderContent(){  
-        return(<div>Authenticated</div>);            
-    }
 
    render(){
      return (
        <BrowserRouter>
            <InterfaceHeader />
 
-          {this.renderContent()}
-           
-        {/* <div className="container">
-           <Route exact path="/" component={Landing} />
-           <Route exact path="/surveys" component={Dashboard} />
-           <Route path="/surveys/new" component={SurveyNew} />
-           <Route exact path="/about" component={About} />
-           <Route exact path="/contact" component={Contact} />
-           <Route exact path="/services" component={Services} />
-         </div> */}
+        <div className="container">
+           <GuardedRoute exact path="/agentsHome" component={AgentsHome} />
+           <GuardedRoute exact path="/agentsList" component={AgentsList} />
+         </div>
        </BrowserRouter>
      );
    }

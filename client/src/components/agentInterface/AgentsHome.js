@@ -9,22 +9,18 @@ import * as actions from '../../actions';
 import InterfaceHeader from "./InterfaceHeader";
 
 
-class AgentsList extends Component{
+class AgentsHome extends Component{
   componentDidMount(){
-    this.props.fetchPage("agentsList");
+    this.props.fetchPage("agentsHome");
 }
-    renderContent(){
-        return(
-        
-        
-        
-        <div  >Agents list</div>
-        );            
+    renderContent(){  
+        return(<div>Authenticated</div>);            
     }
 
    render(){
      return (
        <BrowserRouter>
+      
 
           {this.renderContent()}
            
@@ -41,4 +37,4 @@ class AgentsList extends Component{
    }
 };
 
-export default connect(null,actions)(AgentsList);
+export default connect(null,actions)(AgentsHome);

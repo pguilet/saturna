@@ -2,19 +2,25 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import {Roles} from '../../actions/types.js';
+import { Roles } from '../../actions/types.js';
 class InterfaceHeader extends Component {
-    renderAgentList() {
-    if (this.props.auth!==null && this.props.auth.role === Roles.ADMIN) {
+  renderAgentList() {
+    if (this.props.auth !== null && this.props.auth.role === Roles.ADMIN) {
       return (
         <li class="nav-item">
-          <a href="/agentsList" className="nav-link">
-            Agents list
-          </a>
+          <Link
+            to="/agentsList"
+            className={
+              this.props.pageSelected === 'agentsList'
+                ? 'nav-link active'
+                : 'nav-link'
+            }
+          >
+            Liste des agents
+          </Link>
         </li>
       );
     }
-
   }
 
   renderLogoutLink() {
@@ -32,7 +38,10 @@ class InterfaceHeader extends Component {
     return (
       <div id="header-background">
         <div className="container">
-          <h1 className="brand"> La Pierre Nantaise: Agent Interface</h1>
+          <h1 className="brand" onClick={() => (window.location.href = '/')}>
+            {' '}
+            La Pierre Nantaise: Agent Interface
+          </h1>
           <p className="brand-description">
             Agence immobilière créée par un petit beurre et pour tous le monde.
             Béni par le dieu Pierre Guilet.
@@ -40,9 +49,16 @@ class InterfaceHeader extends Component {
 
           <ul class="nav nav-fill">
             <li class="nav-item">
-              <a href="/" className="nav-link">
+              <Link
+                to="/agentsHome"
+                className={
+                  this.props.pageSelected === 'agentsHome'
+                    ? 'nav-link active'
+                    : 'nav-link'
+                }
+              >
                 Accueil
-              </a>
+              </Link>
             </li>
             {this.renderAgentList()}
             {this.renderLogoutLink()}

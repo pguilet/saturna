@@ -10,6 +10,7 @@ import GuardedRoute from "./GuardedRoute";
 import Login from "./agentInterface/Login";
 import AgentInterface from './agentInterface/AgentInterface';
 import AgentsList from './agentInterface/AgentsList';
+import AgentsHome from './agentInterface/AgentsHome';
 
 
 class App extends Component{
@@ -25,9 +26,9 @@ class App extends Component{
            <Route exact path="/login" component={Login} />
            <GuardedRoute exact path="/surveys" component={Dashboard} />
            <Route exact path="/contact" component={Home} />
-           <Route exact path="/services" component={Home} />
-           <GuardedRoute exact path="/agentInterface" component={AgentInterface}/>  
-           <GuardedRoute exact path="/agentsList" component={AgentsList}/>        
+           <Route exact path="/services" component={Home} />        
+           <GuardedRoute exact path="/agentsHome" component={AgentInterface} />
+           <GuardedRoute exact path="/agentsList" component={AgentInterface} />
        </BrowserRouter>
      );
    }
