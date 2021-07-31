@@ -22,6 +22,7 @@ class NewAgentForm extends Component {
           return (
                <Dialog
                     open={this.props.doOpen}
+                    
                     aria-labelledby="form-dialog-title"
                >
                     <DialogTitle id="form-dialog-title">
@@ -48,19 +49,32 @@ class NewAgentForm extends Component {
                                    name="Password"
                                    component={CustomField}
                               />
+                              <div
+                                   className="red-text"
+                                   style={{ marginBottom: '20px' }}
+                              >
+                                   {this.props.flash
+                                        ? this.props.flash.message
+                                        : ''}
+                              </div>
                          </form>
                     </DialogContent>
                     <DialogActions>
                          <button
                               className="yellow darken-3 white-text btn-flat"
-                              onClick={this.props.onTheClose}
+                              onClick={() => {
+                                   this.props.onTheClose(true,false);
+                              }}
                          >
                               Back
                               <i className="material-icons right">cancel</i>
                          </button>
                          <button
                               className="green right btn-flat white-text"
-                              onClick={() => {this.props.createUser(this.props.form);this.props.onTheClose();}}
+                              onClick={() => {
+                                   this.props.createUser(this.props.form);
+                                   this.props.onTheClose(false,true);
+                              }}
                          >
                               Créer l'utilisateur
                               <i className="material-icons right">done</i>
@@ -79,50 +93,3 @@ export default reduxForm({
      destroyOnUnmount: false,
      form: 'newAgentForm',
 })(NewAgentForm);
-
-// export default connect (null,{fetchPage}) (Contact);
-//     export default function NewAgentForm({onTheClose, doOpen}) {
-//         const [open, setOpen] = React.useState(true);
-
-//         const handleClickOpen = () => {
-//           setOpen(true);
-//         };
-
-//         const handleClose = () => {
-//             console.log('handle close');
-//             console.log(this.state);
-//           setOpen(false);
-//         };
-
-//         return (
-
-//             console.log(onTheClose),
-//           <div>
-//             <Dialog open={doOpen} onClose={onTheClose} aria-labelledby="form-dialog-title">
-//               <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
-//               <DialogContent>
-//                 <DialogContentText>
-//                   To subscribe to this website, please enter your email address here. We will send updates
-//                   occasionally.
-//                 </DialogContentText>
-//                 <TextField
-//                   autoFocus
-//                   margin="dense"
-//                   id="name"
-//                   label="Email Address"
-//                   type="email"
-//                   fullWidth
-//                 />
-//               </DialogContent>
-//               <DialogActions>
-//                 <Button onClick={handleClose} color="primary">
-//                   Cancel
-//                 </Button>
-//                 <Button onClick={handleClose} color="primary">
-//                   Subscribe
-//                 </Button>
-//               </DialogActions>
-//             </Dialog>
-//           </div>
-//         );
-//       }

@@ -54,6 +54,7 @@ class Login extends Component{
                     component={SurveyField}
                     onChange={this.handlePasswordChange}
                   />
+                  
                   <div className="red-text" style={{ marginBottom: '20px' }}>
                       {this.props.flash?this.props.flash.message:''}
                   </div>
