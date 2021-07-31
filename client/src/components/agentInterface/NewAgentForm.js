@@ -49,6 +49,15 @@ class NewAgentForm extends Component {
                                    name="Password"
                                    component={CustomField}
                               />
+                             <label>Favorite Color</label>
+        <div>
+          <Field name="favoriteColor" component="select">
+            <option></option>
+            <option value="#ff0000">Red</option>
+            <option value="#00ff00">Green</option>
+            <option value="#0000ff">Blue</option>
+          </Field>
+        </div>
                               <div
                                    className="red-text"
                                    style={{ marginBottom: '20px' }}
