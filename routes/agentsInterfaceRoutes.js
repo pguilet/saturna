@@ -19,11 +19,11 @@ module.exports = (app) => {
           const userAlreadyExisting = await Users.find({
                username: req.body.Username,
           });
-         
           if (!userAlreadyExisting.length) {
                const user = await new Users({
                     username: req.body.Username,
                     password: req.body.Password,
+                    role: req.body.role
                }).save();
           
                res.send(user);

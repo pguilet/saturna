@@ -3,26 +3,33 @@
   background-size: 100%;
   padding-top: 50px;
   min-height: 300px;
-  background-position: center center; }
+  background-position: center center;
+}
 
 .brand {
   background-color: #009ed8;
   color: white;
   text-align: center;
-  cursor: pointer; }
+  cursor: pointer;
+}
 
 .brand-description {
   background-color: #181919;
-  color: white; }
+  color: white;
+}
 
 .nav {
-  padding-top: 130px; }
-  .nav .nav-link {
-    background-color: #181919;
-    color: white; }
-  .nav .nav-link:focus, .nav .nav-link:hover {
-    color: white; }
-  .nav .active {
-    background-color: #009ed8; }
+  padding-top: 130px;
+}
+.nav .nav-link {
+  background-color: #181919;
+  color: white;
+}
+.nav .nav-link:focus, .nav .nav-link:hover {
+  color: white;
+}
+.nav .active {
+  background-color: #009ed8;
+}
 
 /*# sourceMappingURL=index.css.map */

@@ -55,7 +55,6 @@ export const createUser = (form) => async (dispatch) => {
      var res = await axios.post('/api/newUser', form.newAgentForm.values);
      if (!res.data.message) {
           res = await axios.get('/api/allUsers');
-          console.log('dispatch flash');
           dispatch({ type: FLASH, payload: {message:false} });
           dispatch({ type: FETCH_USERS, payload: res.data });
          

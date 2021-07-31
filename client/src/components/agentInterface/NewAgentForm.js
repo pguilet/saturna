@@ -13,16 +13,26 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import CustomField from '../customs/CustomField';
-// import SurveyField from "./SurveyField";
-// import validateEmails from '../../../utils/validateEmails';
-// import formFields from './formFields';
+import {
+     Roles
+} from '../../actions/types';
+
 
 class NewAgentForm extends Component {
+
+     renderOptions(){
+         return _.map(Roles,(role)=>{
+               return (
+                   <option key={role} value={role}>{role}</option>
+               );
+
+              
+          });
+     }
      render() {
           return (
                <Dialog
                     open={this.props.doOpen}
-                    
                     aria-labelledby="form-dialog-title"
                >
                     <DialogTitle id="form-dialog-title">
@@ -49,15 +59,16 @@ class NewAgentForm extends Component {
                                    name="Password"
                                    component={CustomField}
                               />
-                             <label>Favorite Color</label>
-        <div>
-          <Field name="favoriteColor" component="select">
-            <option></option>
-            <option value="#ff0000">Red</option>
-            <option value="#00ff00">Green</option>
-            <option value="#0000ff">Blue</option>
-          </Field>
-        </div>
+                              <label>Rôle</label>
+                              <div>
+                                   <Field
+                                        name="role"
+                                        component="select"
+                                        className="browser-default"
+                                   >
+                                        {this.renderOptions()}
+                                   </Field>
+                              </div>
                               <div
                                    className="red-text"
                                    style={{ marginBottom: '20px' }}
@@ -72,7 +83,7 @@ class NewAgentForm extends Component {
                          <button
                               className="yellow darken-3 white-text btn-flat"
                               onClick={() => {
-                                   this.props.onTheClose(true,false);
+                                   this.props.onTheClose(true, false);
                               }}
                          >
                               Back
@@ -82,7 +93,7 @@ class NewAgentForm extends Component {
                               className="green right btn-flat white-text"
                               onClick={() => {
                                    this.props.createUser(this.props.form);
-                                   this.props.onTheClose(false,true);
+                                   this.props.onTheClose(false, true);
                               }}
                          >
                               Créer l'utilisateur
