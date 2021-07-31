@@ -6,7 +6,7 @@ const requireLogin = require('../middlewares/requireLogin');
 const requireCredits = require('../middlewares/requireCredits');
 const Mailer = require('../services/Mailer');
 const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
-
+const bcrypt = require('bcrypt');
 const Users = mongoose.model('users'); //for testing purpose with node and mongoose we should not get info from Survey.js
 
 module.exports = (app) => {
@@ -20,16 +20,29 @@ module.exports = (app) => {
                username: req.body.Username,
           });
           if (!userAlreadyExisting.length) {
+               var salt = await bcrypt.genSalt(12);
+               var hashedPassword = bcrypt.hashSync(req.body.Password, salt);
                const user = await new Users({
                     username: req.body.Username,
-                    password: req.body.Password,
-                    role: req.body.role
+                    password: hashedPassword,
+                    role: req.body.role,
                }).save();
-          
+
                res.send(user);
-          }else{
-            res.send({ message: "Un agent avec ce nom d'utilisateur existe déjà" });
+          } else {
+               res.send({
+                    message: "Un agent avec ce nom d'utilisateur existe déjà",
+               });
           }
-         
+     });
+     app.post('/api/deleteUser', requireLogin, async (req, res) => {
+          if (req.body.username !== 'nsalem') {
+               const userAlreadyExisting = await Users.findOneAndDelete({
+                    username: req.body.username,
+               });
+
+               res.send(userAlreadyExisting);
+          }
+          res.send(null);
      });
 };

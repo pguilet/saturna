@@ -55,10 +55,15 @@ export const createUser = (form) => async (dispatch) => {
      var res = await axios.post('/api/newUser', form.newAgentForm.values);
      if (!res.data.message) {
           res = await axios.get('/api/allUsers');
-          dispatch({ type: FLASH, payload: {message:false} });
+          dispatch({ type: FLASH, payload: { message: false } });
           dispatch({ type: FETCH_USERS, payload: res.data });
-         
      } else {
           dispatch({ type: FLASH, payload: res.data });
      }
+};
+
+export const deleteUser = (username) => async (dispatch) => {
+     var res = await axios.post('/api/deleteUser', {username:username});
+     res = await axios.get('/api/allUsers');
+     dispatch({ type: FETCH_USERS, payload: res.data });
 };

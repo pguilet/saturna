@@ -7,9 +7,6 @@ const LocalStrategy = require('passport-local').Strategy;
 
 const User = mongoose.model('users');
 
-const BCRYPT_SALT_ROUNDS = 12;
-
-
 passport.serializeUser((user, done) => {//let's put it in a cookie
   //user is what is retrieved from callback after done is called.
   done(null, user.id); //we use record id and not profile id for when we will have many identification modes.

@@ -45,7 +45,8 @@ class AgentsList extends Component {
                                                     <td>{user.role}</td>
                                                     <td>
                                                          <a
-                                                              href="#!"
+                                                             onClick={()=>this.props.deleteUser(user.username)}
+                                                             href="#!"
                                                               className="secondary-content red-text"
                                                          >
                                                               <i className="material-icons">
