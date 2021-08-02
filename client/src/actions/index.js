@@ -52,7 +52,6 @@ export const login =
      };
 
 export const createUser = (form) => async (dispatch) => {
-     console.log(form.newAgentForm);
      var res = await axios.post('/api/newUser', form.newAgentForm.values);
      if (!res.data.message) {
           res = await axios.get('/api/allUsers');

@@ -6,7 +6,6 @@ import { BrowserRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import GuardedRoute from '../GuardedRoute';
-import { unmountComponentAtNode, render } from 'react-dom';
 import NewAgentForm from './NewAgentForm';
 
 class AgentsList extends Component {
@@ -74,6 +73,9 @@ class AgentsList extends Component {
                                                                                   },
                                                                         }
                                                                    );
+                                                                   if(this.props.flash){
+                                                                      this.props.flash.message=false;
+                                                                   }
                                                               }}
                                                               href="#!"
                                                               className="secondary-content teal-text"
@@ -131,6 +133,7 @@ class AgentsList extends Component {
                          doOpen={true}
                          onTheClose={this.closeNewAgentForm}
                          editMode={this.state.editMode}
+                         validateButtonAction={()=> this.props.editUser(this.props.form,this.props.editMode.username)}
                     />
                );
           }

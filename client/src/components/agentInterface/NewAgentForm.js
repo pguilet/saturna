@@ -54,7 +54,7 @@ class NewAgentForm extends Component {
                               {this.props.editMode
                                    ? "Veuillez sélectionner le rôle de l'agent et un nouveau password ou laisser le vide pour qu'il ne soit pas changé."
                                    : "Veuillez rentrer le nom d'utilisateur et le mot de passe d'un agent pour que celui-ci puisse accéder à l'interface dédiée."}
-                         </DialogContentText>{' '}
+                         </DialogContentText>
                          <form>
                               <Field
                                    key="Username"
@@ -62,10 +62,9 @@ class NewAgentForm extends Component {
                                    type="text"
                                    name="Username"
                                    component={CustomField}
-                                   input={{
-                                        disabled: this.props.editMode,
-                                        value: this.props.editMode.username,
-                                   }}
+                                   disabled={this.props.editMode?true:false}
+                                   valueToSet={this.props.editMode?this.props.editMode.username:null}
+                                  
                               />
                               <Field
                                    key="Password"
