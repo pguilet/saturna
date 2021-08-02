@@ -7,6 +7,7 @@ const requireCredits = require('../middlewares/requireCredits');
 const Mailer = require('../services/Mailer');
 const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
 const bcrypt = require('bcrypt');
+const requireAdminRole = require('../middlewares/requireAdminRole');
 const Users = mongoose.model('users'); //for testing purpose with node and mongoose we should not get info from Survey.js
 
 module.exports = (app) => {
@@ -15,7 +16,7 @@ module.exports = (app) => {
           res.send(users);
      });
 
-     app.post('/api/newUser', requireLogin, async (req, res) => {
+     app.post('/api/newUser', requireAdminRole, async (req, res) => {
           const userAlreadyExisting = await Users.find({
                username: req.body.Username,
           });
@@ -38,7 +39,7 @@ module.exports = (app) => {
                });
           }
      });
-     app.post('/api/editUser', requireLogin, async (req, res) => {
+     app.post('/api/editUser', requireAdminRole, async (req, res) => {
           let user = await Users.findOne({ username: req.body.username });
 
           if (user) {
@@ -57,7 +58,7 @@ module.exports = (app) => {
           user.save();
           res.send(user);
      });
-     app.post('/api/deleteUser', requireLogin, async (req, res) => {
+     app.post('/api/deleteUser', requireAdminRole, async (req, res) => {
           if (req.body.username !== 'nsalem') {
                const userAlreadyExisting = await Users.findOneAndDelete({
                     username: req.body.username,
