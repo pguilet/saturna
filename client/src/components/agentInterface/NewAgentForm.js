@@ -13,20 +13,29 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import CustomField from '../customs/CustomField';
-import {
-     Roles
-} from '../../actions/types';
-
+import { Roles } from '../../actions/types';
 
 class NewAgentForm extends Component {
 
-     renderOptions(){
-         return _.map(Roles,(role)=>{
+     renderFirstOption() {
+          var role = this.props.editMode.role;
+          if (role) {
                return (
-                   <option key={role} value={role}>{role}</option>
+                    <option key={role} value={role}>
+                         {role}
+                    </option>
                );
-
-              
+          }
+     }
+     renderOtherOptions() {
+          return _.map(Roles, (role) => {
+               if (role !== this.props.editMode.role || !this.props.editMode) {
+                    return (
+                         <option key={role} value={role}>
+                              {role}
+                         </option>
+                    );
+               }
           });
      }
      render() {
@@ -36,13 +45,15 @@ class NewAgentForm extends Component {
                     aria-labelledby="form-dialog-title"
                >
                     <DialogTitle id="form-dialog-title">
-                         Création d'utilisateur
+                         {this.props.editMode
+                              ? "Edition de l'utilisateur"
+                              : "Création d'utilisateur"}
                     </DialogTitle>
                     <DialogContent>
                          <DialogContentText>
-                              Veuillez rentrer le nom d'utilisateur et le mot de
-                              passe d'un agent pour que celui-ci puisse accéder
-                              à l'interface dédiée.
+                              {this.props.editMode
+                                   ? "Veuillez sélectionner le rôle de l'agent et un nouveau password ou laisser le vide pour qu'il ne soit pas changé."
+                                   : "Veuillez rentrer le nom d'utilisateur et le mot de passe d'un agent pour que celui-ci puisse accéder à l'interface dédiée."}
                          </DialogContentText>{' '}
                          <form>
                               <Field
@@ -51,6 +62,10 @@ class NewAgentForm extends Component {
                                    type="text"
                                    name="Username"
                                    component={CustomField}
+                                   input={{
+                                        disabled: this.props.editMode,
+                                        value: this.props.editMode.username,
+                                   }}
                               />
                               <Field
                                    key="Password"
@@ -60,15 +75,16 @@ class NewAgentForm extends Component {
                                    component={CustomField}
                               />
                               <label>Rôle</label>
-                              <div>
-                                   <Field
-                                        name="role"
-                                        component="select"
-                                        className="browser-default"
-                                   >
-                                        {this.renderOptions()}
-                                   </Field>
-                              </div>
+                              <Field
+                                   key="role"
+                                   name="role"
+                                   label="Rôle"
+                                   component="select"
+                                   className="browser-default"
+                              >
+                                   {this.renderFirstOption()}
+                                   {this.renderOtherOptions()}
+                              </Field>
                               <div
                                    className="red-text"
                                    style={{ marginBottom: '20px' }}
@@ -92,11 +108,17 @@ class NewAgentForm extends Component {
                          <button
                               className="green right btn-flat white-text"
                               onClick={() => {
-                                   this.props.createUser(this.props.form);
+                                   this.props.editMode
+                                        ? this.props.editUser(this.props.form,this.props.editMode.username)
+                                        : this.props.createUser(
+                                               this.props.form
+                                          );
                                    this.props.onTheClose(false, true);
                               }}
                          >
-                              Créer l'utilisateur
+                              {this.props.editMode
+                                   ? "Editer l'utilisateur"
+                                   : " Créer l'utilisateur"}
                               <i className="material-icons right">done</i>
                          </button>
                     </DialogActions>
@@ -110,6 +132,6 @@ function mapStateToProps(props) {
 }
 NewAgentForm = connect(mapStateToProps, actions)(NewAgentForm);
 export default reduxForm({
-     destroyOnUnmount: false,
+     destroyOnUnmount: true,
      form: 'newAgentForm',
 })(NewAgentForm);

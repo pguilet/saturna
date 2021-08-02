@@ -3,7 +3,8 @@ export const FETCH_USERS = 'fetch_users';
 export const FETCH_SURVEYS = 'fetch_surveys';
 export const FETCH_PAGE = 'fetch_page';
 export const Roles = {
-  ADMIN: 'admin',
+
   AGENT: 'agent',
+  ADMIN: 'admin'
 };
 export const FLASH='flash';

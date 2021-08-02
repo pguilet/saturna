@@ -21,7 +21,10 @@ module.exports = (app) => {
           });
           if (!userAlreadyExisting.length) {
                var salt = await bcrypt.genSalt(12);
-               var hashedPassword = bcrypt.hashSync(req.body.Password, salt);
+               var hashedPassword = bcrypt.hashSync(
+                    req.body.Password.trim(),
+                    salt
+               );
                const user = await new Users({
                     username: req.body.Username,
                     password: hashedPassword,
@@ -34,6 +37,25 @@ module.exports = (app) => {
                     message: "Un agent avec ce nom d'utilisateur existe déjà",
                });
           }
+     });
+     app.post('/api/editUser', requireLogin, async (req, res) => {
+          let user = await Users.findOne({ username: req.body.username });
+
+          if (user) {
+               if (req.body.form.role) {
+                    user.role = req.body.form.role;
+               }
+               if (req.body.Password) {
+                    const password = req.body.form.Password.trim();
+                    if (password && password.length > 0) {
+                         var salt = await bcrypt.genSalt(12);
+                         var hashedPassword = bcrypt.hashSync(password, salt);
+                         user.password = hashedPassword;
+                    }
+               }
+          }
+          user.save();
+          res.send(user);
      });
      app.post('/api/deleteUser', requireLogin, async (req, res) => {
           if (req.body.username !== 'nsalem') {

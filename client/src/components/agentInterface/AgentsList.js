@@ -6,7 +6,7 @@ import { BrowserRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import GuardedRoute from '../GuardedRoute';
-
+import { unmountComponentAtNode, render } from 'react-dom';
 import NewAgentForm from './NewAgentForm';
 
 class AgentsList extends Component {
@@ -14,6 +14,7 @@ class AgentsList extends Component {
           showNewAgentForm: false,
           backButtonTriggered: false,
           createUserButtonTriggered: false,
+          editMode: false,
      };
      componentDidMount() {
           this.props.fetchPage('agentsList');
@@ -45,8 +46,12 @@ class AgentsList extends Component {
                                                     <td>{user.role}</td>
                                                     <td>
                                                          <a
-                                                             onClick={()=>this.props.deleteUser(user.username)}
-                                                             href="#!"
+                                                              onClick={() =>
+                                                                   this.props.deleteUser(
+                                                                        user.username
+                                                                   )
+                                                              }
+                                                              href="#!"
                                                               className="secondary-content red-text"
                                                          >
                                                               <i className="material-icons">
@@ -54,6 +59,22 @@ class AgentsList extends Component {
                                                               </i>
                                                          </a>
                                                          <a
+                                                              onClick={() => {
+
+                                                                   this.setState(
+                                                                        {
+                                                                             showNewAgentForm: true,
+                                                                             backButtonTriggered: false,
+                                                                             createUserButtonTriggered: false,
+                                                                             editMode:
+                                                                                  {
+                                                                                       username:
+                                                                                            user.username,
+                                                                                       role: user.role,
+                                                                                  },
+                                                                        }
+                                                                   );
+                                                              }}
                                                               href="#!"
                                                               className="secondary-content teal-text"
                                                          >
@@ -72,10 +93,14 @@ class AgentsList extends Component {
           );
      }
 
-     closeNewAgentForm(actionFromBackButton,actionFromNewUserButton) {
-          this.setState({ backButtonTriggered: actionFromBackButton,createUserButtonTriggered:actionFromNewUserButton });
+     closeNewAgentForm(actionFromBackButton, actionFromNewUserButton) {
+          this.setState({
+               backButtonTriggered: actionFromBackButton,
+               createUserButtonTriggered: actionFromNewUserButton
+          });
      }
      computeFormOpeningStatus(showNewAgentForm, flash) {
+          
           if (this.state.backButtonTriggered) {
                return false;
           } else if (this.state.createUserButtonTriggered) {
@@ -87,7 +112,7 @@ class AgentsList extends Component {
                     return true;
                }
           } else {
-               if (this.state.showNewAgentForm) {
+               if (showNewAgentForm) {
                     return true;
                } else {
                     return false;
@@ -95,16 +120,22 @@ class AgentsList extends Component {
           }
      }
      renderNewAgentForm() {
-          return (
-               <NewAgentForm
-                    doOpen={this.computeFormOpeningStatus(
-                         this.state.showNewAgentForm,
-                         this.props.flash
-                    )}
-                    onTheClose={this.closeNewAgentForm}
-               />
-          );
+          if (
+               this.computeFormOpeningStatus(
+                    this.state.showNewAgentForm,
+                    this.props.flash
+               )
+          ) {
+               return (
+                    <NewAgentForm
+                         doOpen={true}
+                         onTheClose={this.closeNewAgentForm}
+                         editMode={this.state.editMode}
+                    />
+               );
+          }
      }
+
      render() {
           return (
                <div>
@@ -118,6 +149,7 @@ class AgentsList extends Component {
                                         showNewAgentForm: true,
                                         backButtonTriggered: false,
                                         createUserButtonTriggered: false,
+                                        editMode: false,
                                    })
                               }
                          >
