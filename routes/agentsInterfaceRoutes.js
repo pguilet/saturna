@@ -9,12 +9,40 @@ const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
 const bcrypt = require('bcrypt');
 const requireAdminRole = require('../middlewares/requireAdminRole');
 const Users = mongoose.model('users'); //for testing purpose with node and mongoose we should not get info from Survey.js
+const multer = require('multer');
+const { uploadFile } = require('../services/s3');
+
+const handleError = (err, res) => {
+     res.status(500)
+          .contentType('text/plain')
+          .end('An error occurred while sending image');
+};
+
+const uploader = multer({
+     dest: './upload/',
+     // you might also want to set some limits: https://github.com/expressjs/multer#limits
+});
+
+
 
 module.exports = (app) => {
      app.get('/api/allUsers', requireLogin, async (req, res) => {
           const users = await Users.find().sort({ username: 1 });
           res.send(users);
      });
+
+     app.post(
+          '/api/uploadImage',
+          requireLogin,uploader.single('file'), /* name attribute of <file> element in your form */
+          async (req, res) => {
+               console.log(req.file);
+              const uploadedImage= await uploadFile(req.file);
+              console.log(uploadedImage);
+               res.status(200)
+                              .contentType('text/plain')
+                              .end('File uploaded!');
+          }
+);
 
      app.post('/api/newUser', requireAdminRole, async (req, res) => {
           const userAlreadyExisting = await Users.find({

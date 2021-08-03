@@ -29,6 +29,7 @@ class App extends Component{
            <Route exact path="/services" component={Home} />        
            <GuardedRoute exact path="/agentsHome" component={AgentInterface} />
            <GuardedRoute exact path="/agentsList" component={AgentInterface} />
+           <GuardedRoute exact path="/homeAdsList" component={AgentInterface} />
        </BrowserRouter>
      );
    }

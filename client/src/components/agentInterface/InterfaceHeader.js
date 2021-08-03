@@ -22,6 +22,24 @@ class InterfaceHeader extends Component {
       );
     }
   }
+  renderHomeAdsList() {
+    if (this.props.auth !== null && (this.props.auth.role === Roles.ADMIN||this.props.auth.role === Roles.AGENT)) {
+      return (
+        <li className="nav-item">
+          <Link
+            to="/homeAdsList"
+            className={
+              this.props.pageSelected === 'homeAdsList'
+                ? 'nav-link active'
+                : 'nav-link'
+            }
+          >
+            Annonces de locations
+          </Link>
+        </li>
+      );
+    }
+  }
 
   renderLogoutLink() {
     if (this.props.auth) {
@@ -61,24 +79,9 @@ class InterfaceHeader extends Component {
               </Link>
             </li>
             {this.renderAgentList()}
+            {this.renderHomeAdsList()}
             {this.renderLogoutLink()}
           </ul>
-
-          {/* <nav>
-                        <div className="nav-wrapper">
-                            <Link 
-                            className="left brand-logo" 
-                            to={this.props.auth?'/surveys':'/'}
-                            >
-                                Emaily
-                            </Link>    
-                            <ul className="right">
-                                {this.renderContent()}
-                            
-                            </ul>
-                        </div>             
-
-                    </nav> */}
         </div>
       </div>
     );

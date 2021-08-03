@@ -6,5 +6,9 @@ module.exports={//export following property and make it available in other files
     googleClientID:process.env.GOOGLE_CLIENT_ID,
     googleClientSecret:process.env.GOOGLE_CLIENT_SECRET,
     mongoURI:process.env.MONGO_URI,
-    cookieKey:process.env.COOKIE_KEY//we don't care the key. should not have a meaning for security reason
+    cookieKey:process.env.COOKIE_KEY,//we don't care the key. should not have a meaning for security reason
+    awsBucketName:process.env.AWS_BUCKET_NAME,
+    awsBucketRegion:process.env.AWS_BUCKET_REGION,
+    awsAccessKey:process.env.AWS_ACCESS_KEY,
+    awsSecretKey:process.env.AWS_SECRET_KEY
 };
