@@ -51,7 +51,7 @@ export const login =
           }
      };
 
-export const createUser = (form) => async (dispatch) => {
+export const createUser = (form,username) => async (dispatch) => {
      var res = await axios.post('/api/newUser', form.newAgentForm.values);
      if (!res.data.message) {
           res = await axios.get('/api/allUsers');
@@ -69,7 +69,7 @@ export const editUser = (form,username) => async (dispatch) => {
      dispatch({ type: FETCH_USERS, payload: res.data });
 };
 
-export const deleteUser = (username) => async (dispatch) => {
+export const deleteUser = (form,username) => async (dispatch) => {
      var res = await axios.post('/api/deleteUser', { username: username });
      res = await axios.get('/api/allUsers');
      dispatch({ type: FETCH_USERS, payload: res.data });

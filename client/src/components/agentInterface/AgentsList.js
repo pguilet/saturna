@@ -2,23 +2,44 @@
 import '../../css/index.css';
 // import 'materialize-css/dist/css/materialize.min.css'; //we have to precise extension when not importing js files
 import React, { Component } from 'react';
-import { BrowserRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
-import GuardedRoute from '../GuardedRoute';
-import NewAgentForm from './NewAgentForm';
+import NewAgentForm from './FocusForm';
+import CustomField from '../customs/CustomField';
+import { Roles } from '../../actions/types';
 
 class AgentsList extends Component {
      state = {
           showNewAgentForm: false,
           backButtonTriggered: false,
           createUserButtonTriggered: false,
-          editMode: false,
+          username: undefined,
+          validateButtonAction: undefined,
+          title: undefined,
+          description: undefined,
+          validateButtonLabel: undefined,
+          fieldsToDisplay: undefined,
      };
      componentDidMount() {
           this.props.fetchPage('agentsList');
           this.props.fetchUsers();
           this.closeNewAgentForm = this.closeNewAgentForm.bind(this);
+     }
+
+     resetState(user) {
+          if (this.props.flash) {
+               this.props.flash.message = false;
+          }
+          this.setState({
+               showNewAgentForm: true,
+               backButtonTriggered: false,
+               createUserButtonTriggered: false,
+          });
+          if (user) {
+               this.setState({
+                    username: user.username,
+               });
+          }
      }
      renderContent() {
           var key = 0;
@@ -45,11 +66,26 @@ class AgentsList extends Component {
                                                     <td>{user.role}</td>
                                                     <td>
                                                          <a
-                                                              onClick={() =>
-                                                                   this.props.deleteUser(
-                                                                        user.username
-                                                                   )
-                                                              }
+                                                              onClick={() => {
+                                                                   this.resetState(
+                                                                        user
+                                                                   );
+                                                                   this.setState(
+                                                                        {
+                                                                             validateButtonAction:
+                                                                                  this
+                                                                                       .props
+                                                                                       .deleteUser,
+                                                                             title: "Suppression d'utilisateur",
+                                                                             description:
+                                                                                  "Etes-vous sûr de vouloir supprimer l'agent?",
+                                                                             validateButtonLabel:
+                                                                                  "Supprimer l'utilisateur",
+                                                                             fieldsToDisplay:
+                                                                                  [],
+                                                                        }
+                                                                   );
+                                                              }}
                                                               href="#!"
                                                               className="secondary-content red-text"
                                                          >
@@ -59,23 +95,53 @@ class AgentsList extends Component {
                                                          </a>
                                                          <a
                                                               onClick={() => {
-
+                                                                   this.resetState(
+                                                                        user
+                                                                   );
                                                                    this.setState(
                                                                         {
-                                                                             showNewAgentForm: true,
-                                                                             backButtonTriggered: false,
-                                                                             createUserButtonTriggered: false,
-                                                                             editMode:
-                                                                                  {
-                                                                                       username:
-                                                                                            user.username,
-                                                                                       role: user.role,
-                                                                                  },
+                                                                             validateButtonAction:
+                                                                                  this
+                                                                                       .props
+                                                                                       .editUser,
+
+                                                                             title: "Edition de l'utilisateur",
+                                                                             description:
+                                                                                  "Veuillez sélectionner le rôle de l'agent et un nouveau password ou laisser le vide pour qu'il ne soit pas changé.",
+                                                                             validateButtonLabel:
+                                                                                  "Editer l'utilisateur",
+                                                                             fieldsToDisplay:
+                                                                                  [
+                                                                                       {
+                                                                                            label: 'Username',
+                                                                                            id: 'username',
+                                                                                            type: 'text',
+                                                                                            component:
+                                                                                                 CustomField,
+                                                                                            disabled: true,
+                                                                                            valueToSet:
+                                                                                                 user.username,
+                                                                                       },
+                                                                                       {
+                                                                                            label: 'Password',
+                                                                                            id: 'password',
+                                                                                            type: 'text',
+                                                                                            component:
+                                                                                                 CustomField,
+                                                                                       },
+                                                                                       {
+                                                                                            label: 'Rôle',
+                                                                                            id: 'role',
+                                                                                            type: 'select',
+                                                                                            component:
+                                                                                                 'select',
+                                                                                            valueToSet:
+                                                                                                 user.role,
+                                                                                            values: Roles,
+                                                                                       },
+                                                                                  ],
                                                                         }
                                                                    );
-                                                                   if(this.props.flash){
-                                                                      this.props.flash.message=false;
-                                                                   }
                                                               }}
                                                               href="#!"
                                                               className="secondary-content teal-text"
@@ -98,11 +164,10 @@ class AgentsList extends Component {
      closeNewAgentForm(actionFromBackButton, actionFromNewUserButton) {
           this.setState({
                backButtonTriggered: actionFromBackButton,
-               createUserButtonTriggered: actionFromNewUserButton
+               createUserButtonTriggered: actionFromNewUserButton,
           });
      }
      computeFormOpeningStatus(showNewAgentForm, flash) {
-          
           if (this.state.backButtonTriggered) {
                return false;
           } else if (this.state.createUserButtonTriggered) {
@@ -132,8 +197,12 @@ class AgentsList extends Component {
                     <NewAgentForm
                          doOpen={true}
                          onTheClose={this.closeNewAgentForm}
-                         editMode={this.state.editMode}
-                         validateButtonAction={()=> this.props.editUser(this.props.form,this.props.editMode.username)}
+                         validateButtonAction={this.state.validateButtonAction}
+                         username={this.state.username}
+                         title={this.state.title}
+                         description={this.state.description}
+                         fieldsToDisplay={this.state.fieldsToDisplay}
+                         validateButtonLabel={this.state.validateButtonLabel}
                     />
                );
           }
@@ -147,14 +216,40 @@ class AgentsList extends Component {
                     <div className="fixed-action-btn">
                          <div
                               className="btn-floating btn-large teal"
-                              onClick={() =>
+                              onClick={() => {
+                                   this.resetState();
                                    this.setState({
-                                        showNewAgentForm: true,
-                                        backButtonTriggered: false,
-                                        createUserButtonTriggered: false,
-                                        editMode: false,
-                                   })
-                              }
+                                        validateButtonAction:
+                                             this.props.createUser,
+                                        title: "Création d'utilisateur",
+                                        description:
+                                             "Veuillez rentrer le nom d'utilisateur et le mot de passe d'un agent pour que celui-ci puisse accéder à l'interface dédiée.",
+                                        validateButtonLabel:
+                                             "Créer l'utilisateur",
+                                        fieldsToDisplay: [
+                                             {
+                                                  label: 'Username',
+                                                  id: 'username',
+                                                  type: 'text',
+                                                  component: CustomField,
+                                             },
+                                             {
+                                                  label: 'Password',
+                                                  id: 'password',
+                                                  type: 'text',
+                                                  component: CustomField,
+                                             },
+                                             {
+                                                  label: 'Rôle',
+                                                  id: 'role',
+                                                  type: 'select',
+                                                  component: 'select',
+                                                  valueToSet: 'agent',
+                                                  values: Roles,
+                                             },
+                                        ],
+                                   });
+                              }}
                          >
                               <i className="material-icons">add</i>
                          </div>

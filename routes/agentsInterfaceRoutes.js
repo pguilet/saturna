@@ -18,16 +18,16 @@ module.exports = (app) => {
 
      app.post('/api/newUser', requireAdminRole, async (req, res) => {
           const userAlreadyExisting = await Users.find({
-               username: req.body.Username,
+               username: req.body.username,
           });
           if (!userAlreadyExisting.length) {
                var salt = await bcrypt.genSalt(12);
                var hashedPassword = bcrypt.hashSync(
-                    req.body.Password.trim(),
+                    req.body.password.trim(),
                     salt
                );
                const user = await new Users({
-                    username: req.body.Username,
+                    username: req.body.username,
                     password: hashedPassword,
                     role: req.body.role,
                }).save();
@@ -46,8 +46,8 @@ module.exports = (app) => {
                if (req.body.form.role) {
                     user.role = req.body.form.role;
                }
-               if (req.body.Password) {
-                    const password = req.body.form.Password.trim();
+               if (req.body.password) {
+                    const password = req.body.form.password.trim();
                     if (password && password.length > 0) {
                          var salt = await bcrypt.genSalt(12);
                          var hashedPassword = bcrypt.hashSync(password, salt);
@@ -65,7 +65,8 @@ module.exports = (app) => {
                });
 
                res.send(userAlreadyExisting);
+          } else {
+               res.send(null);
           }
-          res.send(null);
      });
 };
