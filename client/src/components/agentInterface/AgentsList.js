@@ -4,13 +4,13 @@ import '../../css/index.css';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
-import NewAgentForm from './FocusForm';
+import FocusForm from './FocusForm';
 import CustomField from '../customs/CustomField';
 import { Roles } from '../../actions/types';
 
 class AgentsList extends Component {
      state = {
-          showNewAgentForm: false,
+          showFocusForm: false,
           backButtonTriggered: false,
           createUserButtonTriggered: false,
           username: undefined,
@@ -23,7 +23,7 @@ class AgentsList extends Component {
      componentDidMount() {
           this.props.fetchPage('agentsList');
           this.props.fetchUsers();
-          this.closeNewAgentForm = this.closeNewAgentForm.bind(this);
+          this.closeFocusForm = this.closeFocusForm.bind(this);
      }
 
      resetState(user) {
@@ -31,7 +31,7 @@ class AgentsList extends Component {
                this.props.flash.message = false;
           }
           this.setState({
-               showNewAgentForm: true,
+               showFocusForm: true,
                backButtonTriggered: false,
                createUserButtonTriggered: false,
           });
@@ -161,13 +161,13 @@ class AgentsList extends Component {
           );
      }
 
-     closeNewAgentForm(actionFromBackButton, actionFromNewUserButton) {
+     closeFocusForm(actionFromBackButton, actionFromNewUserButton) {
           this.setState({
                backButtonTriggered: actionFromBackButton,
                createUserButtonTriggered: actionFromNewUserButton,
           });
      }
-     computeFormOpeningStatus(showNewAgentForm, flash) {
+     computeFormOpeningStatus(showFocusForm, flash) {
           if (this.state.backButtonTriggered) {
                return false;
           } else if (this.state.createUserButtonTriggered) {
@@ -179,26 +179,26 @@ class AgentsList extends Component {
                     return true;
                }
           } else {
-               if (showNewAgentForm) {
+               if (showFocusForm) {
                     return true;
                } else {
                     return false;
                }
           }
      }
-     renderNewAgentForm() {
+     renderFocusForm() {
           if (
                this.computeFormOpeningStatus(
-                    this.state.showNewAgentForm,
+                    this.state.showFocusForm,
                     this.props.flash
                )
           ) {
                return (
-                    <NewAgentForm
+                    <FocusForm
                          doOpen={true}
-                         onTheClose={this.closeNewAgentForm}
+                         onTheClose={this.closeFocusForm}
                          validateButtonAction={this.state.validateButtonAction}
-                         username={this.state.username}
+                         identifiant={this.state.username}
                          title={this.state.title}
                          description={this.state.description}
                          fieldsToDisplay={this.state.fieldsToDisplay}
@@ -211,7 +211,7 @@ class AgentsList extends Component {
      render() {
           return (
                <div>
-                    {this.renderNewAgentForm()}
+                    {this.renderFocusForm()}
                     {this.renderContent()}
                     <div className="fixed-action-btn">
                          <div

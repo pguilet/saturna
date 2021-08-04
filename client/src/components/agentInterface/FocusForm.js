@@ -9,7 +9,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 
-class NewAgentForm extends Component {
+class FocusForm extends Component {
      renderFirstOption(valueToSet, values) {
           return _.map(values, (value) => {
                if (value === valueToSet) {
@@ -102,7 +102,7 @@ class NewAgentForm extends Component {
                               onClick={() => {
                                    this.props.validateButtonAction(
                                         this.props.form,
-                                        this.props.username
+                                        this.props.identifiant
                                    );
                                    this.props.onTheClose(false, true);
                               }}
@@ -119,8 +119,8 @@ class NewAgentForm extends Component {
 function mapStateToProps(props) {
      return props;
 }
-NewAgentForm = connect(mapStateToProps, actions)(NewAgentForm);
+FocusForm = connect(mapStateToProps, actions)(FocusForm);
 export default reduxForm({
      destroyOnUnmount: true,
-     form: 'newAgentForm',
-})(NewAgentForm);
+     form: 'focusForm',
+})(FocusForm);

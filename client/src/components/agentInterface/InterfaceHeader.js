@@ -34,7 +34,7 @@ class InterfaceHeader extends Component {
                 : 'nav-link'
             }
           >
-            Annonces de locations
+            Annonces immobilières
           </Link>
         </li>
       );

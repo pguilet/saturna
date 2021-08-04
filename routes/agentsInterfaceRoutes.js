@@ -9,6 +9,7 @@ const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
 const bcrypt = require('bcrypt');
 const requireAdminRole = require('../middlewares/requireAdminRole');
 const Users = mongoose.model('users'); //for testing purpose with node and mongoose we should not get info from Survey.js
+const HomeAds = mongoose.model('homeAds');
 const multer = require('multer');
 const { uploadFile } = require('../services/s3');
 
@@ -29,6 +30,31 @@ module.exports = (app) => {
      app.get('/api/allUsers', requireLogin, async (req, res) => {
           const users = await Users.find().sort({ username: 1 });
           res.send(users);
+     });
+
+     app.get('/api/homeAds', requireLogin, async (req, res) => {
+          const homeAds = await HomeAds.find().sort({ title: 1 });
+          res.send(homeAds);
+     });
+
+     app.post('/api/createHomeAd', requireLogin, async (req, res) => {
+               const homeAd = await new HomeAds({
+                    title: req.body.title,
+                    description: req.body.description,
+                    isLocation: !req.body.type||req.body.type==="location"?true:false
+               }).save();
+               res.send(homeAd);
+         
+     });
+
+     app.post('/api/deleteHomeAd', requireLogin, async (req, res) => {
+
+               const homeAdAlreadyExisting = await HomeAds.findOneAndDelete({
+                    _id: req.body.identifiant,
+               });
+
+               res.send(homeAdAlreadyExisting);
+          
      });
 
      app.post(

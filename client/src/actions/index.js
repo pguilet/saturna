@@ -2,6 +2,7 @@ import axios from 'axios';
 import {
      FETCH_USER,
      FETCH_USERS,
+     FETCH_HOME_ADS,
      FETCH_SURVEYS,
      FETCH_PAGE,
      FLASH,
@@ -15,6 +16,11 @@ export const fetchUser = () => async (dispatch) => {
 export const fetchUsers = () => async (dispatch) => {
      const res = await axios.get('/api/allUsers');
      dispatch({ type: FETCH_USERS, payload: res.data });
+};
+
+export const fetchHomeAds = () => async (dispatch) => {
+     const res = await axios.get('/api/homeAds');
+     dispatch({ type: FETCH_HOME_ADS, payload: res.data });
 };
 
 export const handleToken = (token) => async (dispatch) => {
@@ -52,7 +58,7 @@ export const login =
      };
 
 export const createUser = (form,username) => async (dispatch) => {
-     var res = await axios.post('/api/newUser', form.newAgentForm.values);
+     var res = await axios.post('/api/newUser', form.focusForm.values);
      if (!res.data.message) {
           res = await axios.get('/api/allUsers');
           dispatch({ type: FLASH, payload: { message: false } });
@@ -62,8 +68,22 @@ export const createUser = (form,username) => async (dispatch) => {
      }
 };
 
+export const createHomeAd = (form,username) => async (dispatch) => {
+     var res = await axios.post('/api/createHomeAd', form.focusForm.values);
+          res = await axios.get('/api/homeAds');
+          dispatch({ type: FETCH_HOME_ADS, payload: res.data });
+};
+
+export const deleteHomeAd = (form,identifiant) => async (dispatch) => {
+     
+     var res = await axios.post('/api/deleteHomeAd', { identifiant: identifiant });
+     res = await axios.get('/api/homeAds');
+     dispatch({ type: FLASH, payload: { message: false } });
+     dispatch({ type: FETCH_HOME_ADS, payload: res.data });
+};
+
 export const editUser = (form,username) => async (dispatch) => {
-     var res = await axios.post('/api/editUser', {form:form.newAgentForm.values,username:username});
+     var res = await axios.post('/api/editUser', {form:form.focusForm.values,username:username});
      res = await axios.get('/api/allUsers');
      dispatch({ type: FLASH, payload: { message: false } });
      dispatch({ type: FETCH_USERS, payload: res.data });
@@ -72,5 +92,6 @@ export const editUser = (form,username) => async (dispatch) => {
 export const deleteUser = (form,username) => async (dispatch) => {
      var res = await axios.post('/api/deleteUser', { username: username });
      res = await axios.get('/api/allUsers');
+     dispatch({ type: FLASH, payload: { message: false } });
      dispatch({ type: FETCH_USERS, payload: res.data });
 };

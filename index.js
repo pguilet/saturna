@@ -5,6 +5,7 @@ const passport = require('passport');
 const keys = require('./config/keys');
 require('./models/User');
 require('./models/Survey');
+require('./models/HomeAds');
 require('./services/passport');// no need of a variable because the file does not export anything
 var flash = require('connect-flash');
 
@@ -13,10 +14,12 @@ const app = express();
 
 //Set middlewares used before incoming requests.
 app.use(express.json());
-app.use(cookieSession({
-  maxAge: 30 *24 *60*60*1000,//30 days before expire
-  keys:[keys.cookieKey]//an array to add many keys that will be chosen randomly when creating the cookie instead of just one.
-}));
+app.use(
+     cookieSession({
+          maxAge: 30 * 24 * 60 * 60 * 1000, //30 days before expire
+          keys: [keys.cookieKey], //an array to add many keys that will be chosen randomly when creating the cookie instead of just one.
+     })
+);
 
 app.use(flash());
 

@@ -6,6 +6,7 @@ import surveysReducer from './surveysReducer';
 import pageSelectedReducer from './pageSelectedReducer';
 import flashReducer from './flashReducer';
 import allUsers from './agentsInterfaceReducers';
+import homeAdsReducer from './homeAdsReducers';
 
 export default combineReducers({
     auth: authReducer,
@@ -13,5 +14,6 @@ export default combineReducers({
     surveys: surveysReducer,
     pageSelected: pageSelectedReducer,
     flash:flashReducer,
-    users:allUsers
+    users:allUsers,
+    homeAds: homeAdsReducer
 });
