@@ -35,6 +35,7 @@ class FocusForm extends Component {
      renderFields() {
           return _.map(this.props.fieldsToDisplay, (field) => {
                return (
+                    <div><label >{field.label}</label>
                     <Field
                          key={field.id}
                          label={field.label}
@@ -58,6 +59,7 @@ class FocusForm extends Component {
                               field.values
                          )}
                     </Field>
+                    </div>
                );
           });
      }

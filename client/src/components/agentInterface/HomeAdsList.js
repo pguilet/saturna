@@ -247,7 +247,7 @@ class AgentsList extends Component {
                                                   label: 'Description',
                                                   id: 'description',
                                                   type: 'text',
-                                                  component: CustomField,
+                                                  component: 'textarea',
                                              },
                                              {
                                                   label: 'Type',
