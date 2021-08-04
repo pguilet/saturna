@@ -36,8 +36,7 @@ class Login extends Component{
                 <form
                   className="container"
                   onSubmit={this.props.handleSubmit(()=>this.props.login(this.props.history,this.props.form.loginForm.values))}
-                  // onSubmit={this.props.handleSubmit(()=>console.log(this.props.form.loginForm.values))}
-                >
+                            >
                   <Field
                     key="username"
                     label="Username"

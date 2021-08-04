@@ -13,6 +13,10 @@
   cursor: pointer;
 }
 
+.selectable {
+  cursor: pointer;
+}
+
 .brand-description {
   background-color: #181919;
   color: white;

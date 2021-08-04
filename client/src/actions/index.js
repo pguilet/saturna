@@ -71,12 +71,19 @@ export const createUser = (form,username) => async (dispatch) => {
 export const createHomeAd = (form,username) => async (dispatch) => {
      var res = await axios.post('/api/createHomeAd', form.focusForm.values);
           res = await axios.get('/api/homeAds');
+          dispatch({ type: FLASH, payload: { message: false } });
           dispatch({ type: FETCH_HOME_ADS, payload: res.data });
 };
 
 export const deleteHomeAd = (form,identifiant) => async (dispatch) => {
      
      var res = await axios.post('/api/deleteHomeAd', { identifiant: identifiant });
+     res = await axios.get('/api/homeAds');
+     dispatch({ type: FLASH, payload: { message: false } });
+     dispatch({ type: FETCH_HOME_ADS, payload: res.data });
+};
+export const editHomeAd = (form,identifiant) => async (dispatch) => {
+     var res = await axios.post('/api/editHomeAd', {form:form.focusForm.values,identifiant:identifiant});
      res = await axios.get('/api/homeAds');
      dispatch({ type: FLASH, payload: { message: false } });
      dispatch({ type: FETCH_HOME_ADS, payload: res.data });

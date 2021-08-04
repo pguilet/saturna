@@ -35,7 +35,7 @@ class FocusForm extends Component {
      renderFields() {
           return _.map(this.props.fieldsToDisplay, (field) => {
                return (
-                    <div><label >{field.label}</label>
+                    <div key={field.id}><label >{field.label}</label>
                     <Field
                          key={field.id}
                          label={field.label}
@@ -66,7 +66,7 @@ class FocusForm extends Component {
      render() {
           return (
                <Dialog
-                    open={this.props.doOpen}
+                    open={this.props.doOpen()}
                     aria-labelledby="form-dialog-title"
                >
                     <DialogTitle id="form-dialog-title">

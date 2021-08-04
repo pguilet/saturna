@@ -9,37 +9,114 @@ import CustomField from '../customs/CustomField';
 import { Roles } from '../../actions/types';
 
 class AgentsList extends Component {
-     state = {
-          showFocusForm: false,
-          backButtonTriggered: false,
-          createUserButtonTriggered: false,
-          username: undefined,
-          validateButtonAction: undefined,
-          title: undefined,
-          description: undefined,
-          validateButtonLabel: undefined,
-          fieldsToDisplay: undefined,
-     };
+     // state = {
+     //      showFocusForm: false,
+     // };
+
+     constructor(props) {
+          super(props);
+      
+          this.state = {
+               showFoshowFocusFormcusFormBis: false,
+          };
+        }
      componentDidMount() {
           this.props.fetchPage('agentsList');
           this.props.fetchUsers();
           this.closeFocusForm = this.closeFocusForm.bind(this);
+          this.computeFormOpeningStatus =
+               this.computeFormOpeningStatus.bind(this);
+          this.backButtonTriggered = false;
+          this.createUserButtonTriggered = false;
+          this.username = undefined;
+          this.validateButtonAction = undefined;
+          this.title = undefined;
+          this.description = undefined;
+          this.validateButtonLabel = undefined;
+          this.fieldsToDisplay = undefined;
      }
 
      resetState(user) {
           if (this.props.flash) {
                this.props.flash.message = false;
           }
-          this.setState({
-               showFocusForm: true,
-               backButtonTriggered: false,
-               createUserButtonTriggered: false,
-          });
+          this.setState({ showFocusForm: true });
+          this.backButtonTriggered = false;
+          this.createUserButtonTriggered = false;
           if (user) {
-               this.setState({
-                    username: user.username,
-               });
+               this.username = user.username;
           }
+     }
+
+     setUserDeletionVariables() {
+          this.validateButtonAction = this.props.deleteUser;
+          this.title = "Suppression d'utilisateur";
+          this.description = "Etes-vous sûr de vouloir supprimer l'agent?";
+          this.validateButtonLabel = "Supprimer l'utilisateur";
+          this.fieldsToDisplay = [];
+     }
+
+     setUserEditionVariables(user) {
+          this.validateButtonAction = this.props.editUser;
+
+          this.title = "Edition de l'utilisateur";
+          this.description =
+               "Veuillez sélectionner le rôle de l'agent et un nouveau password ou laisser le vide pour qu'il ne soit pas changé.";
+          this.validateButtonLabel = "Modifier l'utilisateur";
+          this.fieldsToDisplay = [
+               {
+                    label: 'Username',
+                    id: 'username',
+                    type: 'text',
+                    component: CustomField,
+                    disabled: true,
+                    valueToSet: user.username,
+               },
+               {
+                    label: 'Password',
+                    id: 'password',
+                    type: 'text',
+                    component: CustomField,
+               },
+               {
+                    label: 'Rôle',
+                    id: 'role',
+                    type: 'select',
+                    component: 'select',
+                    valueToSet: user.role,
+                    values: Roles,
+               },
+          ];
+     }
+
+     setUserCreationVariables() {
+          this.validateButtonAction = this.props.createUser;
+          this.title = "Création d'utilisateur";
+          this.description =
+               "Veuillez rentrer le nom d'utilisateur et le mot de passe d'un agent pour que celui-ci puisse accéder à l'interface dédiée.";
+          this.validateButtonLabel = "Créer l'utilisateur";
+          this.fieldsToDisplay = [
+               {
+                    label: 'Username',
+                    id: 'username',
+                    type: 'text',
+                    component: CustomField,
+               },
+               {
+                    label: 'Password',
+                    id: 'password',
+                    type: 'text',
+                    component: CustomField,
+               },
+               {
+                    label: 'Rôle',
+                    id: 'role',
+                    type: 'select',
+                    component: 'select',
+                    valueToSet: 'agent',
+                    values: Roles,
+               },
+          ];
      }
      renderContent() {
           var key = 0;
@@ -65,91 +142,34 @@ class AgentsList extends Component {
                                                     </td>
                                                     <td>{user.role}</td>
                                                     <td>
-                                                         <a
+                                                         <div
                                                               onClick={() => {
                                                                    this.resetState(
                                                                         user
                                                                    );
-                                                                   this.setState(
-                                                                        {
-                                                                             validateButtonAction:
-                                                                                  this
-                                                                                       .props
-                                                                                       .deleteUser,
-                                                                             title: "Suppression d'utilisateur",
-                                                                             description:
-                                                                                  "Etes-vous sûr de vouloir supprimer l'agent?",
-                                                                             validateButtonLabel:
-                                                                                  "Supprimer l'utilisateur",
-                                                                             fieldsToDisplay:
-                                                                                  [],
-                                                                        }
-                                                                   );
+                                                                   this.setUserDeletionVariables();
                                                               }}
-                                                              href="#!"
-                                                              className="secondary-content red-text"
+                                                              className="selectable secondary-content red-text"
                                                          >
                                                               <i className="material-icons">
                                                                    delete
                                                               </i>
-                                                         </a>
-                                                         <a
+                                                         </div>
+                                                         <div
                                                               onClick={() => {
                                                                    this.resetState(
                                                                         user
                                                                    );
-                                                                   this.setState(
-                                                                        {
-                                                                             validateButtonAction:
-                                                                                  this
-                                                                                       .props
-                                                                                       .editUser,
-
-                                                                             title: "Edition de l'utilisateur",
-                                                                             description:
-                                                                                  "Veuillez sélectionner le rôle de l'agent et un nouveau password ou laisser le vide pour qu'il ne soit pas changé.",
-                                                                             validateButtonLabel:
-                                                                                  "Editer l'utilisateur",
-                                                                             fieldsToDisplay:
-                                                                                  [
-                                                                                       {
-                                                                                            label: 'Username',
-                                                                                            id: 'username',
-                                                                                            type: 'text',
-                                                                                            component:
-                                                                                                 CustomField,
-                                                                                            disabled: true,
-                                                                                            valueToSet:
-                                                                                                 user.username,
-                                                                                       },
-                                                                                       {
-                                                                                            label: 'Password',
-                                                                                            id: 'password',
-                                                                                            type: 'text',
-                                                                                            component:
-                                                                                                 CustomField,
-                                                                                       },
-                                                                                       {
-                                                                                            label: 'Rôle',
-                                                                                            id: 'role',
-                                                                                            type: 'select',
-                                                                                            component:
-                                                                                                 'select',
-                                                                                            valueToSet:
-                                                                                                 user.role,
-                                                                                            values: Roles,
-                                                                                       },
-                                                                                  ],
-                                                                        }
+                                                                   this.setUserEditionVariables(
+                                                                        user
                                                                    );
                                                               }}
-                                                              href="#!"
-                                                              className="secondary-content teal-text"
+                                                              className="selectable secondary-content teal-text"
                                                          >
                                                               <i className="material-icons">
                                                                    mode_edit
                                                               </i>
-                                                         </a>
+                                                         </div>
                                                     </td>
                                                </tr>
                                           );
@@ -162,15 +182,14 @@ class AgentsList extends Component {
      }
 
      closeFocusForm(actionFromBackButton, actionFromNewUserButton) {
-          this.setState({
-               backButtonTriggered: actionFromBackButton,
-               createUserButtonTriggered: actionFromNewUserButton,
-          });
+          this.backButtonTriggered = actionFromBackButton;
+          this.createUserButtonTriggered = actionFromNewUserButton;
+          this.setState({ showFocusForm: false });
      }
      computeFormOpeningStatus(showFocusForm, flash) {
-          if (this.state.backButtonTriggered) {
+          if (this.backButtonTriggered) {
                return false;
-          } else if (this.state.createUserButtonTriggered) {
+          } else if (this.createUserButtonTriggered) {
                if (flash && flash.message) {
                     return true;
                } else if (flash && flash.message === false) {
@@ -186,69 +205,36 @@ class AgentsList extends Component {
                }
           }
      }
-     renderFocusForm() {
-          if (
-               this.computeFormOpeningStatus(
-                    this.state.showFocusForm,
-                    this.props.flash
-               )
-          ) {
+     renderFocusForm(showFocusForm) {
                return (
                     <FocusForm
-                         doOpen={true}
+                         doOpen={() =>
+                              this.computeFormOpeningStatus(
+                                   showFocusForm,
+                                   this.props.flash
+                              )}
                          onTheClose={this.closeFocusForm}
-                         validateButtonAction={this.state.validateButtonAction}
-                         identifiant={this.state.username}
-                         title={this.state.title}
-                         description={this.state.description}
-                         fieldsToDisplay={this.state.fieldsToDisplay}
-                         validateButtonLabel={this.state.validateButtonLabel}
+                         validateButtonAction={this.validateButtonAction}
+                         identifiant={this.username}
+                         title={this.title}
+                         description={this.description}
+                         fieldsToDisplay={this.fieldsToDisplay}
+                         validateButtonLabel={this.validateButtonLabel}
                     />
                );
-          }
      }
 
      render() {
           return (
                <div>
-                    {this.renderFocusForm()}
+                    {this.renderFocusForm(this.state.showFocusForm)}
                     {this.renderContent()}
                     <div className="fixed-action-btn">
                          <div
                               className="btn-floating btn-large teal"
                               onClick={() => {
-                                   this.resetState();
-                                   this.setState({
-                                        validateButtonAction:
-                                             this.props.createUser,
-                                        title: "Création d'utilisateur",
-                                        description:
-                                             "Veuillez rentrer le nom d'utilisateur et le mot de passe d'un agent pour que celui-ci puisse accéder à l'interface dédiée.",
-                                        validateButtonLabel:
-                                             "Créer l'utilisateur",
-                                        fieldsToDisplay: [
-                                             {
-                                                  label: 'Username',
-                                                  id: 'username',
-                                                  type: 'text',
-                                                  component: CustomField,
-                                             },
-                                             {
-                                                  label: 'Password',
-                                                  id: 'password',
-                                                  type: 'text',
-                                                  component: CustomField,
-                                             },
-                                             {
-                                                  label: 'Rôle',
-                                                  id: 'role',
-                                                  type: 'select',
-                                                  component: 'select',
-                                                  valueToSet: 'agent',
-                                                  values: Roles,
-                                             },
-                                        ],
-                                   });
+                                   this.resetState(null);
+                                   this.setUserCreationVariables();
                               }}
                          >
                               <i className="material-icons">add</i>

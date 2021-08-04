@@ -24,8 +24,6 @@ const uploader = multer({
      // you might also want to set some limits: https://github.com/expressjs/multer#limits
 });
 
-
-
 module.exports = (app) => {
      app.get('/api/allUsers', requireLogin, async (req, res) => {
           const users = await Users.find().sort({ username: 1 });
@@ -38,37 +36,54 @@ module.exports = (app) => {
      });
 
      app.post('/api/createHomeAd', requireLogin, async (req, res) => {
-               const homeAd = await new HomeAds({
-                    title: req.body.title,
-                    description: req.body.description,
-                    isLocation: !req.body.type||req.body.type==="location"?true:false
-               }).save();
-               res.send(homeAd);
-         
+          const homeAd = await new HomeAds({
+               title: req.body.title,
+               description: req.body.description,
+               isLocation:
+                    !req.body.type || req.body.type === 'location'
+                         ? true
+                         : false,
+          }).save();
+          res.send(homeAd);
+     });
+
+     app.post('/api/editHomeAd', requireLogin, async (req, res) => {
+          let homeAd = await HomeAds.findOne({ _id: req.body.identifiant });
+          if (homeAd) {
+               if (req.body.form && req.body.form.type) {
+                    homeAd.isLocation =
+                         req.body.form.type === 'location' ? true : false;
+               }
+               if (req.body.form && req.body.form.title) {
+                    homeAd.title = req.body.form.title;
+               }
+               if (req.body.form && req.body.form.description) {
+                    homeAd.description = req.body.form.description;
+               }
+          }
+          homeAd.save();
+          res.send(homeAd);
      });
 
      app.post('/api/deleteHomeAd', requireLogin, async (req, res) => {
+          const homeAdAlreadyExisting = await HomeAds.findOneAndDelete({
+               _id: req.body.identifiant,
+          });
 
-               const homeAdAlreadyExisting = await HomeAds.findOneAndDelete({
-                    _id: req.body.identifiant,
-               });
-
-               res.send(homeAdAlreadyExisting);
-          
+          res.send(homeAdAlreadyExisting);
      });
 
      app.post(
           '/api/uploadImage',
-          requireLogin,uploader.single('file'), /* name attribute of <file> element in your form */
+          requireLogin,
+          uploader.single(
+               'file'
+          ) /* name attribute of <file> element in your form */,
           async (req, res) => {
-               console.log(req.file);
-              const uploadedImage= await uploadFile(req.file);
-              console.log(uploadedImage);
-               res.status(200)
-                              .contentType('text/plain')
-                              .end('File uploaded!');
+               const uploadedImage = await uploadFile(req.file);
+               res.status(200).contentType('text/plain').end('File uploaded!');
           }
-);
+     );
 
      app.post('/api/newUser', requireAdminRole, async (req, res) => {
           const userAlreadyExisting = await Users.find({
@@ -97,10 +112,10 @@ module.exports = (app) => {
           let user = await Users.findOne({ username: req.body.username });
 
           if (user) {
-               if (req.body.form.role) {
+               if (req.body.form&&req.body.form.role) {
                     user.role = req.body.form.role;
                }
-               if (req.body.password) {
+               if (req.body.form&&req.body.form.password) {
                     const password = req.body.form.password.trim();
                     if (password && password.length > 0) {
                          var salt = await bcrypt.genSalt(12);

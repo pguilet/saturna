@@ -8,38 +8,115 @@ import FocusForm from './FocusForm';
 import CustomField from '../customs/CustomField';
 import { AdType } from '../../actions/types';
 
-class AgentsList extends Component {
-     state = {
-          showFocusForm: false,
-          backButtonTriggered: false,
-          createUserButtonTriggered: false,
-          identifiant: undefined,
-          validateButtonAction: undefined,
-          title: undefined,
-          description: undefined,
-          validateButtonLabel: undefined,
-          fieldsToDisplay: undefined,
-     };
+class HomeAdsList extends Component {
+     // state = {
+     //      showFocusFormBis: false,
+     // };
+
+     constructor(props) {
+          super(props);
+      
+          this.state = {
+               showFocusFormBis: false,
+          };
+        }
      componentDidMount() {
           this.props.fetchPage('homeAdsList');
           this.props.fetchHomeAds();
           this.closeFocusForm = this.closeFocusForm.bind(this);
+          this.computeFormOpeningStatus =
+               this.computeFormOpeningStatus.bind(this);
+          this.backButtonTriggered = false;
+          this.createUserButtonTriggered = false;
+          this.identifiant = undefined;
+          this.validateButtonAction = undefined;
+          this.title = undefined;
+          this.description = undefined;
+          this.validateButtonLabel = undefined;
+          this.fieldsToDisplay = undefined;
      }
 
      resetState(homeAd) {
           if (this.props.flash) {
                this.props.flash.message = false;
           }
-          this.setState({
-               showFocusForm: true,
-               backButtonTriggered: false,
-               createUserButtonTriggered: false,
-          });
+          this.setState({ showFocusForm: true });
+          this.backButtonTriggered = false;
+          this.createUserButtonTriggered = false;
+
           if (homeAd) {
-               this.setState({
-                    identifiant: homeAd._id,
-               });
+               this.identifiant = homeAd._id;
           }
+     }
+     setHomeAdEditionVariables(homeAd) {
+          this.validateButtonAction = this.props.editHomeAd;
+
+          this.title = "Edition de l'annonce";
+          this.description =
+               "Vous pouvez modifier chaque élément de l'annonce.";
+          this.validateButtonLabel = "Modifier l'annonce";
+          this.fieldsToDisplay = [
+               {
+                    label: 'Title',
+                    id: 'title',
+                    type: 'text',
+                    component: CustomField,
+                    valueToSet: homeAd.title,
+               },
+               {
+                    label: 'Description',
+                    id: 'description',
+                    type: 'textarea',
+                    component: CustomField,
+                    valueToSet: homeAd.description,
+               },
+               {
+                    label: 'Type',
+                    id: 'type',
+                    type: 'select',
+                    component: 'select',
+                    valueToSet: homeAd.isLocation ? 'location' : 'vente',
+                    values: AdType,
+               },
+          ];
+     }
+
+     setHomeAdDeletionVariables() {
+          this.validateButtonAction = this.props.deleteHomeAd;
+          this.title = "Suppression de l'annonce";
+          this.description = "Etes-vous sûr de vouloir supprimer l'annonce?";
+          this.validateButtonLabel = "Supprimer l'annonce";
+          this.fieldsToDisplay = [];
+     }
+
+     setHomeAdCreationVariables() {
+          this.validateButtonAction = this.props.createHomeAd;
+          this.title = "Création d'annonce immobilière";
+          this.description =
+               "Formulaire de création d'annonce immobilière afficher sur le site vitrine.";
+          this.validateButtonLabel = "Créer l'annonce";
+          this.fieldsToDisplay = [
+               {
+                    label: 'Title',
+                    id: 'title',
+                    type: 'text',
+                    component: CustomField,
+               },
+               {
+                    label: 'Description',
+                    id: 'description',
+                    type: 'text',
+                    component: 'textarea',
+               },
+               {
+                    label: 'Type',
+                    id: 'type',
+                    type: 'select',
+                    component: 'select',
+                    valueToSet: 'location',
+                    values: AdType,
+               },
+          ];
      }
      renderContent() {
           var key = 0;
@@ -61,101 +138,47 @@ class AgentsList extends Component {
                                           key += 4;
                                           return (
                                                <tr key={key + 1}>
+                                                    <td>{homeAd.title}</td>
                                                     <td>
-                                                         {homeAd.title}
-                                                      
+                                                         {homeAd.description}
                                                     </td>
-                                                    <td>{homeAd.description}</td>
-                                                    <td>{homeAd.isLocation?"Location":"Vente"}</td>
+                                                    <td>
+                                                         {homeAd.isLocation
+                                                              ? 'Location'
+                                                              : 'Vente'}
+                                                    </td>
                                                     <td>Images</td>
-                                                     <td>
-                                                         <a
-                                                              onClick={() => {
-                                                                 this.resetState(
-                                                                      homeAd
-                                                                 );
-                                                                   this.setState(
-                                                                        {
-                                                                             validateButtonAction:
-                                                                                  this
-                                                                                       .props
-                                                                                       .deleteHomeAd,
-                                                                             title: "Suppression de l'annonce",
-                                                                             description:
-                                                                                  "Etes-vous sûr de vouloir supprimer l'annonce?",
-                                                                             validateButtonLabel:
-                                                                                  "Supprimer l'annonce",
-                                                                             fieldsToDisplay:
-                                                                                  [],
-                                                                        }
-                                                                   );
-                                                              }}
-                                                              href="#!"
-                                                              className="secondary-content red-text"
-                                                         >
-                                                              <i className="material-icons">
-                                                                   delete
-                                                              </i>
-                                                         </a>
-                                                         </td>
-                                                        {/*   <a
+                                                    <td>
+                                                         <div
                                                               onClick={() => {
                                                                    this.resetState(
-                                                                        user
-                                                                 );
-                                                                   this.setState(
-                                                                        {
-                                                                             validateButtonAction:
-                                                                                  this
-                                                                                       .props
-                                                                                       .editUser,
-
-                                                                             title: "Edition de l'utilisateur",
-                                                                             description:
-                                                                                  "Veuillez sélectionner le rôle de l'agent et un nouveau password ou laisser le vide pour qu'il ne soit pas changé.",
-                                                                             validateButtonLabel:
-                                                                                  "Editer l'utilisateur",
-                                                                             fieldsToDisplay:
-                                                                                  [
-                                                                                       {
-                                                                                            label: 'Username',
-                                                                                            id: 'username',
-                                                                                            type: 'text',
-                                                                                            component:
-                                                                                                 CustomField,
-                                                                                            disabled: true,
-                                                                                            valueToSet:
-                                                                                                 user.username,
-                                                                                       },
-                                                                                       {
-                                                                                            label: 'Password',
-                                                                                            id: 'password',
-                                                                                            type: 'text',
-                                                                                            component:
-                                                                                                 CustomField,
-                                                                                       },
-                                                                                       {
-                                                                                            label: 'Rôle',
-                                                                                            id: 'role',
-                                                                                            type: 'select',
-                                                                                            component:
-                                                                                                 'select',
-                                                                                            valueToSet:
-                                                                                                 user.role,
-                                                                                            values: Roles,
-                                                                                       },
-                                                                                  ],
-                                                                        }
+                                                                        homeAd
+                                                                   );
+                                                                   this.setHomeAdEditionVariables(
+                                                                        homeAd
                                                                    );
                                                               }}
-                                                              href="#!"
-                                                              className="secondary-content teal-text"
+                                                              className="selectable secondary-content teal-text"
                                                          >
                                                               <i className="material-icons">
                                                                    mode_edit
                                                               </i>
-                                                         </a>
-                                                    </td> */}
+                                                         </div>
+                                                         <div
+                                                              onClick={() => {
+                                                                   this.resetState(
+                                                                        homeAd
+                                                                   );
+                                                                   this.setHomeAdDeletionVariables();
+                                                              }}
+                                                              href="#!"
+                                                              className="selectable secondary-content red-text"
+                                                         >
+                                                              <i className="material-icons">
+                                                                   delete
+                                                              </i>
+                                                         </div>
+                                                    </td>
                                                </tr>
                                           );
                                      })
@@ -167,15 +190,14 @@ class AgentsList extends Component {
      }
 
      closeFocusForm(actionFromBackButton, actionFromNewUserButton) {
-          this.setState({
-               backButtonTriggered: actionFromBackButton,
-               createUserButtonTriggered: actionFromNewUserButton,
-          });
+          this.backButtonTriggered = actionFromBackButton;
+          this.createUserButtonTriggered = actionFromNewUserButton;
+          this.setState({ showFocusForm: false });
      }
      computeFormOpeningStatus(showFocusForm, flash) {
-          if (this.state.backButtonTriggered) {
+          if (this.backButtonTriggered) {
                return false;
-          } else if (this.state.createUserButtonTriggered) {
+          } else if (this.createUserButtonTriggered) {
                if (flash && flash.message) {
                     return true;
                } else if (flash && flash.message === false) {
@@ -191,74 +213,48 @@ class AgentsList extends Component {
                }
           }
      }
-     renderFocusForm() {
-          if (
-               this.computeFormOpeningStatus(
-                    this.state.showFocusForm,
-                    this.props.flash
-               )
-          ) {
-               return (
-                    <FocusForm
-                         doOpen={true}
-                         onTheClose={this.closeFocusForm}
-                         validateButtonAction={this.state.validateButtonAction}
-                         identifiant={this.state.identifiant}
-                         title={this.state.title}
-                         description={this.state.description}
-                         fieldsToDisplay={this.state.fieldsToDisplay}
-                         validateButtonLabel={this.state.validateButtonLabel}
-                    />
-               );
-          }
+     renderFocusForm(showFocusForm) {
+          return (
+               <FocusForm
+                    doOpen={() =>
+                         this.computeFormOpeningStatus(
+                              showFocusForm,
+                              this.props.flash
+                         )
+                    }
+                    onTheClose={this.closeFocusForm}
+                    validateButtonAction={this.validateButtonAction}
+                    identifiant={this.identifiant}
+                    title={this.title}
+                    description={this.description}
+                    fieldsToDisplay={this.fieldsToDisplay}
+                    validateButtonLabel={this.validateButtonLabel}
+               />
+          );
      }
 
      render() {
           return (
-               
                <div>
-                    <form action="/api/uploadImage" method="post" encType="multipart/form-data">
-  <input type="file" name="file" />
-  <input type="submit" className="btn btn-warning btn-lg"/>
-</form>
-                    {this.renderFocusForm()}
+                    <form
+                         action="/api/uploadImage"
+                         method="post"
+                         encType="multipart/form-data"
+                    >
+                         <input type="file" name="file" />
+                         <input
+                              type="submit"
+                              className="btn btn-warning btn-lg"
+                         />
+                    </form>
+                    {this.renderFocusForm(this.state.showFocusForm)}
                     {this.renderContent()}
                     <div className="fixed-action-btn">
                          <div
                               className="btn-floating btn-large teal"
                               onClick={() => {
-                                   this.resetState();
-                                   this.setState({
-                                        validateButtonAction:
-                                             this.props.createHomeAd,
-                                        title: "Création d'annonce immobilière",
-                                        description:
-                                             "Formulaire de création d'annonce immobilière afficher sur le site vitrine.",
-                                        validateButtonLabel:
-                                             "Créer l'annonce",
-                                        fieldsToDisplay: [
-                                             {
-                                                  label: 'Title',
-                                                  id: 'title',
-                                                  type: 'text',
-                                                  component: CustomField,
-                                             },
-                                             {
-                                                  label: 'Description',
-                                                  id: 'description',
-                                                  type: 'text',
-                                                  component: 'textarea',
-                                             },
-                                             {
-                                                  label: 'Type',
-                                                  id: 'type',
-                                                  type: 'select',
-                                                  component: 'select',
-                                                  valueToSet: 'location',
-                                                  values: AdType,
-                                             },
-                                        ],
-                                   });
+                                   this.resetState(null);
+                                   this.setHomeAdCreationVariables();
                               }}
                          >
                               <i className="material-icons">add</i>
@@ -272,4 +268,4 @@ function mapStateToProps({ homeAds, flash }) {
      return { homeAds, flash };
 }
 
-export default connect(mapStateToProps, actions)(AgentsList);
+export default connect(mapStateToProps, actions)(HomeAdsList);
