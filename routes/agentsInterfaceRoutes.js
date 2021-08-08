@@ -11,7 +11,10 @@ const requireAdminRole = require('../middlewares/requireAdminRole');
 const Users = mongoose.model('users'); //for testing purpose with node and mongoose we should not get info from Survey.js
 const HomeAds = mongoose.model('homeAds');
 const multer = require('multer');
-const { uploadFile } = require('../services/s3');
+const { uploadFile, getFileStream } = require('../services/s3');
+const fs = require('fs');
+const util = require('util');
+const unlinkFile = util.promisify(fs.unlink);
 
 const handleError = (err, res) => {
      res.status(500)
@@ -35,18 +38,53 @@ module.exports = (app) => {
           res.send(homeAds);
      });
 
-     app.post('/api/createHomeAd', requireLogin, async (req, res) => {
-          const homeAd = await new HomeAds({
-               title: req.body.title,
-               description: req.body.description,
-               isLocation:
-                    !req.body.type || req.body.type === 'location'
-                         ? true
-                         : false,
-          }).save();
-          res.send(homeAd);
+     app.get('/api/images/:key', async (req, res) => {
+          const key = req.params.key;
+          if (key !== 'undefined') {
+               const readStream = getFileStream(key);
+               readStream.pipe(res);
+          }
      });
 
+     app.post(
+          '/api/createHomeAd',
+          requireLogin,
+          uploader.array('file'),
+          async (req, res) => {
+               var files = req.files;
+               var filesNameOnS3Bucket = [];
+               var x = 0;
+               if (files) {
+                    for (const file of files) {
+                         const uploadedImage = await uploadFile(file);
+                         await unlinkFile(file.path);
+                         filesNameOnS3Bucket[x] = uploadedImage.key;
+                         x++;
+                    }
+               }
+               const homeAd = await new HomeAds({
+                    title: req.body.title,
+                    description: req.body.description,
+                    images: filesNameOnS3Bucket,
+                    isLocation:
+                         !req.body.type || req.body.type === 'location'
+                              ? true
+                              : false,
+               }).save();
+               res.send(homeAd);
+          }
+     );
+     app.post(
+          '/api/uploadImage',
+          requireLogin,
+          uploader.single(
+               'file'
+          ) /* name attribute of <file> element in your form */,
+          async (req, res) => {
+               const uploadedImage = await uploadFile(req.file);
+               res.status(200).contentType('text/plain').end('File uploaded!');
+          }
+     );
      app.post('/api/editHomeAd', requireLogin, async (req, res) => {
           let homeAd = await HomeAds.findOne({ _id: req.body.identifiant });
           if (homeAd) {
@@ -72,18 +110,6 @@ module.exports = (app) => {
 
           res.send(homeAdAlreadyExisting);
      });
-
-     app.post(
-          '/api/uploadImage',
-          requireLogin,
-          uploader.single(
-               'file'
-          ) /* name attribute of <file> element in your form */,
-          async (req, res) => {
-               const uploadedImage = await uploadFile(req.file);
-               res.status(200).contentType('text/plain').end('File uploaded!');
-          }
-     );
 
      app.post('/api/newUser', requireAdminRole, async (req, res) => {
           const userAlreadyExisting = await Users.find({
@@ -112,10 +138,10 @@ module.exports = (app) => {
           let user = await Users.findOne({ username: req.body.username });
 
           if (user) {
-               if (req.body.form&&req.body.form.role) {
+               if (req.body.form && req.body.form.role) {
                     user.role = req.body.form.role;
                }
-               if (req.body.form&&req.body.form.password) {
+               if (req.body.form && req.body.form.password) {
                     const password = req.body.form.password.trim();
                     if (password && password.length > 0) {
                          var salt = await bcrypt.genSalt(12);

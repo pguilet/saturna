@@ -66,7 +66,7 @@ class FocusForm extends Component {
      render() {
           return (
                <Dialog
-                    open={this.props.doOpen()}
+                    open={true}
                     aria-labelledby="form-dialog-title"
                >
                     <DialogTitle id="form-dialog-title">

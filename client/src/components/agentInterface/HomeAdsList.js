@@ -7,19 +7,16 @@ import * as actions from '../../actions';
 import FocusForm from './FocusForm';
 import CustomField from '../customs/CustomField';
 import { AdType } from '../../actions/types';
+import _ from 'lodash';
 
 class HomeAdsList extends Component {
-     // state = {
-     //      showFocusFormBis: false,
-     // };
-
      constructor(props) {
           super(props);
-      
+
           this.state = {
-               showFocusFormBis: false,
+               showFocusForm: false,
           };
-        }
+     }
      componentDidMount() {
           this.props.fetchPage('homeAdsList');
           this.props.fetchHomeAds();
@@ -116,7 +113,24 @@ class HomeAdsList extends Component {
                     valueToSet: 'location',
                     values: AdType,
                },
+               {
+                    label: 'Choose images',
+                    id: 'file',
+                    type: 'file',
+                    component: CustomField,
+               },
           ];
+     }
+     renderImages(images) {
+          return _.map(images, (image) => {
+               return (
+                    <img
+                         title={images}
+                         className="thumbnail padding-right-10"
+                         src={'/api/images/' + image}
+                    />
+               );
+          });
      }
      renderContent() {
           var key = 0;
@@ -147,7 +161,11 @@ class HomeAdsList extends Component {
                                                               ? 'Location'
                                                               : 'Vente'}
                                                     </td>
-                                                    <td>Images</td>
+                                                    <td>
+                                                         {this.renderImages(
+                                                              homeAd.images
+                                                         )}
+                                                    </td>
                                                     <td>
                                                          <div
                                                               onClick={() => {
@@ -214,39 +232,25 @@ class HomeAdsList extends Component {
           }
      }
      renderFocusForm(showFocusForm) {
-          return (
-               <FocusForm
-                    doOpen={() =>
-                         this.computeFormOpeningStatus(
-                              showFocusForm,
-                              this.props.flash
-                         )
-                    }
-                    onTheClose={this.closeFocusForm}
-                    validateButtonAction={this.validateButtonAction}
-                    identifiant={this.identifiant}
-                    title={this.title}
-                    description={this.description}
-                    fieldsToDisplay={this.fieldsToDisplay}
-                    validateButtonLabel={this.validateButtonLabel}
-               />
-          );
+          if (this.computeFormOpeningStatus(showFocusForm, this.props.flash)) {
+               return (
+                    <FocusForm
+                         doOpen={true}
+                         onTheClose={this.closeFocusForm}
+                         validateButtonAction={this.validateButtonAction}
+                         identifiant={this.identifiant}
+                         title={this.title}
+                         description={this.description}
+                         fieldsToDisplay={this.fieldsToDisplay}
+                         validateButtonLabel={this.validateButtonLabel}
+                    />
+               );
+          }
      }
 
      render() {
           return (
                <div>
-                    <form
-                         action="/api/uploadImage"
-                         method="post"
-                         encType="multipart/form-data"
-                    >
-                         <input type="file" name="file" />
-                         <input
-                              type="submit"
-                              className="btn btn-warning btn-lg"
-                         />
-                    </form>
                     {this.renderFocusForm(this.state.showFocusForm)}
                     {this.renderContent()}
                     <div className="fixed-action-btn">

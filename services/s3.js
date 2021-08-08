@@ -30,5 +30,14 @@ function removeFile(fileKey) {
     return s3.deleteObject(uploadParams).promise();
 }
 
+function getFileStream(fileKey){
+     const downloadParams = {
+          Key:fileKey,
+          Bucket:keys.awsBucketName
+     }
+     return s3.getObject(downloadParams).createReadStream()
+}
+
 exports.removeFile = removeFile;
 exports.uploadFile = uploadFile;
+exports.getFileStream = getFileStream;

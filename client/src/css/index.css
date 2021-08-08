@@ -6,6 +6,14 @@
   background-position: center center;
 }
 
+.padding-right-10 {
+  padding-right: 10px;
+}
+
+.thumbnail {
+  width: 100px;
+}
+
 .brand {
   background-color: #009ed8;
   color: white;

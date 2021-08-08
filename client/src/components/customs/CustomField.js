@@ -45,6 +45,7 @@ class CustomField extends Component {
                          onChange={(e) =>
                               this.setState({ value: e.target.value })
                          }
+                         multiple
                     />
                );
           }

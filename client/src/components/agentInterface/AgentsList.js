@@ -15,11 +15,11 @@ class AgentsList extends Component {
 
      constructor(props) {
           super(props);
-      
+
           this.state = {
                showFoshowFocusFormcusFormBis: false,
           };
-        }
+     }
      componentDidMount() {
           this.props.fetchPage('agentsList');
           this.props.fetchUsers();
@@ -206,13 +206,10 @@ class AgentsList extends Component {
           }
      }
      renderFocusForm(showFocusForm) {
+          if (this.computeFormOpeningStatus(showFocusForm, this.props.flash)) {
                return (
                     <FocusForm
-                         doOpen={() =>
-                              this.computeFormOpeningStatus(
-                                   showFocusForm,
-                                   this.props.flash
-                              )}
+                         doOpen={true}
                          onTheClose={this.closeFocusForm}
                          validateButtonAction={this.validateButtonAction}
                          identifiant={this.username}
@@ -222,6 +219,7 @@ class AgentsList extends Component {
                          validateButtonLabel={this.validateButtonLabel}
                     />
                );
+          }
      }
 
      render() {
