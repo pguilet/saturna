@@ -7,7 +7,7 @@ const s3 = new S3({
      secretAccessKey: keys.awsSecretKey,
 });
 
-function uploadFile(file) {
+async function  uploadFile(file) {
      const fileStream = fs.createReadStream(file.path);
 
      const uploadParams = {
@@ -20,11 +20,9 @@ function uploadFile(file) {
 }
 
 function removeFile(fileKey) {
-    const fileStream = fs.createReadStream(file.path);
-
     const uploadParams = {
          Bucket: keys.awsBucketName,
-         Key: file.filename
+         Key: fileKey
     };
 
     return s3.deleteObject(uploadParams).promise();

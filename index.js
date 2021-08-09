@@ -9,11 +9,12 @@ require('./models/HomeAds');
 require('./services/passport');// no need of a variable because the file does not export anything
 var flash = require('connect-flash');
 
-mongoose.connect(keys.mongoURI,{ useNewUrlParser: true,useUnifiedTopology: true });
+mongoose.connect(keys.mongoURI,{ useNewUrlParser: true,useUnifiedTopology: true,useFindAndModify: false  });
 const app = express();
 
 //Set middlewares used before incoming requests.
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(
      cookieSession({
           maxAge: 30 * 24 * 60 * 60 * 1000, //30 days before expire

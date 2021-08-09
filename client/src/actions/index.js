@@ -68,7 +68,7 @@ export const createUser = (form, username) => async (dispatch) => {
      }
 };
 
-export const createHomeAd = (form, identifiant) => async (dispatch) => {
+export const createHomeAd = (form, identifiant,stateTriggeredValues) => async (dispatch) => {
      let data = new FormData();
      if (form.focusForm.values.file) {
           for (var x = 0; x < form.focusForm.values.file.length; x++) {
@@ -77,6 +77,7 @@ export const createHomeAd = (form, identifiant) => async (dispatch) => {
      }
      data.append('title', form.focusForm.values.title);
      data.append('description', form.focusForm.values.description);
+     data.append('stateTriggeredValues', stateTriggeredValues);
 
      var res = await axios.post('/api/createHomeAd', data, {
           headers: { 'Content-Type': 'multipart/form-data' },
@@ -94,14 +95,29 @@ export const deleteHomeAd = (form, identifiant) => async (dispatch) => {
      dispatch({ type: FLASH, payload: { message: false } });
      dispatch({ type: FETCH_HOME_ADS, payload: res.data });
 };
-export const editHomeAd = (form, identifiant) => async (dispatch) => {
+export const editHomeAd = (form, identifiant,stateTriggeredValues) => async (dispatch) => {
      var res = await axios.post('/api/editHomeAd', {
           form: form.focusForm.values,
           identifiant: identifiant,
+          stateTriggeredValues:stateTriggeredValues,
      });
      res = await axios.get('/api/homeAds');
      dispatch({ type: FLASH, payload: { message: false } });
      dispatch({ type: FETCH_HOME_ADS, payload: res.data });
+};
+export const updateImagesOfHomeAd = async (files, identifiant) => {
+     let data = new FormData();
+     if (files) {
+          for (var x = 0; x < files.length; x++) {
+               data.append('file', files[x]);
+          }
+     }
+     data.append('identifiant', identifiant);
+
+     var res = await axios.post('/api/updateHomeAdImages', data, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+     });
+     return res;
 };
 
 export const editUser = (form, username) => async (dispatch) => {

@@ -8,6 +8,7 @@ import FocusForm from './FocusForm';
 import CustomField from '../customs/CustomField';
 import { AdType } from '../../actions/types';
 import _ from 'lodash';
+import axios from 'axios';
 
 class HomeAdsList extends Component {
      constructor(props) {
@@ -25,12 +26,12 @@ class HomeAdsList extends Component {
                this.computeFormOpeningStatus.bind(this);
           this.backButtonTriggered = false;
           this.createUserButtonTriggered = false;
+          this.fieldsToDisplay = undefined;
           this.identifiant = undefined;
           this.validateButtonAction = undefined;
           this.title = undefined;
           this.description = undefined;
           this.validateButtonLabel = undefined;
-          this.fieldsToDisplay = undefined;
      }
 
      resetState(homeAd) {
@@ -40,9 +41,15 @@ class HomeAdsList extends Component {
           this.setState({ showFocusForm: true });
           this.backButtonTriggered = false;
           this.createUserButtonTriggered = false;
-
+          this.fieldsToDisplay = undefined;
+          this.validateButtonAction = undefined;
+          this.title = undefined;
+          this.description = undefined;
+          this.validateButtonLabel = undefined;
           if (homeAd) {
                this.identifiant = homeAd._id;
+          } else {
+               this.identifiant = undefined;
           }
      }
      setHomeAdEditionVariables(homeAd) {
@@ -71,9 +78,18 @@ class HomeAdsList extends Component {
                     label: 'Type',
                     id: 'type',
                     type: 'select',
-                    component: 'select',
-                    valueToSet: homeAd.isLocation ? 'location' : 'vente',
-                    values: AdType,
+                    component: CustomField,
+                    valueToSet: homeAd.isLocation
+                         ? AdType.LOCATION
+                         : AdType.SELLING,
+                    valuesToSet: AdType,
+               },
+               {
+                    label: 'Photos',
+                    id: 'images',
+                    type: 'images',
+                    component: CustomField,
+                    valuesToSet: homeAd.images,
                },
           ];
      }
@@ -109,25 +125,26 @@ class HomeAdsList extends Component {
                     label: 'Type',
                     id: 'type',
                     type: 'select',
-                    component: 'select',
-                    valueToSet: 'location',
-                    values: AdType,
+                    component: CustomField,
+                    valueToSet: AdType.LOCATION,
+                    valuesToSet: AdType,
                },
                {
-                    label: 'Choose images',
-                    id: 'file',
-                    type: 'file',
+                    label: 'Photos',
+                    id: 'images',
+                    type: 'images',
                     component: CustomField,
                },
           ];
      }
      renderImages(images) {
-          return _.map(images, (image) => {
+          return _.map(images, (imageKey) => {
                return (
                     <img
-                         title={images}
-                         className="thumbnail padding-right-10"
-                         src={'/api/images/' + image}
+                         key={imageKey}
+                         title={imageKey}
+                         className="thumbnail separated"
+                         src={'/api/images/' + imageKey}
                     />
                );
           });
@@ -189,7 +206,6 @@ class HomeAdsList extends Component {
                                                                    );
                                                                    this.setHomeAdDeletionVariables();
                                                               }}
-                                                              href="#!"
                                                               className="selectable secondary-content red-text"
                                                          >
                                                               <i className="material-icons">
@@ -207,10 +223,15 @@ class HomeAdsList extends Component {
           );
      }
 
+     async deleteTemporaryUploadDirectory() {
+          var res = await axios.post('/api/deleteTemporaryUploadDirectory');
+     }
      closeFocusForm(actionFromBackButton, actionFromNewUserButton) {
           this.backButtonTriggered = actionFromBackButton;
           this.createUserButtonTriggered = actionFromNewUserButton;
           this.setState({ showFocusForm: false });
+          if(actionFromBackButton){
+          this.deleteTemporaryUploadDirectory();}
      }
      computeFormOpeningStatus(showFocusForm, flash) {
           if (this.backButtonTriggered) {

@@ -10,32 +10,13 @@ import { connect } from 'react-redux';
 import * as actions from '../../actions';
 
 class FocusForm extends Component {
-     renderFirstOption(valueToSet, values) {
-          return _.map(values, (value) => {
-               if (value === valueToSet) {
-                    return (
-                         <option key={value} value={value}>
-                              {value}
-                         </option>
-                    );
-               }
-          });
+     state={
+          stateTriggeredValues:undefined
      }
-     renderOtherOptions(valueToSet, values) {
-          return _.map(values, (value) => {
-               if (value !== valueToSet) {
-                    return (
-                         <option key={value} value={value}>
-                              {value}
-                         </option>
-                    );
-               }
-          });
-     }
+
      renderFields() {
           return _.map(this.props.fieldsToDisplay, (field) => {
-               return (
-                    <div key={field.id}><label >{field.label}</label>
+               return ( 
                     <Field
                          key={field.id}
                          label={field.label}
@@ -46,20 +27,15 @@ class FocusForm extends Component {
                          valuetoset={
                               field.valueToSet ? field.valueToSet : undefined
                          }
+                         valuestoset={ field.valuesToSet ? field.valuesToSet : undefined}
                          className={
                               field.type === 'select' ? 'browser-default' : ''
                          }
-                    >
-                         {this.renderFirstOption(
-                              field.valueToSet,
-                              field.values
-                         )}
-                         {this.renderOtherOptions(
-                              field.valueToSet,
-                              field.values
-                         )}
-                    </Field>
-                    </div>
+                         identifiant= {this.props.identifiant}
+                         statetriggeredvaluesupdatefunction={(values)=>this.setState({stateTriggeredValues:values})}
+                   />
+                        
+
                );
           });
      }
@@ -104,7 +80,8 @@ class FocusForm extends Component {
                               onClick={() => {
                                    this.props.validateButtonAction(
                                         this.props.form,
-                                        this.props.identifiant
+                                        this.props.identifiant,
+                                        this.state.stateTriggeredValues
                                    );
                                    this.props.onTheClose(false, true);
                               }}

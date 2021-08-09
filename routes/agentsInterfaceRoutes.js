@@ -11,8 +11,8 @@ const requireAdminRole = require('../middlewares/requireAdminRole');
 const Users = mongoose.model('users'); //for testing purpose with node and mongoose we should not get info from Survey.js
 const HomeAds = mongoose.model('homeAds');
 const multer = require('multer');
-const { uploadFile, getFileStream } = require('../services/s3');
-const fs = require('fs');
+const { uploadFile, getFileStream, removeFile } = require('../services/s3');
+const fs = require('fs-extra');
 const util = require('util');
 const unlinkFile = util.promisify(fs.unlink);
 
@@ -23,8 +23,15 @@ const handleError = (err, res) => {
 };
 
 const uploader = multer({
-     dest: './upload/',
+     // dest: './upload/',
      // you might also want to set some limits: https://github.com/expressjs/multer#limits
+     storage: multer.diskStorage({
+          destination: (req, file, callback) => {
+               let path = `./upload/${req.user.username}`;
+               fs.mkdirsSync(path);
+               callback(null, path);
+          },
+     }),
 });
 
 module.exports = (app) => {
@@ -45,23 +52,53 @@ module.exports = (app) => {
                readStream.pipe(res);
           }
      });
+     app.get('/api/images/:folder/:user/:key', async (req, res) => {
+          const key = req.params.key;
+          const folder = req.params.folder;
+          const user = req.params.user;
+          if (key !== 'undefined' && folder !== 'undefined') {
+               const fileStream = fs.createReadStream(
+                    folder + '/' + user + '/' + key
+               );
+               fileStream.pipe(res);
+          }
+     });
 
+     app.post(
+          '/api/uploadHomeAdImageLocally',
+          requireLogin,
+          uploader.array('file'),
+          async (req, res) => {
+               var files = req.files;
+               var filePaths = [];
+               var x = 0;
+               if (files) {
+                    for (const file of files) {
+                         filePaths[x] = file.path
+                              .replace('\\', '/')
+                              .replace('\\', '/');
+                         x++;
+                    }
+               }
+               if (
+                    req.body.identifiant &&
+                    !req.body.identifiant === 'undefined'
+               ) {
+                    const homeAd = await HomeAds.findOne({
+                         _id: req.body.identifiant,
+                    });
+
+                    res.send(filePaths.concat(homeAd.images));
+               } else {
+                    res.send(filePaths);
+               }
+          }
+     );
      app.post(
           '/api/createHomeAd',
           requireLogin,
           uploader.array('file'),
           async (req, res) => {
-               var files = req.files;
-               var filesNameOnS3Bucket = [];
-               var x = 0;
-               if (files) {
-                    for (const file of files) {
-                         const uploadedImage = await uploadFile(file);
-                         await unlinkFile(file.path);
-                         filesNameOnS3Bucket[x] = uploadedImage.key;
-                         x++;
-                    }
-               }
                const homeAd = await new HomeAds({
                     title: req.body.title,
                     description: req.body.description,
@@ -71,6 +108,31 @@ module.exports = (app) => {
                               ? true
                               : false,
                }).save();
+               if (req.body.stateTriggeredValues) {
+                    var filesNameOnS3Bucket = [];
+                    var x = 0;
+                    for (const imagePath of req.body.stateTriggeredValues.split(',')) {
+                         if (imagePath.includes('upload')) {
+                              const uploadedImage = await uploadFile({
+                                   path: imagePath,
+                                   filename: imagePath.replace(
+                                        'upload/' + req.user.username + '/',
+                                        ''
+                                   ),
+                              });
+                              filesNameOnS3Bucket[x] = uploadedImage.key;
+                              x++;
+                         }
+                    }
+                    homeAd.images = homeAd.images.concat(filesNameOnS3Bucket);
+               }
+
+               if (fs.pathExistsSync('./upload/' + req.user.username)) {
+                    fs.rmdirSync('./upload/' + req.user.username, {
+                         recursive: true,
+                    });
+               }
+               homeAd.save();
                res.send(homeAd);
           }
      );
@@ -85,29 +147,88 @@ module.exports = (app) => {
                res.status(200).contentType('text/plain').end('File uploaded!');
           }
      );
+
      app.post('/api/editHomeAd', requireLogin, async (req, res) => {
           let homeAd = await HomeAds.findOne({ _id: req.body.identifiant });
-          if (homeAd) {
-               if (req.body.form && req.body.form.type) {
-                    homeAd.isLocation =
-                         req.body.form.type === 'location' ? true : false;
+          if (
+               homeAd &&
+               (req.body.form || req.body.stateTriggeredValues)
+          ) {
+               if (req.body.form) {
+                    if (req.body.form.type) {
+                         homeAd.isLocation =
+                              req.body.form.type === 'location' ? true : false;
+                    }
+                    if (req.body.form.title) {
+                         homeAd.title = req.body.form.title;
+                    }
+                    if (req.body.form.description) {
+                         homeAd.description = req.body.form.description;
+                    }
                }
-               if (req.body.form && req.body.form.title) {
-                    homeAd.title = req.body.form.title;
+               if (req.body.stateTriggeredValues && homeAd.images) {
+                    for (const imageKey of homeAd.images) {
+                         if (
+                              !req.body.stateTriggeredValues.includes(imageKey)
+                         ) {
+                              await removeFile(imageKey);
+                              homeAd.images = homeAd.images.filter(
+                                   (item) => item !== imageKey
+                              );
+                         }
+                    }
                }
-               if (req.body.form && req.body.form.description) {
-                    homeAd.description = req.body.form.description;
+
+               if (req.body.stateTriggeredValues) {
+                    var filesNameOnS3Bucket = [];
+                    var x = 0;
+                    for (const imagePath of req.body.stateTriggeredValues) {
+                         if (imagePath.includes('upload')) {
+                              const uploadedImage = await uploadFile({
+                                   path: imagePath,
+                                   filename: imagePath.replace(
+                                        'upload/' + req.user.username + '/',
+                                        ''
+                                   ),
+                              });
+                              filesNameOnS3Bucket[x] = uploadedImage.key;
+                              x++;
+                         }
+                    }
+                    homeAd.images = homeAd.images.concat(filesNameOnS3Bucket);
+               }
+               if (fs.pathExistsSync('./upload/' + req.user.username)) {
+                    fs.rmdirSync('./upload/' + req.user.username, {
+                         recursive: true,
+                    });
                }
           }
           homeAd.save();
           res.send(homeAd);
      });
 
+     app.post(
+          '/api/deleteTemporaryUploadDirectory',
+          requireLogin,
+          async (req, res) => {
+               if (fs.pathExistsSync('./upload/' + req.user.username)) {
+                    fs.rmdirSync('./upload/' + req.user.username, {
+                         recursive: true,
+                    });
+               }
+               res.send(req.user);
+          }
+     );
+
      app.post('/api/deleteHomeAd', requireLogin, async (req, res) => {
-          const homeAdAlreadyExisting = await HomeAds.findOneAndDelete({
+          const homeAdAlreadyExisting = await HomeAds.findOne({
                _id: req.body.identifiant,
           });
 
+          for (const imageKey of homeAdAlreadyExisting.images) {
+               await removeFile(imageKey);
+          }
+          homeAdAlreadyExisting.deleteOne();
           res.send(homeAdAlreadyExisting);
      });
 
