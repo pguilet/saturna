@@ -1,7 +1,6 @@
 //Rendering layer control (React router content)
 import '../../css/index.css';
 import _ from 'lodash';
-// import 'materialize-css/dist/css/materialize.min.css';//we have to precise extension when not importing js files
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { connect, ReactReduxContext } from 'react-redux';
