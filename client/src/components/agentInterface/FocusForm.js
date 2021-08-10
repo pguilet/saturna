@@ -33,6 +33,7 @@ class FocusForm extends Component {
                          className={
                               field.type === 'select' ? 'browser-default' : ''
                          }
+                         id={field.id}
                          identifiant= {this.props.identifiant}
                          statetriggeredvaluesupdatefunction={(values)=>this.setState({stateTriggeredValues:values})}
                    />
@@ -41,12 +42,23 @@ class FocusForm extends Component {
                );
           });
      }
+
+     handleSubmit = (event) => {
+          event.preventDefault();
+          this.props.validateButtonAction(
+               this.props.form,
+               this.props.identifiant,
+               this.state.stateTriggeredValues
+          );
+          this.props.onTheClose(false, true);
+     };
      render() {
           return (
                <Dialog
                     open={true}
                     aria-labelledby="form-dialog-title"
                >
+                    <Form onSubmit={this.handleSubmit} >
                     <DialogTitle id="form-dialog-title">
                          {this.props.title}
                     </DialogTitle>
@@ -54,7 +66,7 @@ class FocusForm extends Component {
                          <DialogContentText>
                               {this.props.description}
                          </DialogContentText>
-                         <Form>
+                         
                          <Form.Group className="mb-3">
                               {this.renderFields()}
 
@@ -67,7 +79,7 @@ class FocusForm extends Component {
                                         : ''}
                               </div>
                               </Form.Group>
-                         </Form>
+                         
                     </DialogContent>
                     <DialogActions>
                     <Button variant="warning" type="button"
@@ -79,21 +91,14 @@ class FocusForm extends Component {
                               Back
                               <i className="material-icons separateIcon">cancel</i>
                          </Button>
-                         <Button variant="success" type="button"
+                         <Button variant="success" type="submit"
                               className="centered"
-                              onClick={() => {
-                                   this.props.validateButtonAction(
-                                        this.props.form,
-                                        this.props.identifiant,
-                                        this.state.stateTriggeredValues
-                                   );
-                                   this.props.onTheClose(false, true);
-                              }}
                          >
                               {this.props.validateButtonLabel}
                               <i className="material-icons separateIcon">done</i>
                          </Button>
                     </DialogActions>
+                    </Form>
                </Dialog>
           );
      }
@@ -105,5 +110,5 @@ function mapStateToProps(props) {
 FocusForm = connect(mapStateToProps, actions)(FocusForm);
 export default reduxForm({
      destroyOnUnmount: true,
-     form: 'focusForm',
+     form: 'focusForm'
 })(FocusForm);

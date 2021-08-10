@@ -11,6 +11,7 @@ import Button from 'react-bootstrap/Button';
 
 import { Roles } from '../../actions/types.js';
 class InterfaceHeader extends Component {
+     
           renderUserConnectedDropDown() {
           if (this.props.auth) {
                const isAdmin = this.props.auth.role === Roles.ADMIN;
@@ -50,7 +51,7 @@ class InterfaceHeader extends Component {
                                    <Link to="/agentsHome" className="nav-link">
                                         Dashboard
                                    </Link>
-                                   <Link to="/agentsHome" className="nav-link">
+                                   <Link to="/clients" className="nav-link">
                                         Clients
                                    </Link>
                               </Nav>

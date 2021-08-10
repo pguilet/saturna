@@ -5,6 +5,7 @@ import {
      FETCH_HOME_ADS,
      FETCH_SURVEYS,
      FETCH_PAGE,
+     FETCH_CLIENTS,
      FLASH,
 } from './types';
 
@@ -17,6 +18,12 @@ export const fetchUsers = () => async (dispatch) => {
      const res = await axios.get('/api/allUsers');
      dispatch({ type: FETCH_USERS, payload: res.data });
 };
+
+export const fetchClients = () => async (dispatch) => {
+     const res = await axios.get('/api/allClients');
+     dispatch({ type: FETCH_CLIENTS, payload: res.data });
+};
+
 
 export const fetchHomeAds = () => async (dispatch) => {
      const res = await axios.get('/api/homeAds');
@@ -67,6 +74,18 @@ export const createUser = (form, username) => async (dispatch) => {
           dispatch({ type: FLASH, payload: res.data });
      }
 };
+
+export const createClient = (form) => async (dispatch) => {
+     var res = await axios.post('/api/newClient', form.focusForm.values);
+     if (!res.data.message) {
+          res = await axios.get('/api/allClients');
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({ type: FETCH_CLIENTS, payload: res.data });
+     } else {
+          dispatch({ type: FLASH, payload: res.data });
+     }
+};
+
 
 export const createHomeAd = (form, identifiant,stateTriggeredValues) => async (dispatch) => {
      let data = new FormData();
@@ -135,4 +154,11 @@ export const deleteUser = (form, username) => async (dispatch) => {
      res = await axios.get('/api/allUsers');
      dispatch({ type: FLASH, payload: { message: false } });
      dispatch({ type: FETCH_USERS, payload: res.data });
+};
+
+export const deleteClient = (form, identifiant) => async (dispatch) => {
+     var res = await axios.post('/api/deleteClient', { identifiant: identifiant });
+     res = await axios.get('/api/allClients');
+     dispatch({ type: FLASH, payload: { message: false } });
+     dispatch({ type: FETCH_CLIENTS, payload: res.data });
 };

@@ -9,7 +9,8 @@ import AgentsHome from "./AgentsHome";
 import AgentsList from "./AgentsList";
 import GuardedRoute from "../GuardedRoute";
 import HomeAdsList from './HomeAdsList';
-
+import Clients from './Clients';
+import { Roles } from '../../actions/types';
 
 class AgentInterface extends Component{
     
@@ -21,8 +22,9 @@ class AgentInterface extends Component{
 
         <main className="container">
            <GuardedRoute exact path="/agentsHome" component={AgentsHome} />
-           <GuardedRoute exact path="/agentsList" component={AgentsList} />
+           <GuardedRoute exact path="/agentsList" component={AgentsList} role={Roles.ADMIN} />
            <GuardedRoute exact path="/homeAdsList" component={HomeAdsList} />
+           <GuardedRoute exact path="/clients" component={Clients} />
          </main>
        </BrowserRouter>
      );

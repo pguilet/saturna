@@ -10,15 +10,15 @@ import FixedFloatingButton from '../customs/FixedFloatingButton';
 import Table from 'react-bootstrap/Table';
 
 class AgentsList extends Component {
-     // state = {
-     //      showFocusForm: false,
-     // };
+     state = {
+          showFocusForm: false,
+     };
 
      constructor(props) {
           super(props);
 
           this.state = {
-               showFoshowFocusFormcusFormBis: false,
+               showFocusForm: false,
           };
      }
      componentDidMount() {
@@ -148,27 +148,30 @@ class AgentsList extends Component {
                                                                    this.resetState(
                                                                         user
                                                                    );
-                                                                   this.setUserDeletionVariables();
+                                                                   this.setUserEditionVariables(
+                                                                        user
+                                                                   );
                                                               }}
-                                                              className="selectable secondary-content text-danger"
+                                                              className="inline selectable secondary-content text-teal"
                                                          >
                                                               <i className="material-icons">
-                                                                   delete
+                                                                   mode_edit
                                                               </i>
                                                          </div>
+                                                    </td>
+                                                    <td>
+                                                         {' '}
                                                          <div
                                                               onClick={() => {
                                                                    this.resetState(
                                                                         user
                                                                    );
-                                                                   this.setUserEditionVariables(
-                                                                        user
-                                                                   );
+                                                                   this.setUserDeletionVariables();
                                                               }}
-                                                              className="selectable secondary-content text-teal"
+                                                              className="inline selectable secondary-content text-danger"
                                                          >
                                                               <i className="material-icons">
-                                                                   mode_edit
+                                                                   delete
                                                               </i>
                                                          </div>
                                                     </td>

@@ -194,12 +194,14 @@ class HomeAdsList extends Component {
                                                                         homeAd
                                                                    );
                                                               }}
-                                                              className="selectable secondary-content text-teal"
+                                                              className="inline selectable secondary-content text-teal"
                                                          >
                                                               <i className="material-icons">
                                                                    mode_edit
                                                               </i>
                                                          </div>
+                                                    </td>
+                                                    <td>
                                                          <div
                                                               onClick={() => {
                                                                    this.resetState(
@@ -207,7 +209,7 @@ class HomeAdsList extends Component {
                                                                    );
                                                                    this.setHomeAdDeletionVariables();
                                                               }}
-                                                              className="selectable secondary-content text-danger"
+                                                              className="inline selectable secondary-content text-danger"
                                                          >
                                                               <i className="material-icons">
                                                                    delete

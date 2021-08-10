@@ -2,13 +2,12 @@
 import '../../css/index.css';
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { BrowserRouter, Route, Redirect } from 'react-router-dom';
-import { connect, ReactReduxContext } from 'react-redux';
+import { connect } from 'react-redux';
 import * as actions from '../../actions';
-import { reduxForm, Field } from 'redux-form';
 import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import TextField from '@material-ui/core/TextField';
 
 class CustomField extends Component {
      state = { valueToSet: '', valuesToSet: [] };
@@ -61,10 +60,27 @@ class CustomField extends Component {
           return res.data;
      }
 
-     getTag(type, label, disabled, input) {
-          if (type === 'textarea') {
+     getTag(type, label, disabled, input, id) {
+          if (type === 'datePicker') {
                return (
-                    <Form.Control as="textarea" rows={3}
+                    <>
+                         <br />
+                         <TextField
+                              id={id}
+                              name={id}
+                              {...input}
+                              type="date"
+                              InputLabelProps={{
+                                   shrink: true,
+                              }}
+                         />
+                    </>
+               );
+          } else if (type === 'textarea') {
+               return (
+                    <Form.Control
+                         as="textarea"
+                         rows={3}
                          {...input}
                          id={label}
                          disabled={disabled}
@@ -73,7 +89,7 @@ class CustomField extends Component {
                               this.setState({ valueToSet: e.target.value })
                          }
                          name={label}
-                         ></Form.Control>
+                    ></Form.Control>
                );
           } else if (type === 'images') {
                var result = (
@@ -104,7 +120,6 @@ class CustomField extends Component {
                          }}
                          multiple
                     />
-
                );
                const images = _.map(this.state.valuesToSet, (imageKey) => {
                     if (!this.state.deletedImages.includes(imageKey)) {
@@ -119,34 +134,48 @@ class CustomField extends Component {
                                         className="thumbnail"
                                         src={'/api/images/' + imageKey}
                                    />
-
                                    <span
                                         onClick={() => {
-                                             const newValues=this.state.valuesToSet.filter(
-                                                  (item) => item !== imageKey
-                                             )
+                                             const newValues =
+                                                  this.state.valuesToSet.filter(
+                                                       (item) =>
+                                                            item !== imageKey
+                                                  );
                                              this.setState({
                                                   deletedImages:
                                                        this.state.deletedImages.concat(
                                                             imageKey
                                                        ),
-                                                  valuesToSet:newValues,
+                                                  valuesToSet: newValues,
                                              });
-                                          
+
                                              this.props.statetriggeredvaluesupdatefunction(
                                                   newValues
                                              );
                                         }}
                                         className="overlay selectable"
                                    >
-                                   </span> <i className="material-icons text-danger">delete</i>
+                                        {' '}
+                                        <span className="material-icons text-danger">
+                                             delete
+                                        </span>
+                                   </span>
                               </div>
                          );
                     }
                });
                return [
                     <br key={2} />,
-                    result, <Button  type="button"  key={7}  type="button" className="teal btn-flat white-text" onClick={()=>document.getElementById(label).click()}>Sélectionner</Button>,
+                    result,
+                    <Button
+                         type="button"
+                         key={7}
+                         type="button"
+                         className="teal btn-flat white-text"
+                         onClick={() => document.getElementById(label).click()}
+                    >
+                         Sélectionner
+                    </Button>,
                     <input
                          key={1}
                          type="hidden"
@@ -159,7 +188,12 @@ class CustomField extends Component {
                ];
           } else if (type === 'select') {
                return (
-                    <Form.Select aria-label={label} name={label} id={label} {...input}>
+                    <Form.Select
+                         aria-label={label}
+                         name={label}
+                         id={label}
+                         {...input}
+                    >
                          {this.renderFirstOption(
                               this.state.valueToSet,
                               this.state.valuesToSet
@@ -172,7 +206,9 @@ class CustomField extends Component {
                );
           } else {
                return (
-                    <Form.Control type="text" placeholder="Enter title" 
+                    <Form.Control
+                         type="text"
+                         placeholder=""
                          id={label}
                          {...input}
                          type={type}
@@ -195,9 +231,13 @@ class CustomField extends Component {
                          this.props.type,
                          this.props.label,
                          this.props.disabled,
-                         this.props.input
+                         this.props.input,
+                         this.props.id
                     )}
-                    <div className="text-danger" style={{ marginBottom: '20px' }}>
+                    <div
+                         className="text-danger"
+                         style={{ marginBottom: '20px' }}
+                    >
                          {this.props.meta.touched && this.props.meta.error}
                     </div>
                </div>

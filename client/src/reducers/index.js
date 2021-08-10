@@ -7,6 +7,7 @@ import pageSelectedReducer from './pageSelectedReducer';
 import flashReducer from './flashReducer';
 import allUsers from './agentsInterfaceReducers';
 import homeAdsReducer from './homeAdsReducers';
+import clientsReducer from './clientsReducer';
 
 export default combineReducers({
     auth: authReducer,
@@ -15,5 +16,6 @@ export default combineReducers({
     pageSelected: pageSelectedReducer,
     flash:flashReducer,
     users:allUsers,
-    homeAds: homeAdsReducer
+    homeAds: homeAdsReducer,
+    clients:clientsReducer
 });

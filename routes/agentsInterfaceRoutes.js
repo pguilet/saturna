@@ -10,6 +10,7 @@ const bcrypt = require('bcrypt');
 const requireAdminRole = require('../middlewares/requireAdminRole');
 const Users = mongoose.model('users'); //for testing purpose with node and mongoose we should not get info from Survey.js
 const HomeAds = mongoose.model('homeAds');
+const Clients = mongoose.model('clients');
 const multer = require('multer');
 const { uploadFile, getFileStream, removeFile } = require('../services/s3');
 const fs = require('fs-extra');
@@ -38,6 +39,11 @@ module.exports = (app) => {
      app.get('/api/allUsers', requireLogin, async (req, res) => {
           const users = await Users.find().sort({ username: 1 });
           res.send(users);
+     });
+
+     app.get('/api/allClients', requireLogin, async (req, res) => {
+          const clients = await Clients.find().sort({ surname: 1 });
+          res.send(clients);
      });
 
      app.get('/api/homeAds', requireLogin, async (req, res) => {
@@ -283,6 +289,44 @@ module.exports = (app) => {
                res.send(userAlreadyExisting);
           } else {
                res.send(null);
+          }
+     });
+
+     app.post('/api/deleteClient', requireAdminRole, async (req, res) => {
+               const clientAlreadyExisting = await Clients.findOneAndDelete({
+                    surname: req.body.identifiant.surname,
+                    name: req.body.identifiant.name,
+                    birthday: req.body.identifiant.birthday
+               });
+
+               res.send(clientAlreadyExisting);
+
+     });
+
+
+     app.post('/api/newClient', requireLogin, async (req, res) => {
+          const clientAlreadyExisting = await Clients.find({
+               name: req.body.name,
+               surname:req.body.surname,
+               birthday:req.body.birthday
+          });
+          if (!clientAlreadyExisting.length) {
+               if(!req.body.name||!(req.body.surname)||!(req.body.birthday)){
+                    res.send({
+                         message: "Veuillez renseigner tous les champs.",
+                    });
+               }else{
+               const client = await new Clients({
+                    surname: req.body.surname,
+                    name: req.body.name,
+                    birthday: req.body.birthday,
+               }).save();
+
+               res.send(client);}
+          } else {
+               res.send({
+                    message: "Le client existe déjà.",
+               });
           }
      });
 };
