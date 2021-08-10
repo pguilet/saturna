@@ -7,6 +7,8 @@ import { connect, ReactReduxContext } from 'react-redux';
 import * as actions from '../../actions';
 import { reduxForm, Field } from 'redux-form';
 import axios from 'axios';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 class CustomField extends Component {
      state = { valueToSet: '', valuesToSet: [] };
@@ -62,7 +64,7 @@ class CustomField extends Component {
      getTag(type, label, disabled, input) {
           if (type === 'textarea') {
                return (
-                    <textarea
+                    <Form.Control as="textarea" rows={3}
                          {...input}
                          id={label}
                          disabled={disabled}
@@ -71,7 +73,7 @@ class CustomField extends Component {
                               this.setState({ valueToSet: e.target.value })
                          }
                          name={label}
-                    ></textarea>
+                         ></Form.Control>
                );
           } else if (type === 'images') {
                var result = (
@@ -135,17 +137,16 @@ class CustomField extends Component {
                                                   newValues
                                              );
                                         }}
-                                        className="overlay selectable red-text"
+                                        className="overlay selectable"
                                    >
-                                        <i className="material-icons">delete</i>
-                                   </span>
+                                   </span> <i className="material-icons text-danger">delete</i>
                               </div>
                          );
                     }
                });
                return [
                     <br key={2} />,
-                    result,<input  key={7}  type="button" className="teal btn-flat white-text" value="Sélectionner" onClick={()=>document.getElementById(label).click()} />,
+                    result, <Button  type="button"  key={7}  type="button" className="teal btn-flat white-text" onClick={()=>document.getElementById(label).click()}>Sélectionner</Button>,
                     <input
                          key={1}
                          type="hidden"
@@ -158,7 +159,7 @@ class CustomField extends Component {
                ];
           } else if (type === 'select') {
                return (
-                    <select name={label} id={label} className="browser-default">
+                    <Form.Select aria-label="" name={label} id={label} className="browser-default">
                          {this.renderFirstOption(
                               this.state.valueToSet,
                               this.state.valuesToSet
@@ -167,11 +168,11 @@ class CustomField extends Component {
                               this.state.valueToSet,
                               this.state.valuesToSet
                          )}
-                    </select>
+                    </Form.Select>
                );
           } else {
                return (
-                    <input
+                    <Form.Control type="text" placeholder="Enter title" 
                          id={label}
                          {...input}
                          type={type}
@@ -189,14 +190,14 @@ class CustomField extends Component {
      render() {
           return (
                <div>
-                    <label>{this.props.label}</label>
+                    <Form.Label>{this.props.label}</Form.Label>
                     {this.getTag(
                          this.props.type,
                          this.props.label,
                          this.props.disabled,
                          this.props.input
                     )}
-                    <div className="red-text" style={{ marginBottom: '20px' }}>
+                    <div className="text-danger" style={{ marginBottom: '20px' }}>
                          {this.props.meta.touched && this.props.meta.error}
                     </div>
                </div>

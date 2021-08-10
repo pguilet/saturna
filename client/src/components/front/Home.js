@@ -1,6 +1,5 @@
 //Rendering layer control (React router content)
 import '../../css/index.css';
-import 'bootstrap/dist/css/bootstrap.min.css';//we have to precise extension when not importing js files
 import React, {Component} from 'react';
 import {BrowserRouter, Route} from 'react-router-dom'; 
 import {connect} from 'react-redux';

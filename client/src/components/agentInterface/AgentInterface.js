@@ -19,11 +19,11 @@ class AgentInterface extends Component{
        <BrowserRouter>
            <InterfaceHeader />
 
-        <div className="container">
+        <main className="container">
            <GuardedRoute exact path="/agentsHome" component={AgentsHome} />
            <GuardedRoute exact path="/agentsList" component={AgentsList} />
            <GuardedRoute exact path="/homeAdsList" component={HomeAdsList} />
-         </div>
+         </main>
        </BrowserRouter>
      );
    }

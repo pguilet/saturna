@@ -8,6 +8,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 class FocusForm extends Component {
      state={
@@ -52,31 +54,33 @@ class FocusForm extends Component {
                          <DialogContentText>
                               {this.props.description}
                          </DialogContentText>
-                         <form>
+                         <Form>
+                         <Form.Group className="mb-3">
                               {this.renderFields()}
 
                               <div
-                                   className="red-text"
+                                   className="text-danger"
                                    style={{ marginBottom: '20px' }}
                               >
                                    {this.props.flash
                                         ? this.props.flash.message
                                         : ''}
                               </div>
-                         </form>
+                              </Form.Group>
+                         </Form>
                     </DialogContent>
                     <DialogActions>
-                         <button
-                              className="yellow darken-3 white-text btn-flat"
+                    <Button variant="warning" type="button"
+                              className="centered"
                               onClick={() => {
                                    this.props.onTheClose(true, false);
                               }}
                          >
                               Back
-                              <i className="material-icons right">cancel</i>
-                         </button>
-                         <button
-                              className="green right btn-flat white-text"
+                              <i className="material-icons separateIcon">cancel</i>
+                         </Button>
+                         <Button variant="success" type="button"
+                              className="centered"
                               onClick={() => {
                                    this.props.validateButtonAction(
                                         this.props.form,
@@ -87,8 +91,8 @@ class FocusForm extends Component {
                               }}
                          >
                               {this.props.validateButtonLabel}
-                              <i className="material-icons right">done</i>
-                         </button>
+                              <i className="material-icons separateIcon">done</i>
+                         </Button>
                     </DialogActions>
                </Dialog>
           );

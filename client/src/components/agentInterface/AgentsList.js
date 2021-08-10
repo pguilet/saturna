@@ -6,6 +6,8 @@ import * as actions from '../../actions';
 import FocusForm from './FocusForm';
 import CustomField from '../customs/CustomField';
 import { Roles } from '../../actions/types';
+import FixedFloatingButton from '../customs/FixedFloatingButton';
+import Table from 'react-bootstrap/Table';
 
 class AgentsList extends Component {
      // state = {
@@ -81,9 +83,9 @@ class AgentsList extends Component {
                     label: 'Rôle',
                     id: 'role',
                     type: 'select',
-                    component: 'select',
+                    component: CustomField,
                     valueToSet: user.role,
-                    values: Roles,
+                    valuesToSet: Roles,
                },
           ];
      }
@@ -111,9 +113,9 @@ class AgentsList extends Component {
                     label: 'Rôle',
                     id: 'role',
                     type: 'select',
-                    component: 'select',
+                    component: CustomField,
                     valueToSet: 'agent',
-                    values: Roles,
+                    valuesToSet: Roles,
                },
           ];
      }
@@ -122,7 +124,7 @@ class AgentsList extends Component {
           return (
                <div>
                     <h4>Liste des comptes des agents</h4>
-                    <table>
+                    <Table striped bordered hover>
                          <thead>
                               <tr>
                                    <th>Identifiant</th>
@@ -148,7 +150,7 @@ class AgentsList extends Component {
                                                                    );
                                                                    this.setUserDeletionVariables();
                                                               }}
-                                                              className="selectable secondary-content red-text"
+                                                              className="selectable secondary-content text-danger"
                                                          >
                                                               <i className="material-icons">
                                                                    delete
@@ -163,7 +165,7 @@ class AgentsList extends Component {
                                                                         user
                                                                    );
                                                               }}
-                                                              className="selectable secondary-content teal-text"
+                                                              className="selectable secondary-content text-teal"
                                                          >
                                                               <i className="material-icons">
                                                                    mode_edit
@@ -175,7 +177,7 @@ class AgentsList extends Component {
                                      })
                                    : null}
                          </tbody>
-                    </table>
+                    </Table>
                </div>
           );
      }
@@ -226,17 +228,12 @@ class AgentsList extends Component {
                <div>
                     {this.renderFocusForm(this.state.showFocusForm)}
                     {this.renderContent()}
-                    <div className="fixed-action-btn">
-                         <div
-                              className="btn-floating btn-large teal"
-                              onClick={() => {
-                                   this.resetState(null);
-                                   this.setUserCreationVariables();
-                              }}
-                         >
-                              <i className="material-icons">add</i>
-                         </div>
-                    </div>
+                    <FixedFloatingButton
+                         onClick={() => {
+                              this.resetState(null);
+                              this.setUserCreationVariables();
+                         }}
+                    />
                </div>
           );
      }

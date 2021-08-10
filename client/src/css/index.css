@@ -1,3 +1,6 @@
+#root {
+  padding-top: 50px; }
+
 #header-background {
   background-image: url("../images/background.jpg");
   background-size: 100%;

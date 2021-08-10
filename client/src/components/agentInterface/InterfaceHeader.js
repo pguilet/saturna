@@ -1,94 +1,82 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Navbar from 'react-bootstrap/Navbar';
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+import Form from 'react-bootstrap/Form';
+import FormControl from 'react-bootstrap/FormControl';
+import Button from 'react-bootstrap/Button';
 
 import { Roles } from '../../actions/types.js';
 class InterfaceHeader extends Component {
-  renderAgentList() {
-    if (this.props.auth !== null && this.props.auth.role === Roles.ADMIN) {
-      return (
-        <li className="nav-item">
-          <Link
-            to="/agentsList"
-            className={
-              this.props.pageSelected === 'agentsList'
-                ? 'nav-link active'
-                : 'nav-link'
-            }
-          >
-            Liste des agents
-          </Link>
-        </li>
-      );
-    }
-  }
-  renderHomeAdsList() {
-    if (this.props.auth !== null && (this.props.auth.role === Roles.ADMIN||this.props.auth.role === Roles.AGENT)) {
-      return (
-        <li className="nav-item">
-          <Link
-            to="/homeAdsList"
-            className={
-              this.props.pageSelected === 'homeAdsList'
-                ? 'nav-link active'
-                : 'nav-link'
-            }
-          >
-            Annonces immobilières
-          </Link>
-        </li>
-      );
-    }
-  }
+          renderUserConnectedDropDown() {
+          if (this.props.auth) {
+               const isAdmin = this.props.auth.role === Roles.ADMIN;
+               const isAgent = this.props.auth.role === Roles.AGENT;
+               return (
+                    <NavDropdown
+                         title={this.props.auth.username}
+                         id="basic-nav-dropdown"
+                    >
+                         <NavDropdown.Item href="/api/logout">
+                              Logout
+                         </NavDropdown.Item>
+                         {(isAgent || isAdmin) && (
+                              <Link to="/homeAdsList" className="dropdown-item">
+                                   Annonces immobilières
+                              </Link>
+                         )}
+                         {isAdmin && (
+                              <Link to="/agentsList" className="dropdown-item">
+                                   Liste des agents
+                              </Link>
+                         )}
+                    </NavDropdown>
+               );
+          }
+     }
+     render() {
+          return (
+               <Navbar bg="light" expand="lg" fixed="top">
+                    <Container>
+                         <Navbar.Brand href="/">
+                              La Pierre Nantaise
+                         </Navbar.Brand>
+                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                         <Navbar.Collapse id="basic-navbar-nav">
+                              <Nav className="me-auto">
+                                   <Link to="/agentsHome" className="nav-link">
+                                        Dashboard
+                                   </Link>
+                                   <Link to="/agentsHome" className="nav-link">
+                                        Clients
+                                   </Link>
+                              </Nav>
 
-  renderLogoutLink() {
-    if (this.props.auth) {
-      return (
-        <li className="nav-item">
-          <a href="/api/logout" className="nav-link">
-            Logout
-          </a>
-        </li>
-      );
-    }
-  }
-  render() {
-    return (
-      <div id="header-background">
-        <div className="container">
-          <h1 className="brand" onClick={() => (window.location.href = '/')}>
-            {' '}
-            La Pierre Nantaise: Agent Interface
-          </h1>
-          <p className="brand-description">
-            Agence immobilière créée par un petit beurre et pour tous le monde.
-            Béni par le dieu Pierre Guilet.
-          </p>
-
-          <ul className="nav nav-fill">
-            <li className="nav-item">
-              <Link
-                to="/agentsHome"
-                className={
-                  this.props.pageSelected === 'agentsHome'
-                    ? 'nav-link active'
-                    : 'nav-link'
-                }
-              >
-                Accueil
-              </Link>
-            </li>
-            {this.renderAgentList()}
-            {this.renderHomeAdsList()}
-            {this.renderLogoutLink()}
-          </ul>
-        </div>
-      </div>
-    );
-  }
+                              <Form className="d-flex">
+                                   <FormControl
+                                        type="search"
+                                        placeholder="Search"
+                                        className="mr-2"
+                                        aria-label="Search"
+                                   />
+                                   <Button variant="outline-success">
+                                        Search
+                                   </Button>
+                              </Form>
+                              <Nav className="">
+                                   {this.renderUserConnectedDropDown()}
+                              </Nav>
+                         </Navbar.Collapse>
+                    </Container>
+               </Navbar>
+          );
+     }
 }
 
 function mapStateToProps({ auth, pageSelected, history }) {
-  return { auth, pageSelected, history };
+     return { auth, pageSelected, history };
 }
 export default connect(mapStateToProps)(InterfaceHeader);

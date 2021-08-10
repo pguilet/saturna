@@ -4,10 +4,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import FocusForm from './FocusForm';
+import FixedFloatingButton from '../customs/FixedFloatingButton';
 import CustomField from '../customs/CustomField';
 import { AdType } from '../../actions/types';
 import _ from 'lodash';
 import axios from 'axios';
+import Table from 'react-bootstrap/Table';
 
 class HomeAdsList extends Component {
      constructor(props) {
@@ -117,8 +119,8 @@ class HomeAdsList extends Component {
                {
                     label: 'Description',
                     id: 'description',
-                    type: 'text',
-                    component: 'textarea',
+                    type: 'textarea',
+                    component: CustomField,
                },
                {
                     label: 'Type',
@@ -153,7 +155,7 @@ class HomeAdsList extends Component {
           return (
                <div>
                     <h4>Liste des annonces immobilières</h4>
-                    <table>
+                    <Table striped bordered hover>
                          <thead>
                               <tr>
                                    <th>Titre</th>
@@ -192,7 +194,7 @@ class HomeAdsList extends Component {
                                                                         homeAd
                                                                    );
                                                               }}
-                                                              className="selectable secondary-content teal-text"
+                                                              className="selectable secondary-content text-teal"
                                                          >
                                                               <i className="material-icons">
                                                                    mode_edit
@@ -205,7 +207,7 @@ class HomeAdsList extends Component {
                                                                    );
                                                                    this.setHomeAdDeletionVariables();
                                                               }}
-                                                              className="selectable secondary-content red-text"
+                                                              className="selectable secondary-content text-danger"
                                                          >
                                                               <i className="material-icons">
                                                                    delete
@@ -217,7 +219,7 @@ class HomeAdsList extends Component {
                                      })
                                    : null}
                          </tbody>
-                    </table>
+                    </Table>
                </div>
           );
      }
@@ -229,8 +231,9 @@ class HomeAdsList extends Component {
           this.backButtonTriggered = actionFromBackButton;
           this.createUserButtonTriggered = actionFromNewUserButton;
           this.setState({ showFocusForm: false });
-          if(actionFromBackButton){
-          this.deleteTemporaryUploadDirectory();}
+          if (actionFromBackButton) {
+               this.deleteTemporaryUploadDirectory();
+          }
      }
      computeFormOpeningStatus(showFocusForm, flash) {
           if (this.backButtonTriggered) {
@@ -273,17 +276,12 @@ class HomeAdsList extends Component {
                <div>
                     {this.renderFocusForm(this.state.showFocusForm)}
                     {this.renderContent()}
-                    <div className="fixed-action-btn">
-                         <div
-                              className="btn-floating btn-large teal"
-                              onClick={() => {
-                                   this.resetState(null);
-                                   this.setHomeAdCreationVariables();
-                              }}
-                         >
-                              <i className="material-icons">add</i>
-                         </div>
-                    </div>
+                    <FixedFloatingButton
+                         onClick={() => {
+                              this.resetState(null);
+                              this.setHomeAdCreationVariables();
+                         }}
+                    />
                </div>
           );
      }

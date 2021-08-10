@@ -9,6 +9,7 @@ import Dashboard from "./front/Dashboard";
 import GuardedRoute from "./GuardedRoute";
 import Login from "./agentInterface/Login";
 import AgentInterface from './agentInterface/AgentInterface';
+import '../css/index.scss';
 import AgentsList from './agentInterface/AgentsList';
 import AgentsHome from './agentInterface/AgentsHome';
 

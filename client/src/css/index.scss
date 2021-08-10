@@ -1,3 +1,71 @@
+@import "~bootstrap/scss/bootstrap";
+
+@mixin centered {
+    display : flex;
+    align-items : center;
+    justify-content: center;
+}
+#root main{
+    margin-top:30px;
+}
+#root main form{
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding:10px;
+}
+.fixed-button{
+    position: fixed;
+    right: 23px;
+    bottom: 23px;
+    padding-top: 15px;
+    margin-bottom: 0;
+    z-index: 997;
+    bottom: 45px;
+    right: 24px;
+}
+
+.text-teal{
+    color:teal;
+}
+
+.centered{
+    @include centered(); 
+}
+
+.separateIcon{
+    margin-left:5px;
+}
+
+.button-floating{
+    @include centered(); 
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #26a69a;
+    border-radius: 50%;
+    -webkit-transition: background-color .3s;
+    transition: background-color .3s;
+    cursor: pointer;
+    vertical-align: middle;
+    text-align: center;
+    width: 56px;
+    height: 56px;
+    font-size: 30px;
+}
+
+.btn-floating i {
+    position:absolute;
+    top:0;
+    left:0;
+    text-align: center;
+    color:red;
+
+}
+
 #header-background{
   background-image: url("../images/background.jpg");
   background-size: 100%;
@@ -63,7 +131,6 @@
 
 .nav {
   
-    padding-top: 130px;
     .nav-link{
         background-color:#181919 ;
         color:white;
