@@ -27,7 +27,7 @@ class CustomField extends Component {
           return _.map(selectvalues, (value) => {
                if (value === valueToSet) {
                     return (
-                         <option key={value} value={value}>
+                         <option key={value} value={value} defaultValue>
                               {value}
                          </option>
                     );
@@ -159,7 +159,7 @@ class CustomField extends Component {
                ];
           } else if (type === 'select') {
                return (
-                    <Form.Select aria-label="" name={label} id={label} className="browser-default">
+                    <Form.Select aria-label={label} name={label} id={label} {...input}>
                          {this.renderFirstOption(
                               this.state.valueToSet,
                               this.state.valuesToSet

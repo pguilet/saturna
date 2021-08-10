@@ -44,7 +44,7 @@ export const fetchPage = (pageName) => async (dispatch) => {
 };
 
 export const login =
-     (history, { username, password }) =>
+     (history,  username, password ) =>
      async (dispatch) => {
           const res = await axios.get('/api/loginUser', {
                params: { username, password },

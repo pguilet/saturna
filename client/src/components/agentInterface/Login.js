@@ -27,20 +27,21 @@ class Login extends Component {
           this.setState({ password: e.target.value });
      }
 
+     handleSubmit = (event) => {
+          event.preventDefault();
+          this.props.login(
+               this.props.history,
+               event.target.username.value,
+               event.target.password.value
+          );
+     };
      renderContent() {
           if (this.props.auth === null || !this.props.auth.username) {
                return (
                     <BrowserRouter>
                          <InterfaceHeader />
                          <main className="container">
-                              <form
-                                   onSubmit={this.props.handleSubmit(() =>
-                                        this.props.login(
-                                             this.props.history,
-                                             this.props.form.loginForm.values
-                                        )
-                                   )}
-                              >
+                              <form onSubmit={this.handleSubmit}>
                                    <Field
                                         key="username"
                                         label="Username"
