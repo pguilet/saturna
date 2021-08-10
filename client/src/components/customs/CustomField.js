@@ -133,6 +133,7 @@ class CustomField extends Component {
                                         title={imageKey}
                                         className="thumbnail"
                                         src={'/api/images/' + imageKey}
+                                        alt="thumbnail"
                                    />
                                    <span
                                         onClick={() => {
@@ -170,7 +171,6 @@ class CustomField extends Component {
                     <Button
                          type="button"
                          key={7}
-                         type="button"
                          className="teal btn-flat white-text"
                          onClick={() => document.getElementById(label).click()}
                     >
@@ -207,7 +207,6 @@ class CustomField extends Component {
           } else {
                return (
                     <Form.Control
-                         type="text"
                          placeholder=""
                          id={label}
                          {...input}

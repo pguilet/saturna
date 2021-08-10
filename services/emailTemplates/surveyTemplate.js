@@ -1,6 +1,6 @@
-const keys=require('../../config/keys');
-module.exports=(survey)=>{
-    return `
+const keys = require('../../config/keys');
+module.exports = (survey) => {
+     return `
         <html>
         <body>
             <div style="text-align:center">

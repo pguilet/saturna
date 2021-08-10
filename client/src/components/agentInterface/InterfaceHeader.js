@@ -11,8 +11,7 @@ import Button from 'react-bootstrap/Button';
 
 import { Roles } from '../../actions/types.js';
 class InterfaceHeader extends Component {
-     
-          renderUserConnectedDropDown() {
+     renderUserConnectedDropDown() {
           if (this.props.auth) {
                const isAdmin = this.props.auth.role === Roles.ADMIN;
                const isAgent = this.props.auth.role === Roles.AGENT;

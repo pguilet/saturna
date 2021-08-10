@@ -1,12 +1,12 @@
-import { FETCH_USERS } from '../actions/types';
+import { FETCH_CLIENT } from '../actions/types';
 
-const allUsers = function (state = null, action) {
+const client = function (state = null, action) {
      switch (action.type) {
-          case FETCH_USERS:
+          case FETCH_CLIENT:
                return action.payload || false; //payload with empty string = false
           default:
                return state;
      }
 };
 
-export default allUsers;
+export default client;

@@ -46,6 +46,11 @@ module.exports = (app) => {
           res.send(clients);
      });
 
+     app.post('/api/client', requireLogin, async (req, res) => {
+          const client = await Clients.findById(req.body.clientId);
+          res.send(client);
+     });
+
      app.get('/api/homeAds', requireLogin, async (req, res) => {
           const homeAds = await HomeAds.find().sort({ title: 1 });
           res.send(homeAds);
@@ -58,6 +63,7 @@ module.exports = (app) => {
                readStream.pipe(res);
           }
      });
+
      app.get('/api/images/:folder/:user/:key', async (req, res) => {
           const key = req.params.key;
           const folder = req.params.folder;
@@ -117,7 +123,9 @@ module.exports = (app) => {
                if (req.body.stateTriggeredValues) {
                     var filesNameOnS3Bucket = [];
                     var x = 0;
-                    for (const imagePath of req.body.stateTriggeredValues.split(',')) {
+                    for (const imagePath of req.body.stateTriggeredValues.split(
+                         ','
+                    )) {
                          if (imagePath.includes('upload')) {
                               const uploadedImage = await uploadFile({
                                    path: imagePath,
@@ -156,10 +164,7 @@ module.exports = (app) => {
 
      app.post('/api/editHomeAd', requireLogin, async (req, res) => {
           let homeAd = await HomeAds.findOne({ _id: req.body.identifiant });
-          if (
-               homeAd &&
-               (req.body.form || req.body.stateTriggeredValues)
-          ) {
+          if (homeAd && (req.body.form || req.body.stateTriggeredValues)) {
                if (req.body.form) {
                     if (req.body.form.type) {
                          homeAd.isLocation =
@@ -293,39 +298,38 @@ module.exports = (app) => {
      });
 
      app.post('/api/deleteClient', requireAdminRole, async (req, res) => {
-               const clientAlreadyExisting = await Clients.findOneAndDelete({
-                    surname: req.body.identifiant.surname,
-                    name: req.body.identifiant.name,
-                    birthday: req.body.identifiant.birthday
-               });
+          const clientAlreadyExisting = await Clients.findOneAndDelete({
+               surname: req.body.identifiant.surname,
+               name: req.body.identifiant.name,
+               birthday: req.body.identifiant.birthday,
+          });
 
-               res.send(clientAlreadyExisting);
-
+          res.send(clientAlreadyExisting);
      });
-
 
      app.post('/api/newClient', requireLogin, async (req, res) => {
           const clientAlreadyExisting = await Clients.find({
                name: req.body.name,
-               surname:req.body.surname,
-               birthday:req.body.birthday
+               surname: req.body.surname,
+               birthday: req.body.birthday,
           });
           if (!clientAlreadyExisting.length) {
-               if(!req.body.name||!(req.body.surname)||!(req.body.birthday)){
+               if (!req.body.name || !req.body.surname || !req.body.birthday) {
                     res.send({
-                         message: "Veuillez renseigner tous les champs.",
+                         message: 'Veuillez renseigner tous les champs.',
                     });
-               }else{
-               const client = await new Clients({
-                    surname: req.body.surname,
-                    name: req.body.name,
-                    birthday: req.body.birthday,
-               }).save();
+               } else {
+                    const client = await new Clients({
+                         surname: req.body.surname,
+                         name: req.body.name,
+                         birthday: req.body.birthday,
+                    }).save();
 
-               res.send(client);}
+                    res.send(client);
+               }
           } else {
                res.send({
-                    message: "Le client existe déjà.",
+                    message: 'Le client existe déjà.',
                });
           }
      });

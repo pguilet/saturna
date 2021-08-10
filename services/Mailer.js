@@ -2,30 +2,28 @@
 // const helper= sendgrid.mail;
 const keys = require('../config/keys');
 const sgMail = require('@sendgrid/mail');
- 
+
 class Mailer {
-  constructor({subject, recipients}, content){
-    this.message = { 
-      to: recipients,
-      from: 'pierre.guilet@gmail.com',
-      subject: subject,
-      html: content,
-      trackingSettings: {
-        clickTracking: { enable: true }
-      }
-    };
-    sgMail.setApiKey(keys.sendGridKey);
-  }
- 
-  async send() {
-    const response = await sgMail.sendMultiple(this.message);
-    return response;
-  }
+     constructor({ subject, recipients }, content) {
+          this.message = {
+               to: recipients,
+               from: 'pierre.guilet@gmail.com',
+               subject: subject,
+               html: content,
+               trackingSettings: {
+                    clickTracking: { enable: true },
+               },
+          };
+          sgMail.setApiKey(keys.sendGridKey);
+     }
+
+     async send() {
+          const response = await sgMail.sendMultiple(this.message);
+          return response;
+     }
 }
- 
+
 module.exports = Mailer;
-
-
 
 // class Mailer extends helper.Mail{
 //     constructor({subject, recipients},content){
@@ -73,7 +71,5 @@ module.exports = Mailer;
 //         return response;
 //     }
 // }
-
-
 
 // module.export=Mailer;

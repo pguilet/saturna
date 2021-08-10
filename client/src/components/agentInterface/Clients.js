@@ -8,7 +8,8 @@ import CustomField from '../customs/CustomField';
 import { Roles } from '../../actions/types';
 import FixedFloatingButton from '../customs/FixedFloatingButton';
 import Table from 'react-bootstrap/Table';
-import moment from 'moment'
+import moment from 'moment';
+import { withRouter } from 'react-router-dom';
 
 class Clients extends Component {
      state = {
@@ -92,10 +93,10 @@ class Clients extends Component {
           ];
      }
      openClientRecord(client) {
-          console.log('toto');
+          this.props.history.push('/client/' + client._id);
      }
 
-     renderOpenRecordTableAction(client, value,isDate) {
+     renderOpenRecordTableAction(client, value, isDate) {
           return (
                <td
                     className="selectable"
@@ -104,7 +105,7 @@ class Clients extends Component {
                          this.openClientRecord(client);
                     }}
                >
-                    {isDate?moment(value).format('L'):value}
+                    {isDate ? moment(value).format('L') : value}
                </td>
           );
      }
@@ -249,8 +250,8 @@ class Clients extends Component {
           );
      }
 }
-function mapStateToProps({ clients, flash, auth }) {
-     return { clients, flash, auth };
+function mapStateToProps({ clients, flash, auth, history }) {
+     return { clients, flash, auth, history };
 }
 
-export default connect(mapStateToProps, actions)(Clients);
+export default connect(mapStateToProps, actions)(withRouter(Clients));

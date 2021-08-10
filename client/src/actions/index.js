@@ -6,12 +6,18 @@ import {
      FETCH_SURVEYS,
      FETCH_PAGE,
      FETCH_CLIENTS,
+     FETCH_CLIENT,
      FLASH,
 } from './types';
 
 export const fetchUser = () => async (dispatch) => {
      const res = await axios.get('/api/current_user');
      dispatch({ type: FETCH_USER, payload: res.data });
+};
+
+export const fetchClient = (params) => async (dispatch) => {
+     const res = await axios.post('/api/client', params);
+     dispatch({ type: FETCH_CLIENT, payload: res.data });
 };
 
 export const fetchUsers = () => async (dispatch) => {
@@ -23,7 +29,6 @@ export const fetchClients = () => async (dispatch) => {
      const res = await axios.get('/api/allClients');
      dispatch({ type: FETCH_CLIENTS, payload: res.data });
 };
-
 
 export const fetchHomeAds = () => async (dispatch) => {
      const res = await axios.get('/api/homeAds');
@@ -50,19 +55,17 @@ export const fetchPage = (pageName) => async (dispatch) => {
      dispatch({ type: FETCH_PAGE, payload: pageName });
 };
 
-export const login =
-     (history,  username, password ) =>
-     async (dispatch) => {
-          const res = await axios.get('/api/loginUser', {
-               params: { username, password },
-          });
-          if (!res.data.message) {
-               dispatch({ type: FETCH_USER, payload: res.data });
-               history.push('/agentsHome');
-          } else {
-               dispatch({ type: FLASH, payload: res.data });
-          }
-     };
+export const login = (history, username, password) => async (dispatch) => {
+     const res = await axios.get('/api/loginUser', {
+          params: { username, password },
+     });
+     if (!res.data.message) {
+          dispatch({ type: FETCH_USER, payload: res.data });
+          history.push('/agentsHome');
+     } else {
+          dispatch({ type: FLASH, payload: res.data });
+     }
+};
 
 export const createUser = (form, username) => async (dispatch) => {
      var res = await axios.post('/api/newUser', form.focusForm.values);
@@ -86,25 +89,25 @@ export const createClient = (form) => async (dispatch) => {
      }
 };
 
-
-export const createHomeAd = (form, identifiant,stateTriggeredValues) => async (dispatch) => {
-     let data = new FormData();
-     if (form.focusForm.values.file) {
-          for (var x = 0; x < form.focusForm.values.file.length; x++) {
-               data.append('file', form.focusForm.values.file[x]);
+export const createHomeAd =
+     (form, identifiant, stateTriggeredValues) => async (dispatch) => {
+          let data = new FormData();
+          if (form.focusForm.values.file) {
+               for (var x = 0; x < form.focusForm.values.file.length; x++) {
+                    data.append('file', form.focusForm.values.file[x]);
+               }
           }
-     }
-     data.append('title', form.focusForm.values.title);
-     data.append('description', form.focusForm.values.description);
-     data.append('stateTriggeredValues', stateTriggeredValues);
+          data.append('title', form.focusForm.values.title);
+          data.append('description', form.focusForm.values.description);
+          data.append('stateTriggeredValues', stateTriggeredValues);
 
-     var res = await axios.post('/api/createHomeAd', data, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-     });
-     res = await axios.get('/api/homeAds');
-     dispatch({ type: FLASH, payload: { message: false } });
-     dispatch({ type: FETCH_HOME_ADS, payload: res.data });
-};
+          var res = await axios.post('/api/createHomeAd', data, {
+               headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          res = await axios.get('/api/homeAds');
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({ type: FETCH_HOME_ADS, payload: res.data });
+     };
 
 export const deleteHomeAd = (form, identifiant) => async (dispatch) => {
      var res = await axios.post('/api/deleteHomeAd', {
@@ -114,16 +117,17 @@ export const deleteHomeAd = (form, identifiant) => async (dispatch) => {
      dispatch({ type: FLASH, payload: { message: false } });
      dispatch({ type: FETCH_HOME_ADS, payload: res.data });
 };
-export const editHomeAd = (form, identifiant,stateTriggeredValues) => async (dispatch) => {
-     var res = await axios.post('/api/editHomeAd', {
-          form: form.focusForm.values,
-          identifiant: identifiant,
-          stateTriggeredValues:stateTriggeredValues,
-     });
-     res = await axios.get('/api/homeAds');
-     dispatch({ type: FLASH, payload: { message: false } });
-     dispatch({ type: FETCH_HOME_ADS, payload: res.data });
-};
+export const editHomeAd =
+     (form, identifiant, stateTriggeredValues) => async (dispatch) => {
+          var res = await axios.post('/api/editHomeAd', {
+               form: form.focusForm.values,
+               identifiant: identifiant,
+               stateTriggeredValues: stateTriggeredValues,
+          });
+          res = await axios.get('/api/homeAds');
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({ type: FETCH_HOME_ADS, payload: res.data });
+     };
 export const updateImagesOfHomeAd = async (files, identifiant) => {
      let data = new FormData();
      if (files) {
@@ -157,7 +161,9 @@ export const deleteUser = (form, username) => async (dispatch) => {
 };
 
 export const deleteClient = (form, identifiant) => async (dispatch) => {
-     var res = await axios.post('/api/deleteClient', { identifiant: identifiant });
+     var res = await axios.post('/api/deleteClient', {
+          identifiant: identifiant,
+     });
      res = await axios.get('/api/allClients');
      dispatch({ type: FLASH, payload: { message: false } });
      dispatch({ type: FETCH_CLIENTS, payload: res.data });

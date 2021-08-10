@@ -7,33 +7,33 @@ const s3 = new S3({
      secretAccessKey: keys.awsSecretKey,
 });
 
-async function  uploadFile(file) {
+async function uploadFile(file) {
      const fileStream = fs.createReadStream(file.path);
 
      const uploadParams = {
           Bucket: keys.awsBucketName,
           Body: fileStream,
-          Key: file.filename
+          Key: file.filename,
      };
 
      return s3.upload(uploadParams).promise();
 }
 
 function removeFile(fileKey) {
-    const uploadParams = {
-         Bucket: keys.awsBucketName,
-         Key: fileKey
-    };
+     const uploadParams = {
+          Bucket: keys.awsBucketName,
+          Key: fileKey,
+     };
 
-    return s3.deleteObject(uploadParams).promise();
+     return s3.deleteObject(uploadParams).promise();
 }
 
-function getFileStream(fileKey){
+function getFileStream(fileKey) {
      const downloadParams = {
-          Key:fileKey,
-          Bucket:keys.awsBucketName
-     }
-     return s3.getObject(downloadParams).createReadStream()
+          Key: fileKey,
+          Bucket: keys.awsBucketName,
+     };
+     return s3.getObject(downloadParams).createReadStream();
 }
 
 exports.removeFile = removeFile;

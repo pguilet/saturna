@@ -1,40 +1,61 @@
 //Rendering layer control (React router content)
-import React, {Component} from 'react';
-import {BrowserRouter, Route} from 'react-router-dom'; 
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { BrowserRouter, Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 import * as actions from '../actions';
 
-import Home from "./front/Home";
-import Dashboard from "./front/Dashboard";
-import GuardedRoute from "./GuardedRoute";
-import Login from "./agentInterface/Login";
+import Home from './front/Home';
+import Dashboard from './front/Dashboard';
+import GuardedRoute from './GuardedRoute';
+import Login from './agentInterface/Login';
 import AgentInterface from './agentInterface/AgentInterface';
 import '../css/index.scss';
 import AgentsList from './agentInterface/AgentsList';
 import AgentsHome from './agentInterface/AgentsHome';
+import { useHistory } from 'react-router-dom';
 
+class App extends Component {
+     componentDidMount() {
+          this.props.fetchUser();
+     }
 
-class App extends Component{
-    componentDidMount(){
-        this.props.fetchUser();
-    }
-    
-   render(){
-     return (
-       <BrowserRouter>        
-           <Route exact path="/" component={Home} />
-           <Route exact path="/about" component={Home} />
-           <Route exact path="/login" component={Login} />
-           <GuardedRoute exact path="/surveys" component={Dashboard} />
-           <Route exact path="/contact" component={Home} />
-           <Route exact path="/services" component={Home} />        
-           <GuardedRoute exact path="/agentsHome" component={AgentInterface} />
-           <GuardedRoute exact path="/agentsList" component={AgentInterface} />
-           <GuardedRoute exact path="/homeAdsList" component={AgentInterface} />
-           <GuardedRoute exact path="/clients" component={AgentInterface} />
-       </BrowserRouter>
-     );
-   }
-};
+     render() {
+          return (
+               <BrowserRouter>
+                    <Route exact path="/" component={Home} />
+                    <Route exact path="/about" component={Home} />
+                    <Route exact path="/login" component={Login} />
+                    <GuardedRoute exact path="/surveys" component={Dashboard} />
+                    <Route exact path="/contact" component={Home} />
+                    <Route exact path="/services" component={Home} />
+                    <GuardedRoute
+                         exact
+                         path="/agentsHome"
+                         component={AgentInterface}
+                    />
+                    <GuardedRoute
+                         exact
+                         path="/agentsList"
+                         component={AgentInterface}
+                    />
+                    <GuardedRoute
+                         exact
+                         path="/homeAdsList"
+                         component={AgentInterface}
+                    />
+                    <GuardedRoute
+                         exact
+                         path="/clients"
+                         component={AgentInterface}
+                    />
+                    <GuardedRoute
+                         exact
+                         path="/client/:clientId"
+                         component={AgentInterface}
+                    />
+               </BrowserRouter>
+          );
+     }
+}
 
-export default connect(null,actions) (App);
+export default connect(null, actions)(App);

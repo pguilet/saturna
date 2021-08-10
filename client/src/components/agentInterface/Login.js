@@ -1,7 +1,7 @@
 //Rendering layer control (React router content)
 import '../../css/index.css';
 import React, { Component } from 'react';
-import { BrowserRouter, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import { reduxForm, Field } from 'redux-form';
@@ -69,7 +69,6 @@ class Login extends Component {
                                    </div>
                                    <Button
                                         variant="success"
-                                        type="button"
                                         className="centered"
                                         type="submit"
                                    >

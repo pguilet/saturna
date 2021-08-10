@@ -146,6 +146,7 @@ class HomeAdsList extends Component {
                          title={imageKey}
                          className="thumbnail separated"
                          src={'/api/images/' + imageKey}
+                         alt="thumbnail"
                     />
                );
           });
@@ -227,7 +228,7 @@ class HomeAdsList extends Component {
      }
 
      async deleteTemporaryUploadDirectory() {
-          var res = await axios.post('/api/deleteTemporaryUploadDirectory');
+           axios.post('/api/deleteTemporaryUploadDirectory');
      }
      closeFocusForm(actionFromBackButton, actionFromNewUserButton) {
           this.backButtonTriggered = actionFromBackButton;
