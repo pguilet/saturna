@@ -11,7 +11,7 @@ import Table from 'react-bootstrap/Table';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
 
-class Clients extends Component {
+class Search extends Component {
      state = {
           showFocusForm: false,
      };
@@ -25,7 +25,6 @@ class Clients extends Component {
      }
      componentDidMount() {
           this.props.fetchPage('clients');
-          this.props.fetchClients();
           this.closeFocusForm = this.closeFocusForm.bind(this);
           this.computeFormOpeningStatus =
                this.computeFormOpeningStatus.bind(this);
@@ -105,7 +104,7 @@ class Clients extends Component {
                          this.openClientRecord(client);
                     }}
                >
-                    {isDate ? moment(value).format('DD/MM/YYYY') : value}
+                    {isDate ? moment(value).format('L') : value}
                </td>
           );
      }
@@ -254,4 +253,4 @@ function mapStateToProps({ clients, flash, auth }) {
      return { clients, flash, auth };
 }
 
-export default connect(mapStateToProps, actions)(withRouter(Clients));
+export default connect(mapStateToProps, actions)(withRouter(Search));

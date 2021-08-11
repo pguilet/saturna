@@ -10,9 +10,6 @@ import GuardedRoute from './GuardedRoute';
 import Login from './agentInterface/Login';
 import AgentInterface from './agentInterface/AgentInterface';
 import '../css/index.scss';
-import AgentsList from './agentInterface/AgentsList';
-import AgentsHome from './agentInterface/AgentsHome';
-import { useHistory } from 'react-router-dom';
 
 class App extends Component {
      componentDidMount() {
@@ -51,6 +48,11 @@ class App extends Component {
                     <GuardedRoute
                          exact
                          path="/client/:clientId"
+                         component={AgentInterface}
+                    />
+                    <GuardedRoute
+                         exact
+                         path="/search"
                          component={AgentInterface}
                     />
                </BrowserRouter>

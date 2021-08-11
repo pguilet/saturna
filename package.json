@@ -11,7 +11,7 @@
     "start": "node index.js",
     "server": "nodemon index.js",
     "client": "npm run start --prefix client",
-    "dev": "concurrently \"sass client/src/css/index.scss client/src/css/index.css\" \"npm run server\" \"npm run client\"",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "author": "",
@@ -28,6 +28,7 @@
     "express": "^4.17.1",
     "fs-extra": "^10.0.0",
     "lodash": "^4.17.21",
+    "moment": "^2.29.1",
     "mongoose": "^5.13.5",
     "multer": "^1.4.2",
     "node-sass": "^6.0.1",

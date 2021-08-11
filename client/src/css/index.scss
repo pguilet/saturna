@@ -1,158 +1,135 @@
-@import "~bootstrap/scss/bootstrap";
+@import '~bootstrap/scss/bootstrap';
 
 @mixin centered {
-    display : flex;
-    align-items : center;
-    justify-content: center;
+     display: flex;
+     align-items: center;
+     justify-content: center;
 }
-#root main{
-    margin-top:30px;
-}
-
-.inline{
-    display:inline;
-}
-#root main form{
-    border-radius: 8px;
-    border: 1px solid #ced4da;
-    padding:10px;
-}
-.fixed-button{
-    position: fixed;
-    right: 23px;
-    bottom: 23px;
-    padding-top: 15px;
-    margin-bottom: 0;
-    z-index: 997;
-    bottom: 45px;
-    right: 24px;
+#root main {
+     margin-top: 30px;
 }
 
-.text-teal{
-    color:teal;
+.inline {
+     display: inline;
+}
+#root main form {
+     border-radius: 8px;
+     border: 1px solid #ced4da;
+     padding: 10px;
+}
+.fixed-button {
+     position: fixed;
+     right: 23px;
+     bottom: 23px;
+     padding-top: 15px;
+     margin-bottom: 0;
+     z-index: 997;
+     bottom: 45px;
+     right: 24px;
 }
 
-.centered{
-    @include centered(); 
+.text-teal {
+     color: teal;
 }
 
-.separateIcon{
-    margin-left:5px;
+.centered {
+     @include centered();
 }
 
-.button-floating{
-    @include centered(); 
-    color: #fff;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    background-color: #26a69a;
-    border-radius: 50%;
-    -webkit-transition: background-color .3s;
-    transition: background-color .3s;
-    cursor: pointer;
-    vertical-align: middle;
-    text-align: center;
-    width: 56px;
-    height: 56px;
-    font-size: 30px;
+.separateIcon {
+     margin-left: 5px;
+}
+
+.button-floating {
+     @include centered();
+     color: #fff;
+     position: relative;
+     overflow: hidden;
+     z-index: 1;
+     width: 40px;
+     height: 40px;
+     line-height: 40px;
+     background-color: #26a69a;
+     border-radius: 50%;
+     -webkit-transition: background-color 0.3s;
+     transition: background-color 0.3s;
+     cursor: pointer;
+     vertical-align: middle;
+     text-align: center;
+     width: 56px;
+     height: 56px;
+     font-size: 30px;
 }
 
 .btn-floating i {
-    position:absolute;
-    top:0;
-    left:0;
-    text-align: center;
-    color:red;
-
+     position: absolute;
+     top: 0;
+     left: 0;
+     text-align: center;
+     color: red;
 }
 
-#header-background{
-  background-image: url("../images/background.jpg");
-  background-size: 100%;
-  padding-top: 50px;
-  min-height: 300px;
-  background-position: center center;
+#header-background {
+     background-image: url('../images/background.jpg');
+     background-size: 100%;
+     padding-top: 50px;
+     min-height: 300px;
+     background-position: center center;
 }
-.separated{
-    margin-right: 10px;
-    margin-bottom:10px;
-    margin-top:10px;
+.separated {
+     margin-right: 10px;
+     margin-bottom: 10px;
+     margin-top: 10px;
 }
-.thumbnail{
-    width:100px;
+.thumbnail {
+     width: 100px;
 }
-.brand{
-    background-color: #009ed8;
-    color: white;
-    text-align: center;
-    cursor:pointer;
+.brand {
+     background-color: #009ed8;
+     color: white;
+     text-align: center;
+     cursor: pointer;
 }
-.selectable{
-    cursor:pointer;
-
+.selectable {
+     cursor: pointer;
 }
-.img-container{
-    position:relative;
-    display:inline-block;
+.img-container {
+     position: relative;
+     display: inline-block;
 }
-.img-container .overlay{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:black;
-    opacity:0;
-    transition:opacity 500ms ease-in-out;
- }
-.img-container:hover .overlay{
-    opacity:0.5;
+.img-container .overlay {
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background: black;
+     opacity: 0;
+     transition: opacity 500ms ease-in-out;
 }
-
-
-.img-container span{
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.img-container:hover .overlay {
+     opacity: 0.5;
 }
 
-.overlay span{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    color:#fff;
-   
-}
-.brand-description{
-    background-color: #181919;
-    color: white;
+.img-container span {
+     display: flex;
+     align-items: center;
+     justify-content: center;
 }
 
-.nav {
-  
-    .nav-link{
-        background-color:#181919 ;
-        color:white;
-        
-        
-    }
-    .nav-link:focus,.nav-link:hover{
-        color:white;
-        
-        
-    }
-
-    .active {
-        background-color: #009ed8;
-    }
-
+.overlay span {
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     color: #fff;
+}
+.brand-description {
+     background-color: #181919;
+     color: white;
 }
 
-
-  
-  
+.active {
+     background-color: teal !important;
+     color: white !important;
+}

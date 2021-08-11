@@ -60,8 +60,8 @@ export const login = (history, username, password) => async (dispatch) => {
           params: { username, password },
      });
      if (!res.data.message) {
-          dispatch({ type: FETCH_USER, payload: res.data });
           history.push('/agentsHome');
+          dispatch({ type: FETCH_USER, payload: res.data });
      } else {
           dispatch({ type: FLASH, payload: res.data });
      }
@@ -167,4 +167,16 @@ export const deleteClient = (form, identifiant) => async (dispatch) => {
      res = await axios.get('/api/allClients');
      dispatch({ type: FLASH, payload: { message: false } });
      dispatch({ type: FETCH_CLIENTS, payload: res.data });
+};
+
+export const search = (searchValue, history) => async (dispatch) => {
+     const res = await axios.get('/api/search', {
+          params: { searchValue },
+     });
+     if (!res.data.message) {
+          await history.push('/search');
+          dispatch({ type: FETCH_CLIENTS, payload: res.data });
+     } else {
+          dispatch({ type: FLASH, payload: res.data });
+     }
 };

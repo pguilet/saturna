@@ -7,7 +7,7 @@ import * as actions from '../../actions';
 
 class AgentsHome extends Component {
      componentDidMount() {
-          this.props.fetchPage('agentsHome');
+          this.props.fetchPage('dashboard');
      }
      renderContent() {
           return <div>Authenticated</div>;

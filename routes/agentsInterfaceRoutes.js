@@ -16,6 +16,7 @@ const { uploadFile, getFileStream, removeFile } = require('../services/s3');
 const fs = require('fs-extra');
 const util = require('util');
 const unlinkFile = util.promisify(fs.unlink);
+const moment = require('moment');
 
 const handleError = (err, res) => {
      res.status(500)
@@ -44,6 +45,46 @@ module.exports = (app) => {
      app.get('/api/allClients', requireLogin, async (req, res) => {
           const clients = await Clients.find().sort({ surname: 1 });
           res.send(clients);
+     });
+
+     app.get('/api/search', requireLogin, async (req, res) => {
+          const searchValue = req.query.searchValue;
+          var clients = await Clients.find({
+               $or: [
+                    { name: new RegExp(searchValue, 'i') },
+                    { surname: new RegExp(searchValue, 'i') },
+               ],
+          }); //i for case insensitive
+          try {
+               var date = moment(searchValue, 'YYYYMMDD');
+               var datePlusOne = moment(searchValue, 'YYYYMMDD')
+                    .add(1, 'day')
+                    .toDate();
+               var temp = await Clients.find({
+                    birthday: {
+                         $gte: date,
+                         $lt: datePlusOne,
+                    },
+               });
+               clients = clients.concat(temp);
+               date = moment(searchValue, 'DDMMYYYY');
+               datePlusOne = moment(searchValue, 'DDMMYYYY')
+                    .add(1, 'day')
+                    .toDate();
+               temp = await Clients.find({
+                    birthday: {
+                         $gte: date,
+                         $lt: datePlusOne,
+                    },
+               });
+               clients = clients.concat(temp);
+          } catch (e) {}
+
+          if (Array.isArray(clients)) {
+               res.send(clients);
+          } else {
+               res.send([clients]);
+          }
      });
 
      app.post('/api/client', requireLogin, async (req, res) => {

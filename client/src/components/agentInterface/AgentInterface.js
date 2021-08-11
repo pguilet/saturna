@@ -1,7 +1,7 @@
 //Rendering layer control (React router content)
 import '../../css/index.css';
 import React, { Component } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import InterfaceHeader from './InterfaceHeader';
@@ -11,6 +11,7 @@ import GuardedRoute from '../GuardedRoute';
 import HomeAdsList from './HomeAdsList';
 import Clients from './Clients';
 import Client from './Client';
+import Search from './Search';
 import { Roles } from '../../actions/types';
 
 class AgentInterface extends Component {
@@ -40,6 +41,11 @@ class AgentInterface extends Component {
                               exact
                               path="/clients"
                               component={Clients}
+                         />
+                         <GuardedRoute
+                              exact
+                              path="/search"
+                              component={Search}
                          />
                          <GuardedRoute
                               exact

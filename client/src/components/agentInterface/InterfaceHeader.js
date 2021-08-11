@@ -8,9 +8,16 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import Form from 'react-bootstrap/Form';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
-
 import { Roles } from '../../actions/types.js';
+import * as actions from '../../actions';
+import { withRouter } from 'react-router-dom';
+
 class InterfaceHeader extends Component {
+     constructor(props) {
+          super(props);
+          this.searchField = React.createRef();
+     }
+
      renderUserConnectedDropDown() {
           if (this.props.auth) {
                const isAdmin = this.props.auth.role === Roles.ADMIN;
@@ -37,6 +44,18 @@ class InterfaceHeader extends Component {
                );
           }
      }
+
+     handleSubmit = (event) => {
+          event.preventDefault();
+          this.props.search(this.searchField.current.value, this.props.history);
+     };
+     getClassNames(pageName) {
+          var className = 'nav-link';
+          if (this.props.pageSelected === pageName) {
+               className = className + ' active';
+          }
+          return className;
+     }
      render() {
           return (
                <Navbar bg="light" expand="lg" fixed="top">
@@ -47,22 +66,39 @@ class InterfaceHeader extends Component {
                          <Navbar.Toggle aria-controls="basic-navbar-nav" />
                          <Navbar.Collapse id="basic-navbar-nav">
                               <Nav className="me-auto">
-                                   <Link to="/agentsHome" className="nav-link">
+                                   <Link
+                                        to="/agentsHome"
+                                        className={this.getClassNames(
+                                             'dashboard'
+                                        )}
+                                   >
                                         Dashboard
                                    </Link>
-                                   <Link to="/clients" className="nav-link">
+                                   <Link
+                                        to="/clients"
+                                        className={this.getClassNames(
+                                             'clients'
+                                        )}
+                                   >
                                         Clients
                                    </Link>
                               </Nav>
 
-                              <Form className="d-flex">
+                              <Form
+                                   className="d-flex"
+                                   onSubmit={this.handleSubmit}
+                              >
                                    <FormControl
+                                        ref={this.searchField}
                                         type="search"
                                         placeholder="Search"
                                         className="mr-2"
                                         aria-label="Search"
                                    />
-                                   <Button variant="outline-success">
+                                   <Button
+                                        variant="outline-success"
+                                        type="submit"
+                                   >
                                         Search
                                    </Button>
                               </Form>
@@ -76,7 +112,7 @@ class InterfaceHeader extends Component {
      }
 }
 
-function mapStateToProps({ auth, pageSelected, history }) {
-     return { auth, pageSelected, history };
+function mapStateToProps({ auth, pageSelected }) {
+     return { auth, pageSelected };
 }
-export default connect(mapStateToProps)(InterfaceHeader);
+export default connect(mapStateToProps, actions)(withRouter(InterfaceHeader));
