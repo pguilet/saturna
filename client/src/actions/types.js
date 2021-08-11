@@ -9,6 +9,17 @@ export const Roles = {
      AGENT: 'agent',
      ADMIN: 'admin',
 };
+export const Civility = {
+     MR: 'Mr',
+     MME: 'Mme',
+     NOGENRE: 'Non binaire',
+};
+export const FamilySituation = {
+     SINGLE: 'célibataire',
+     MARRIED: 'marié',
+     PACSED: 'pacsé',
+     CONCUBINE: 'en concubinage',
+};
 export const AdType = {
      LOCATION: 'location',
      SELLING: 'vente',

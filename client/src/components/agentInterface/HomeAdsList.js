@@ -1,5 +1,4 @@
 //Rendering layer control (React router content)
-import '../../css/index.css';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
@@ -228,7 +227,7 @@ class HomeAdsList extends Component {
      }
 
      async deleteTemporaryUploadDirectory() {
-           axios.post('/api/deleteTemporaryUploadDirectory');
+          axios.post('/api/deleteTemporaryUploadDirectory');
      }
      closeFocusForm(actionFromBackButton, actionFromNewUserButton) {
           this.backButtonTriggered = actionFromBackButton;

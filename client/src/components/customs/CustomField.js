@@ -1,5 +1,4 @@
 //Rendering layer control (React router content)
-import '../../css/index.css';
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -69,10 +68,15 @@ class CustomField extends Component {
                               id={id}
                               name={id}
                               {...input}
+                              key={id}
+                              value={this.state.valueToSet}
                               type="date"
                               InputLabelProps={{
                                    shrink: true,
                               }}
+                              onChange={(e) =>
+                                   this.setState({ valueToSet: e.target.value })
+                              }
                          />
                     </>
                );
@@ -82,7 +86,8 @@ class CustomField extends Component {
                          as="textarea"
                          rows={3}
                          {...input}
-                         id={label}
+                         id={id}
+                         key={id}
                          disabled={disabled}
                          value={this.state.valueToSet}
                          onChange={(e) =>
@@ -94,8 +99,8 @@ class CustomField extends Component {
           } else if (type === 'images') {
                var result = (
                     <input
-                         key={0}
-                         id={label}
+                         key={id}
+                         id={id}
                          label={label}
                          type="file"
                          style={{ display: 'none' }}
@@ -156,7 +161,6 @@ class CustomField extends Component {
                                         }}
                                         className="overlay selectable"
                                    >
-                                        {' '}
                                         <span className="material-icons text-danger">
                                              delete
                                         </span>
@@ -170,14 +174,14 @@ class CustomField extends Component {
                     result,
                     <Button
                          type="button"
-                         key={7}
+                         key="imageSelect"
                          className="teal btn-flat white-text"
                          onClick={() => document.getElementById(label).click()}
                     >
                          Sélectionner
                     </Button>,
                     <input
-                         key={1}
+                         key="hiddenImage"
                          type="hidden"
                          id="images"
                          {...input}
@@ -191,8 +195,9 @@ class CustomField extends Component {
                     <Form.Select
                          aria-label={label}
                          name={label}
-                         id={label}
+                         id={id}
                          {...input}
+                         key={id}
                     >
                          {this.renderFirstOption(
                               this.state.valueToSet,
@@ -204,14 +209,34 @@ class CustomField extends Component {
                          )}
                     </Form.Select>
                );
+          } else if (type === 'checkbox') {
+               return (
+                    <>
+                         <Form.Check
+                              inline
+                              key={id}
+                              id={id}
+                              {...input}
+                              type={type}
+                              label={label}
+                              {...(this.state.valueToSet && { checked: true })}
+                              onChange={async (e) => {
+                                   this.setState({
+                                        valueToSet: e.target.checked,
+                                   });
+                              }}
+                         />
+                         {this.props.br && <br />}
+                    </>
+               );
           } else {
                return (
                     <Form.Control
                          placeholder=""
-                         id={label}
+                         id={id}
+                         key={id}
                          {...input}
                          type={type}
-                         style={{ marginBottom: '5px' }}
                          disabled={disabled}
                          value={this.state.valueToSet}
                          onChange={async (e) => {
@@ -224,8 +249,16 @@ class CustomField extends Component {
      }
      render() {
           return (
-               <div>
-                    <Form.Label>{this.props.label}</Form.Label>
+               <>
+                    {this.props.type !== 'checkbox' && (
+                         <Form.Label>{this.props.label}</Form.Label>
+                    )}
+                    {this.props.extralabel && (
+                         <>
+                              <Form.Label>{this.props.extralabel}</Form.Label>
+                              <br />
+                         </>
+                    )}
                     {this.getTag(
                          this.props.type,
                          this.props.label,
@@ -233,13 +266,15 @@ class CustomField extends Component {
                          this.props.input,
                          this.props.id
                     )}
-                    <div
-                         className="text-danger"
-                         style={{ marginBottom: '20px' }}
-                    >
-                         {this.props.meta.touched && this.props.meta.error}
-                    </div>
-               </div>
+                    {this.props.type !== 'checkbox' && (
+                         <div
+                              className="text-danger"
+                              style={{ marginBottom: '20px' }}
+                         >
+                              {this.props.meta.touched && this.props.meta.error}
+                         </div>
+                    )}
+               </>
           );
      }
 }

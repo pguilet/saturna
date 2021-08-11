@@ -1,5 +1,4 @@
 //Rendering layer control (React router content)
-import '../../css/index.css';
 import React, { Component } from 'react';
 import { BrowserRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';

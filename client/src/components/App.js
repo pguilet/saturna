@@ -10,7 +10,7 @@ import GuardedRoute from './GuardedRoute';
 import Login from './agentInterface/Login';
 import AgentInterface from './agentInterface/AgentInterface';
 import '../css/index.scss';
-
+import * as Sentry from '@sentry/react';
 class App extends Component {
      componentDidMount() {
           this.props.fetchUser();
@@ -60,4 +60,4 @@ class App extends Component {
      }
 }
 
-export default connect(null, actions)(App);
+export default connect(null, actions)(Sentry.withProfiler(App));

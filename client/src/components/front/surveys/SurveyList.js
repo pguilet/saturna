@@ -4,7 +4,6 @@ import { fetchSurveys } from '../../../actions';
 
 class SurveyList extends Component {
      componentDidMount() {
-          console.log(this.props);
           this.props.fetchSurveys();
      }
 

@@ -1,5 +1,4 @@
 //Rendering layer control (React router content)
-import '../../css/index.css';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
@@ -10,6 +9,7 @@ import FixedFloatingButton from '../customs/FixedFloatingButton';
 import Table from 'react-bootstrap/Table';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
+import * as Sentry from '@sentry/react';
 
 class Clients extends Component {
      state = {
@@ -92,8 +92,8 @@ class Clients extends Component {
                },
           ];
      }
-     openClientRecord(client) {
-          this.props.history.push('/client/' + client._id);
+     openClientRecord(clientId) {
+          this.props.openClient(this.props.history, clientId);
      }
 
      renderOpenRecordTableAction(client, value, isDate) {
@@ -102,7 +102,7 @@ class Clients extends Component {
                     className="selectable"
                     onClick={() => {
                          this.resetState(client);
-                         this.openClientRecord(client);
+                         this.openClientRecord(client._id);
                     }}
                >
                     {isDate ? moment(value).format('DD/MM/YYYY') : value}
@@ -149,7 +149,7 @@ class Clients extends Component {
                                                                         client
                                                                    );
                                                                    this.openClientRecord(
-                                                                        client
+                                                                        client._id
                                                                    );
                                                               }}
                                                               className="selectable inline secondary-content text-teal"

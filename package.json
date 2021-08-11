@@ -20,6 +20,8 @@
     "@babel/core": "^7.14.8",
     "@popperjs/core": "^2.9.2",
     "@sendgrid/mail": "^7.4.5",
+    "@sentry/node": "^6.11.0",
+    "@sentry/tracing": "^6.11.0",
     "aws-sdk": "^2.960.0",
     "bcrypt": "^5.0.1",
     "concurrently": "^6.2.0",

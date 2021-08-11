@@ -79,7 +79,6 @@ module.exports = (app) => {
                const mailer = new Mailer(survey, surveyTemplate(survey));
                try {
                     const sendGridResponse = await mailer.send();
-                    console.log(sendGridResponse);
                     await survey.save();
                     req.user.credits -= 1;
                     const user = await req.user.save();

@@ -15,9 +15,15 @@ export const fetchUser = () => async (dispatch) => {
      dispatch({ type: FETCH_USER, payload: res.data });
 };
 
-export const fetchClient = (params) => async (dispatch) => {
-     const res = await axios.post('/api/client', params);
+export const fetchClient = (clientId) => async (dispatch) => {
+     const res = await axios.post('/api/client', clientId);
      dispatch({ type: FETCH_CLIENT, payload: res.data });
+};
+
+export const openClient = (history, clientId) => async (dispatch) => {
+     const res = await axios.post('/api/client', clientId);
+     dispatch({ type: FETCH_CLIENT, payload: res.data });
+     history.push('/client/' + clientId);
 };
 
 export const fetchUsers = () => async (dispatch) => {
@@ -179,4 +185,11 @@ export const search = (searchValue, history) => async (dispatch) => {
      } else {
           dispatch({ type: FLASH, payload: res.data });
      }
+};
+export const editClientProfile = (form, clientId) => async (dispatch) => {
+     await axios.post('/api/editClientProfile', {
+          form: form.clientForm.values,
+          clientId,
+     });
+     dispatch({ type: FLASH, payload: { message: 'Changements sauvegardés' } });
 };

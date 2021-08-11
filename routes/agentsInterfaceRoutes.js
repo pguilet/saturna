@@ -202,6 +202,20 @@ module.exports = (app) => {
                res.status(200).contentType('text/plain').end('File uploaded!');
           }
      );
+     app.post('/api/editClientProfile', requireLogin, async (req, res) => {
+          let client = await Clients.findOne({
+               _id: req.body.clientId.clientId,
+          });
+          let form = req.body.form;
+          if (client && form) {
+               entries = Object.entries(form);
+               Object.entries(form).forEach(([key, value]) =>
+                    eval('client.' + key + '= ' + value + ';')
+               );
+          }
+          client.save();
+          res.send(client);
+     });
 
      app.post('/api/editHomeAd', requireLogin, async (req, res) => {
           let homeAd = await HomeAds.findOne({ _id: req.body.identifiant });

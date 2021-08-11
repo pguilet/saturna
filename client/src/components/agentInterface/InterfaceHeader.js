@@ -74,14 +74,17 @@ class InterfaceHeader extends Component {
                                    >
                                         Dashboard
                                    </Link>
-                                   <Link
-                                        to="/clients"
-                                        className={this.getClassNames(
-                                             'clients'
-                                        )}
-                                   >
-                                        Clients
-                                   </Link>
+
+                                   {this.props.auth && (
+                                        <Link
+                                             to="/clients"
+                                             className={this.getClassNames(
+                                                  'clients'
+                                             )}
+                                        >
+                                             Clients
+                                        </Link>
+                                   )}
                               </Nav>
 
                               <Form

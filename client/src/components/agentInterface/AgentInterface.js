@@ -1,5 +1,4 @@
 //Rendering layer control (React router content)
-import '../../css/index.css';
 import React, { Component } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -13,14 +12,14 @@ import Clients from './Clients';
 import Client from './Client';
 import Search from './Search';
 import { Roles } from '../../actions/types';
-
+import Nav from 'react-bootstrap/Nav';
 class AgentInterface extends Component {
      render() {
           return (
                <BrowserRouter>
                     <InterfaceHeader />
 
-                    <main className="container">
+                    <main id="agentInterface" className="container-fluid">
                          <GuardedRoute
                               exact
                               path="/agentsHome"
