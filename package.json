@@ -19,6 +19,7 @@
   "dependencies": {
     "@babel/core": "^7.14.8",
     "@popperjs/core": "^2.9.2",
+    "@redux-devtools/cli": "^1.0.0-9",
     "@sendgrid/mail": "^7.4.5",
     "@sentry/node": "^6.11.0",
     "@sentry/tracing": "^6.11.0",
@@ -43,5 +44,8 @@
     "sass": "^1.37.0",
     "sendgrid": "^5.2.3",
     "stripe": "^8.167.0"
+  },
+  "devDependencies": {
+    "remote-redux-devtools": "^0.5.16"
   }
 }

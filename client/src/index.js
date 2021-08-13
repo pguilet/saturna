@@ -9,6 +9,7 @@ import App from './components/App';
 import reducers from './reducers';
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
+import { composeWithDevTools } from 'remote-redux-devtools';
 // import axios from 'axios';
 // window.axios =axios;//used to be able to use axios in browser console to do post requests.
 Sentry.init({
@@ -18,7 +19,19 @@ Sentry.init({
      // for finer control
      tracesSampleRate: 1.0,
 });
-const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
+
+const composeEnhancers = composeWithDevTools({
+     realtime: true,
+     name: 'Your Instance Name',
+     hostname: 'localhost',
+     port: 1024, // the port your remotedev server is running at
+});
+
+const store = createStore(
+     reducers,
+     {},
+     composeEnhancers(applyMiddleware(reduxThunk))
+);
 
 ReactDom.render(
      <Provider store={store}>

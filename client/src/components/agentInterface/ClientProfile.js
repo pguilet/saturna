@@ -14,31 +14,14 @@ import { Link, withRouter } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 import { BrowserRouter } from 'react-router-dom';
 import GuardedRoute from '../GuardedRoute';
-import ClientOpenCases from './ClientOpenCases';
-import ClientClosedCases from './ClientClosedCases';
-import ClientProfile from './ClientProfile';
+import ClientCases from './ClientCases';
 
-class Client extends Component {
-     state = {};
+class ClientProfile extends Component {
      componentDidMount() {
           this.clientId = this.props.match.params.clientId;
           if (!this.props.client) {
                //cas where we come directly from url
                this.props.fetchClient(this.clientId);
-          }
-          let lastSegment = this.props.match.path.split('/')[3];
-          switch (lastSegment) {
-               case 'profile':
-                    this.setState({ activeTab: 'profile' });
-                    break;
-               case 'openCases':
-                    this.setState({ activeTab: 'openCases' });
-                    break;
-               case 'closedCases':
-                    this.setState({ activeTab: 'closedCases' });
-                    break;
-               default:
-                    break;
           }
      }
      componentWillUnmount() {}
@@ -282,88 +265,48 @@ class Client extends Component {
           );
      }
 
-     renderSideBar() {
-          return (
-               <Nav className="flex-column">
-                    <Link
-                         to={'/client/' + this.props.client._id + '/profile'}
-                         className={
-                              this.state.activeTab === 'profile' ? 'active' : ''
-                         }
-                         onClick={() => (this.activeTab = 'profile')}
-                    >
-                         Profile
-                    </Link>
-                    <Link
-                         to={'/client/' + this.props.client._id + '/openCases'}
-                         className={
-                              this.state.activeTab === 'openCases'
-                                   ? 'active'
-                                   : ''
-                         }
-                         // onClick={() => (this.activeTab = 'openCases')}
-                    >
-                         Dossier en cours
-                    </Link>
-                    <Link
-                         to={
-                              '/client/' +
-                              this.props.client._id +
-                              '/closedCases'
-                         }
-                         className={
-                              this.state.activeTab === 'closedCases'
-                                   ? 'active'
-                                   : ''
-                         }
-                         // onClick={() => (this.state.activeTab = 'closedCases')}
-                    >
-                         Dossiers cloturés
-                    </Link>
-                    <Link
-                         to={'/client/' + this.props.client._id}
-                         className={
-                              this.state.activeTab === 'location'
-                                   ? 'active'
-                                   : ''
-                         }
-                         // onClick={() => (this.activeTab = 'location')}
-                    >
-                         Gestion locative
-                    </Link>
-               </Nav>
-          );
-     }
-
      render() {
           return (
                this.props.client && (
-                    <>
-                         <div className="row">
-                              <div className="col-2">
-                                   {this.renderSideBar()}
-                              </div>
-                              <div className="col-10">
-                                   <BrowserRouter>
-                                        <GuardedRoute
-                                             exact
-                                             path="/client/:clientId/openCases"
-                                             component={ClientOpenCases}
-                                        />
-                                        <GuardedRoute
-                                             exact
-                                             path="/client/:clientId/closedCases"
-                                             component={ClientClosedCases}
-                                        />
-                                        <GuardedRoute
-                                             exact
-                                             path="/client/:clientId/profile"
-                                             component={ClientProfile}
-                                        />
-                                   </BrowserRouter>
-                              </div>
+                    <Form>
+                         {this.renderFields(this.props.client)}
+                         <div
+                              className="text-danger"
+                              style={{ marginBottom: '20px' }}
+                         >
+                              {this.props.flash ? this.props.flash.message : ''}
                          </div>
-                    </>
+                         <div className="flexParentRowChildren">
+                              <Button
+                                   variant="warning"
+                                   type="button"
+                                   className="centered margin-right-15px"
+                                   onClick={() => {
+                                        window.location.reload();
+                                   }}
+                              >
+                                   Annuler les modifications
+                                   <i className="material-icons separateIcon">
+                                        cancel
+                                   </i>
+                              </Button>
+                              <Button
+                                   variant="success"
+                                   className="centered"
+                                   onClick={() =>
+                                        this.props.editClientProfile(
+                                             this.props.form,
+                                             this.clientId
+                                        )
+                                   }
+                              >
+                                   Appliquer les modification(s)
+                                   <i className="material-icons separateIcon">
+                                        done
+                                   </i>
+                              </Button>
+                         </div>
+                    </Form>
                )
           );
      }
@@ -372,5 +315,8 @@ class Client extends Component {
 function mapStateToProps(props) {
      return props;
 }
-Client = connect(mapStateToProps, actions)(Client);
-export default withRouter(Client);
+ClientProfile = connect(mapStateToProps, actions)(ClientProfile);
+export default reduxForm({
+     destroyOnUnmount: false,
+     form: 'clientForm',
+})(withRouter(ClientProfile));

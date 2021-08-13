@@ -35,3 +35,28 @@ export default Sentry.withProfiler(App);
 # add attribute with an if condition
 
 {...(this.state.valueToSet && { checked: true })}
+
+# redux dev tool
+
+-    install redux dev tool extension
+-    instals redux dev tool npm install --save @redux-devtools/cli
+-    Add code :
+     import { composeWithDevTools } from 'remote-redux-devtools';
+     const composeEnhancers = composeWithDevTools({
+     realtime: true,
+     name: 'Your Instance Name',
+     hostname: 'localhost',
+     port: 1024, // the port your remotedev server is running at
+     });
+
+const store = createStore(
+reducers,
+{},
+composeEnhancers(applyMiddleware(reduxThunk))
+);
+
+-    Launch the redux dev tool server redux-devtools --hostname=localhost --port=1024
+-    Launch the application with npm run dev
+-    CTRL+SHIFT+P open remote devtools and connect to dev tool server at 1024
+
+Use the website.

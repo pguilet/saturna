@@ -204,14 +204,73 @@ module.exports = (app) => {
      );
      app.post('/api/editClientProfile', requireLogin, async (req, res) => {
           let client = await Clients.findOne({
-               _id: req.body.clientId.clientId,
+               _id: req.body.clientId,
           });
           let form = req.body.form;
           if (client && form) {
-               entries = Object.entries(form);
-               Object.entries(form).forEach(([key, value]) =>
-                    eval('client.' + key + '= ' + value + ';')
-               );
+               if (form.civility) {
+                    client.civility = form.civility;
+               }
+               if (form.name) {
+                    client.name = form.name;
+               }
+               if (form.name2) {
+                    client.name2 = form.name2;
+               }
+               if (form.name3) {
+                    client.name3 = form.name3;
+               }
+               if (form.surname) {
+                    client.surname = form.surname;
+               }
+               if (form.womenSurname) {
+                    client.womenSurname = form.womenSurname;
+               }
+               if (form.birthday) {
+                    client.birthday = form.birthday;
+               }
+               if (form.street) {
+                    client.street = form.street;
+               }
+               if (form.postalCode) {
+                    client.postalCode = form.postalCode;
+               }
+               if (form.city) {
+                    client.city = form.city;
+               }
+               if (form.familySituation) {
+                    client.familySituation = form.familySituation;
+               }
+               if (form.childNumber) {
+                    client.childNumber = form.childNumber;
+               }
+               if (form.job) {
+                    client.job = form.job;
+               }
+               if (form.salary) {
+                    client.salary = form.salary;
+               }
+               if (form.phoneNumber) {
+                    client.phoneNumber = form.phoneNumber;
+               }
+               if (form.email) {
+                    client.email = form.email;
+               }
+               if (form.newsletterSuscribing) {
+                    client.newsletterSuscribing = form.newsletterSuscribing;
+               }
+               if (form.profilInvest) {
+                    client.profilInvest = form.profilInvest;
+               }
+               if (form.profilRent) {
+                    client.profilRent = form.profilRent;
+               }
+               if (form.profilOwner) {
+                    client.profilOwner = form.profilOwner;
+               }
+               if (form.comment) {
+                    client.comment = form.comment;
+               }
           }
           client.save();
           res.send(client);

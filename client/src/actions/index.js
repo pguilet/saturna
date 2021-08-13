@@ -16,14 +16,14 @@ export const fetchUser = () => async (dispatch) => {
 };
 
 export const fetchClient = (clientId) => async (dispatch) => {
-     const res = await axios.post('/api/client', clientId);
+     const res = await axios.post('/api/client', { clientId });
      dispatch({ type: FETCH_CLIENT, payload: res.data });
 };
 
 export const openClient = (history, clientId) => async (dispatch) => {
      const res = await axios.post('/api/client', clientId);
      dispatch({ type: FETCH_CLIENT, payload: res.data });
-     history.push('/client/' + clientId);
+     history.push('/client/' + clientId + '/profile');
 };
 
 export const fetchUsers = () => async (dispatch) => {

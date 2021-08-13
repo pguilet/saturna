@@ -13,6 +13,7 @@ import Client from './Client';
 import Search from './Search';
 import { Roles } from '../../actions/types';
 import Nav from 'react-bootstrap/Nav';
+import ClientCases from './ClientCases';
 class AgentInterface extends Component {
      render() {
           return (
@@ -48,7 +49,17 @@ class AgentInterface extends Component {
                          />
                          <GuardedRoute
                               exact
-                              path="/client/:clientId"
+                              path="/client/:clientId/profile"
+                              component={Client}
+                         />
+                         <GuardedRoute
+                              exact
+                              path="/client/:clientId/openCases"
+                              component={Client}
+                         />
+                         <GuardedRoute
+                              exact
+                              path="/client/:clientId/closedCases"
                               component={Client}
                          />
                     </main>
