@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import { withRouter } from 'react-router-dom';
 
 class FocusForm extends Component {
      state = {
@@ -48,6 +49,7 @@ class FocusForm extends Component {
      handleSubmit = (event) => {
           event.preventDefault();
           this.props.validateButtonAction(
+               this.props.history,
                this.props.form,
                this.props.identifiant,
                this.state.stateTriggeredValues
@@ -117,4 +119,4 @@ FocusForm = connect(mapStateToProps, actions)(FocusForm);
 export default reduxForm({
      destroyOnUnmount: true,
      form: 'focusForm',
-})(FocusForm);
+})(withRouter(FocusForm));

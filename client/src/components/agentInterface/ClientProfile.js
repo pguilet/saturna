@@ -15,16 +15,73 @@ import * as Sentry from '@sentry/react';
 import { BrowserRouter } from 'react-router-dom';
 import GuardedRoute from '../GuardedRoute';
 import ClientCases from './ClientCases';
+import FocusForm from './FocusForm';
 
 class ClientProfile extends Component {
+     state = {
+          showFocusForm: false,
+     };
+
      componentDidMount() {
-          this.clientId = this.props.match.params.clientId;
-          if (!this.props.client) {
-               //cas where we come directly from url
-               this.props.fetchClient(this.clientId);
+          this.clientId = this.props.client._id;
+     }
+     resetState(resetShowFocusForm) {
+          if (this.props.flash) {
+               this.props.flash.message = false;
+          }
+          if (resetShowFocusForm) {
+               this.setState({ showFocusForm: true });
+          }
+          this.backButtonTriggered = false;
+          this.createUserButtonTriggered = false;
+          this.closeFocusForm = this.closeFocusForm.bind(this);
+          this.computeFormOpeningStatus =
+               this.computeFormOpeningStatus.bind(this);
+          this.backButtonTriggered = false;
+          this.createUserButtonTriggered = false;
+     }
+     closeFocusForm(actionFromBackButton, actionFromNewUserButton) {
+          this.backButtonTriggered = actionFromBackButton;
+          this.createUserButtonTriggered = actionFromNewUserButton;
+          this.setState({ showFocusForm: false });
+     }
+     computeFormOpeningStatus(showFocusForm, flash) {
+          if (this.backButtonTriggered) {
+               return false;
+          } else if (this.createUserButtonTriggered) {
+               if (flash && flash.message) {
+                    return true;
+               } else if (flash && flash.message === false) {
+                    return false;
+               } else {
+                    return true;
+               }
+          } else {
+               if (showFocusForm) {
+                    return true;
+               } else {
+                    return false;
+               }
           }
      }
-     componentWillUnmount() {}
+     renderFocusForm(showFocusForm) {
+          if (this.computeFormOpeningStatus(showFocusForm, this.props.flash)) {
+               return (
+                    <FocusForm
+                         doOpen={true}
+                         onTheClose={this.closeFocusForm}
+                         validateButtonAction={this.validateButtonAction}
+                         identifiant={{
+                              _id: this.props.client._id,
+                         }}
+                         title={this.title}
+                         description={this.description}
+                         fieldsToDisplay={this.fieldsToDisplay}
+                         validateButtonLabel={this.validateButtonLabel}
+                    />
+               );
+          }
+     }
 
      renderFields(client) {
           const fieldsToDisplay = [
@@ -251,7 +308,7 @@ class ClientProfile extends Component {
                                         : ''
                               }
                               id={field.id}
-                              identifiant={this.props.identifiant}
+                              identifiant={this.props.client._id}
                               statetriggeredvaluesupdatefunction={(values) =>
                                    this.setState({
                                         stateTriggeredValues: values,
@@ -265,48 +322,73 @@ class ClientProfile extends Component {
           );
      }
 
+     setClientDeletionVariables() {
+          this.validateButtonAction = this.props.deleteClient;
+          this.title = 'Suppression de la fiche du client';
+          this.description = 'Etes-vous sûr de vouloir supprimer la fiche?';
+          this.validateButtonLabel = 'Supprimer la fiche';
+          this.fieldsToDisplay = [];
+     }
      render() {
           return (
                this.props.client && (
-                    <Form>
-                         {this.renderFields(this.props.client)}
-                         <div
-                              className="text-danger"
-                              style={{ marginBottom: '20px' }}
-                         >
-                              {this.props.flash ? this.props.flash.message : ''}
-                         </div>
-                         <div className="flexParentRowChildren">
-                              <Button
-                                   variant="warning"
-                                   type="button"
-                                   className="centered margin-right-15px"
-                                   onClick={() => {
-                                        window.location.reload();
-                                   }}
+                    <>
+                         {this.renderFocusForm(this.state.showFocusForm)}
+                         <Form>
+                              {this.renderFields(this.props.client)}
+                              <div
+                                   className="text-danger"
+                                   style={{ marginBottom: '20px' }}
                               >
-                                   Annuler les modifications
-                                   <i className="material-icons separateIcon">
-                                        cancel
-                                   </i>
-                              </Button>
-                              <Button
-                                   variant="success"
-                                   className="centered"
-                                   onClick={() =>
-                                        this.props.editClientProfile(
-                                             this.props.form,
-                                             this.clientId
-                                        )
-                                   }
-                              >
-                                   Appliquer les modification(s)
-                                   <i className="material-icons separateIcon">
-                                        done
-                                   </i>
-                              </Button>
-                         </div>
-                    </Form>
+                                   {this.props.flash
+                                        ? this.props.flash.message
+                                        : ''}
+                              </div>
+                              <div className="flexParentRowChildren">
+                                   <Button
+                                        variant="warning"
+                                        type="button"
+                                        className="centered margin-right-15px"
+                                        onClick={() => {
+                                             window.location.reload();
+                                        }}
+                                   >
+                                        Annuler les modifications
+                                        <i className="material-icons separateIcon">
+                                             cancel
+                                        </i>
+                                   </Button>
+                                   <Button
+                                        variant="success"
+                                        className="centered margin-right-15px"
+                                        onClick={() =>
+                                             this.props.editClientProfile(
+                                                  this.props.form,
+                                                  this.clientId
+                                             )
+                                        }
+                                   >
+                                        Appliquer les modification(s)
+                                        <i className="material-icons separateIcon">
+                                             done
+                                        </i>
+                                   </Button>
+                                   <Button
+                                        variant="danger"
+                                        className="centered"
+                                        onClick={() => {
+                                             this.resetState(true);
+                                             this.setClientDeletionVariables();
+                                        }}
+                                   >
+                                        Supprimer la fiche client
+                                        <i className="material-icons separateIcon">
+                                             delete
+                                        </i>
+                                   </Button>
+                              </div>
+                         </Form>
+                    </>
                )
           );
      }

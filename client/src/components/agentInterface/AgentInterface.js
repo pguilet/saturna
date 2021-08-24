@@ -17,7 +17,7 @@ import ClientCases from './ClientCases';
 class AgentInterface extends Component {
      render() {
           return (
-               <BrowserRouter>
+               <>
                     <InterfaceHeader />
 
                     <main id="agentInterface" className="container-fluid">
@@ -63,7 +63,7 @@ class AgentInterface extends Component {
                               component={Client}
                          />
                     </main>
-               </BrowserRouter>
+               </>
           );
      }
 }

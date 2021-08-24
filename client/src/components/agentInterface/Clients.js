@@ -9,7 +9,6 @@ import FixedFloatingButton from '../customs/FixedFloatingButton';
 import Table from 'react-bootstrap/Table';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
-import * as Sentry from '@sentry/react';
 
 class Clients extends Component {
      state = {
@@ -34,6 +33,7 @@ class Clients extends Component {
           this.name = undefined;
           this.surname = undefined;
           this.birthday = undefined;
+          this._id = undefined;
           this.validateButtonAction = undefined;
           this.title = undefined;
           this.description = undefined;
@@ -54,6 +54,7 @@ class Clients extends Component {
                this.name = client.name;
                this.surname = client.surname;
                this.birthday = client.birthday;
+               this._id = client._id;
           }
      }
 
@@ -225,6 +226,7 @@ class Clients extends Component {
                               name: this.name,
                               surname: this.surname,
                               birthday: this.birthday,
+                              _id: this._id,
                          }}
                          title={this.title}
                          description={this.description}
@@ -242,8 +244,8 @@ class Clients extends Component {
                     {this.renderContent()}
                     <FixedFloatingButton
                          onClick={() => {
-                              this.resetState(null, true);
-                              this.setClientCreationVariables();
+                              // this.resetState(null, true);
+                              this.props.createClient(this.props.history);
                          }}
                     />
                </div>

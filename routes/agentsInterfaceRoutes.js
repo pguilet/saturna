@@ -413,34 +413,37 @@ module.exports = (app) => {
 
      app.post('/api/deleteClient', requireAdminRole, async (req, res) => {
           const clientAlreadyExisting = await Clients.findOneAndDelete({
-               surname: req.body.identifiant.surname,
-               name: req.body.identifiant.name,
-               birthday: req.body.identifiant.birthday,
+               _id: req.body.identifiant._id,
           });
 
           res.send(clientAlreadyExisting);
      });
 
      app.post('/api/newClient', requireLogin, async (req, res) => {
-          const clientAlreadyExisting = await Clients.find({
-               name: req.body.name,
-               surname: req.body.surname,
-               birthday: req.body.birthday,
-          });
-          if (!clientAlreadyExisting.length) {
-               if (!req.body.name || !req.body.surname || !req.body.birthday) {
-                    res.send({
-                         message: 'Veuillez renseigner tous les champs.',
+          let clientAlreadyExisting = false;
+          let name = undefined;
+          let surname = undefined;
+          let birthday = undefined;
+          if (req.body) {
+               name = req.body.name;
+               surname = req.body.surname;
+               birthday = req.body.birthday;
+               if (name || surname || birthday) {
+                    clientAlreadyExisting = await Clients.find({
+                         name: name,
+                         surname: surname,
+                         birthday: birthday,
                     });
-               } else {
-                    const client = await new Clients({
-                         surname: req.body.surname,
-                         name: req.body.name,
-                         birthday: req.body.birthday,
-                    }).save();
-
-                    res.send(client);
                }
+          }
+          if (!clientAlreadyExisting.length) {
+               const client = await new Clients({
+                    surname: surname,
+                    name: name,
+                    birthday: birthday,
+               }).save();
+
+               res.send(client);
           } else {
                res.send({
                     message: 'Le client existe déjà.',

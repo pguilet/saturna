@@ -21,11 +21,8 @@ import ClientProfile from './ClientProfile';
 class Client extends Component {
      state = {};
      componentDidMount() {
-          this.clientId = this.props.match.params.clientId;
-          if (!this.props.client) {
-               //cas where we come directly from url
-               this.props.fetchClient(this.clientId);
-          }
+          //cas where we come directly from url
+          this.props.fetchClient(this.props.match.params.clientId);
           let lastSegment = this.props.match.path.split('/')[3];
           switch (lastSegment) {
                case 'profile':
@@ -344,23 +341,21 @@ class Client extends Component {
                                    {this.renderSideBar()}
                               </div>
                               <div className="col-10">
-                                   <BrowserRouter>
-                                        <GuardedRoute
-                                             exact
-                                             path="/client/:clientId/openCases"
-                                             component={ClientOpenCases}
-                                        />
-                                        <GuardedRoute
-                                             exact
-                                             path="/client/:clientId/closedCases"
-                                             component={ClientClosedCases}
-                                        />
-                                        <GuardedRoute
-                                             exact
-                                             path="/client/:clientId/profile"
-                                             component={ClientProfile}
-                                        />
-                                   </BrowserRouter>
+                                   <GuardedRoute
+                                        exact
+                                        path="/client/:clientId/openCases"
+                                        component={ClientOpenCases}
+                                   />
+                                   <GuardedRoute
+                                        exact
+                                        path="/client/:clientId/closedCases"
+                                        component={ClientClosedCases}
+                                   />
+                                   <GuardedRoute
+                                        exact
+                                        path="/client/:clientId/profile"
+                                        component={ClientProfile}
+                                   />
                               </div>
                          </div>
                     </>
