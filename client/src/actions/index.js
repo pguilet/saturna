@@ -7,6 +7,7 @@ import {
      FETCH_PAGE,
      FETCH_CLIENTS,
      FETCH_CLIENT,
+     FOCUS_FORM_CONFIGURATION,
      FLASH,
 } from './types';
 
@@ -78,6 +79,10 @@ export const createUser = (history, form, username) => async (dispatch) => {
      if (!res.data.message) {
           res = await axios.get('/api/allUsers');
           dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
           dispatch({ type: FETCH_USERS, payload: res.data });
      } else {
           dispatch({ type: FLASH, payload: res.data });
@@ -87,6 +92,7 @@ export const createUser = (history, form, username) => async (dispatch) => {
 export const createClient = (history) => async (dispatch) => {
      var res = await axios.post('/api/newClient');
      if (!res.data.message) {
+          dispatch({ type: FETCH_CLIENT, payload: res.data });
           history.push('/client/' + res.data._id + '/profile');
           dispatch({ type: FLASH, payload: '' });
      } else {
@@ -97,13 +103,18 @@ export const createClient = (history) => async (dispatch) => {
 export const createHomeAd =
      (history, form, identifiant, stateTriggeredValues) => async (dispatch) => {
           let data = new FormData();
-          if (form.focusForm.values.file) {
-               for (var x = 0; x < form.focusForm.values.file.length; x++) {
-                    data.append('file', form.focusForm.values.file[x]);
+          if (form && form.focusForm && form.focusForm.values) {
+               if (form.focusForm.values.title) {
+                    data.append('title', form.focusForm.values.title);
+               }
+               if (form.focusForm.values.description) {
+                    data.append(
+                         'description',
+                         form.focusForm.values.description
+                    );
                }
           }
-          data.append('title', form.focusForm.values.title);
-          data.append('description', form.focusForm.values.description);
+
           data.append('stateTriggeredValues', stateTriggeredValues);
 
           var res = await axios.post('/api/createHomeAd', data, {
@@ -111,6 +122,10 @@ export const createHomeAd =
           });
           res = await axios.get('/api/homeAds');
           dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
           dispatch({ type: FETCH_HOME_ADS, payload: res.data });
      };
 
@@ -121,6 +136,10 @@ export const deleteHomeAd =
           });
           res = await axios.get('/api/homeAds');
           dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
           dispatch({ type: FETCH_HOME_ADS, payload: res.data });
      };
 export const editHomeAd =
@@ -132,6 +151,10 @@ export const editHomeAd =
           });
           res = await axios.get('/api/homeAds');
           dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
           dispatch({ type: FETCH_HOME_ADS, payload: res.data });
      };
 export const updateImagesOfHomeAd = async (files, identifiant) => {
@@ -149,20 +172,30 @@ export const updateImagesOfHomeAd = async (files, identifiant) => {
      return res;
 };
 
-export const editUser = (history, form, username) => async (dispatch) => {
+export const editUser = (history, form, identifiant) => async (dispatch) => {
      var res = await axios.post('/api/editUser', {
           form: form.focusForm.values,
-          username: username,
+          identifiant: identifiant,
      });
      res = await axios.get('/api/allUsers');
      dispatch({ type: FLASH, payload: { message: false } });
+     dispatch({
+          type: FOCUS_FORM_CONFIGURATION,
+          payload: null,
+     });
      dispatch({ type: FETCH_USERS, payload: res.data });
 };
 
-export const deleteUser = (history, form, username) => async (dispatch) => {
-     var res = await axios.post('/api/deleteUser', { username: username });
+export const deleteUser = (history, form, identifiants) => async (dispatch) => {
+     var res = await axios.post('/api/deleteUser', {
+          identifiants: identifiants,
+     });
      res = await axios.get('/api/allUsers');
      dispatch({ type: FLASH, payload: { message: false } });
+     dispatch({
+          type: FOCUS_FORM_CONFIGURATION,
+          payload: null,
+     });
      dispatch({ type: FETCH_USERS, payload: res.data });
 };
 
@@ -174,6 +207,10 @@ export const deleteClient =
           await history.push('/clients');
           res = await axios.get('/api/allClients');
           dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
           dispatch({ type: FETCH_CLIENTS, payload: res.data });
      };
 
@@ -194,4 +231,12 @@ export const editClientProfile = (form, clientId) => async (dispatch) => {
           clientId,
      });
      dispatch({ type: FLASH, payload: { message: 'Changements sauvegardés' } });
+};
+
+export const configureFocusForm = (configuration) => async (dispatch) => {
+     dispatch({ type: FLASH, payload: { message: false } });
+     dispatch({
+          type: FOCUS_FORM_CONFIGURATION,
+          payload: { configuration },
+     });
 };

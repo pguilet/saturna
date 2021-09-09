@@ -9,6 +9,7 @@ import allUsers from './agentsInterfaceReducers';
 import homeAdsReducer from './homeAdsReducers';
 import clientsReducer from './clientsReducer';
 import clientReducer from './clientReducer';
+import focusFormReducer from './focusFormReducer';
 
 export default combineReducers({
      auth: authReducer,
@@ -20,4 +21,5 @@ export default combineReducers({
      homeAds: homeAdsReducer,
      clients: clientsReducer,
      client: clientReducer,
+     focusFormConfiguration: focusFormReducer,
 });

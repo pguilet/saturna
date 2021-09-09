@@ -176,7 +176,7 @@ class CustomField extends Component {
                          type="button"
                          key="imageSelect"
                          className="teal btn-flat white-text"
-                         onClick={() => document.getElementById(label).click()}
+                         onClick={() => document.getElementById(id).click()}
                     >
                          Sélectionner
                     </Button>,

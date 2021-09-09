@@ -18,69 +18,8 @@ import ClientCases from './ClientCases';
 import FocusForm from './FocusForm';
 
 class ClientProfile extends Component {
-     state = {
-          showFocusForm: false,
-     };
-
      componentDidMount() {
           this.clientId = this.props.client._id;
-     }
-     resetState(resetShowFocusForm) {
-          if (this.props.flash) {
-               this.props.flash.message = false;
-          }
-          if (resetShowFocusForm) {
-               this.setState({ showFocusForm: true });
-          }
-          this.backButtonTriggered = false;
-          this.createUserButtonTriggered = false;
-          this.closeFocusForm = this.closeFocusForm.bind(this);
-          this.computeFormOpeningStatus =
-               this.computeFormOpeningStatus.bind(this);
-          this.backButtonTriggered = false;
-          this.createUserButtonTriggered = false;
-     }
-     closeFocusForm(actionFromBackButton, actionFromNewUserButton) {
-          this.backButtonTriggered = actionFromBackButton;
-          this.createUserButtonTriggered = actionFromNewUserButton;
-          this.setState({ showFocusForm: false });
-     }
-     computeFormOpeningStatus(showFocusForm, flash) {
-          if (this.backButtonTriggered) {
-               return false;
-          } else if (this.createUserButtonTriggered) {
-               if (flash && flash.message) {
-                    return true;
-               } else if (flash && flash.message === false) {
-                    return false;
-               } else {
-                    return true;
-               }
-          } else {
-               if (showFocusForm) {
-                    return true;
-               } else {
-                    return false;
-               }
-          }
-     }
-     renderFocusForm(showFocusForm) {
-          if (this.computeFormOpeningStatus(showFocusForm, this.props.flash)) {
-               return (
-                    <FocusForm
-                         doOpen={true}
-                         onTheClose={this.closeFocusForm}
-                         validateButtonAction={this.validateButtonAction}
-                         identifiant={{
-                              _id: this.props.client._id,
-                         }}
-                         title={this.title}
-                         description={this.description}
-                         fieldsToDisplay={this.fieldsToDisplay}
-                         validateButtonLabel={this.validateButtonLabel}
-                    />
-               );
-          }
      }
 
      renderFields(client) {
@@ -322,18 +261,11 @@ class ClientProfile extends Component {
           );
      }
 
-     setClientDeletionVariables() {
-          this.validateButtonAction = this.props.deleteClient;
-          this.title = 'Suppression de la fiche du client';
-          this.description = 'Etes-vous sûr de vouloir supprimer la fiche?';
-          this.validateButtonLabel = 'Supprimer la fiche';
-          this.fieldsToDisplay = [];
-     }
      render() {
           return (
                this.props.client && (
                     <>
-                         {this.renderFocusForm(this.state.showFocusForm)}
+                         <FocusForm />
                          <Form>
                               {this.renderFields(this.props.client)}
                               <div
@@ -377,8 +309,20 @@ class ClientProfile extends Component {
                                         variant="danger"
                                         className="centered"
                                         onClick={() => {
-                                             this.resetState(true);
-                                             this.setClientDeletionVariables();
+                                             this.props.configureFocusForm({
+                                                  validateButtonAction:
+                                                       this.props.deleteClient,
+                                                  identifiant: {
+                                                       _id: this.props.client
+                                                            ._id,
+                                                  },
+                                                  title: 'Suppression de la fiche du client',
+                                                  description:
+                                                       'Etes-vous sûr de vouloir supprimer la fiche?',
+                                                  validateButtonLabel:
+                                                       'Supprimer la fiche',
+                                                  fieldsToDisplay: [],
+                                             });
                                         }}
                                    >
                                         Supprimer la fiche client

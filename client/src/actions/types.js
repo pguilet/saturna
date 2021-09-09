@@ -5,6 +5,7 @@ export const FETCH_PAGE = 'fetch_page';
 export const FETCH_HOME_ADS = 'fetch_home_ads';
 export const FETCH_CLIENTS = 'fetch_clients';
 export const FETCH_CLIENT = 'fetch_client';
+export const FOCUS_FORM_CONFIGURATION = 'focus_form_configuration';
 export const Roles = {
      AGENT: 'agent',
      ADMIN: 'admin',

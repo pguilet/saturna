@@ -17,6 +17,7 @@ const fs = require('fs-extra');
 const util = require('util');
 const unlinkFile = util.promisify(fs.unlink);
 const moment = require('moment');
+const ObjectId = require('mongodb').ObjectId;
 
 const handleError = (err, res) => {
      res.status(500)
@@ -98,22 +99,33 @@ module.exports = (app) => {
      });
 
      app.get('/api/images/:key', async (req, res) => {
-          const key = req.params.key;
-          if (key !== 'undefined') {
-               const readStream = getFileStream(key);
-               readStream.pipe(res);
+          try {
+               const key = req.params.key;
+               if (key !== 'undefined') {
+                    const readStream = getFileStream(key);
+                    readStream.pipe(res);
+               }
+          } catch (error) {
+               console.log(error);
+               res.send();
           }
      });
 
      app.get('/api/images/:folder/:user/:key', async (req, res) => {
-          const key = req.params.key;
-          const folder = req.params.folder;
-          const user = req.params.user;
-          if (key !== 'undefined' && folder !== 'undefined') {
-               const fileStream = fs.createReadStream(
-                    folder + '/' + user + '/' + key
-               );
-               fileStream.pipe(res);
+          try {
+               const key = req.params.key;
+               const folder = req.params.folder;
+
+               const user = req.params.user;
+               if (key !== 'undefined' && folder !== 'undefined') {
+                    const fileStream = fs.createReadStream(
+                         folder + '/' + user + '/' + key
+                    );
+                    fileStream.pipe(res);
+               }
+          } catch (error) {
+               console.log(error);
+               res.send();
           }
      });
 
@@ -152,6 +164,7 @@ module.exports = (app) => {
           requireLogin,
           uploader.array('file'),
           async (req, res) => {
+               var filesNameOnS3Bucket = [];
                const homeAd = await new HomeAds({
                     title: req.body.title,
                     description: req.body.description,
@@ -160,9 +173,8 @@ module.exports = (app) => {
                          !req.body.type || req.body.type === 'location'
                               ? true
                               : false,
-               }).save();
+               });
                if (req.body.stateTriggeredValues) {
-                    var filesNameOnS3Bucket = [];
                     var x = 0;
                     for (const imagePath of req.body.stateTriggeredValues.split(
                          ','
@@ -185,10 +197,10 @@ module.exports = (app) => {
                if (fs.pathExistsSync('./upload/' + req.user.username)) {
                     fs.rmdirSync('./upload/' + req.user.username, {
                          recursive: true,
+                         force: true,
                     });
                }
-               homeAd.save();
-               res.send(homeAd);
+               res.send(homeAd.save());
           }
      );
      app.post(
@@ -325,6 +337,7 @@ module.exports = (app) => {
                if (fs.pathExistsSync('./upload/' + req.user.username)) {
                     fs.rmdirSync('./upload/' + req.user.username, {
                          recursive: true,
+                         force: true,
                     });
                }
           }
@@ -339,6 +352,7 @@ module.exports = (app) => {
                if (fs.pathExistsSync('./upload/' + req.user.username)) {
                     fs.rmdirSync('./upload/' + req.user.username, {
                          recursive: true,
+                         force: true,
                     });
                }
                res.send(req.user);
@@ -351,7 +365,11 @@ module.exports = (app) => {
           });
 
           for (const imageKey of homeAdAlreadyExisting.images) {
-               await removeFile(imageKey);
+               try {
+                    await removeFile(imageKey);
+               } catch (error) {
+                    console.log(error);
+               }
           }
           homeAdAlreadyExisting.deleteOne();
           res.send(homeAdAlreadyExisting);
@@ -381,7 +399,7 @@ module.exports = (app) => {
           }
      });
      app.post('/api/editUser', requireAdminRole, async (req, res) => {
-          let user = await Users.findOne({ username: req.body.username });
+          let user = await Users.findOne({ _id: req.body.identifiant });
 
           if (user) {
                if (req.body.form && req.body.form.role) {
@@ -400,9 +418,9 @@ module.exports = (app) => {
           res.send(user);
      });
      app.post('/api/deleteUser', requireAdminRole, async (req, res) => {
-          if (req.body.username !== 'nsalem') {
+          if (req.body.identifiants.username !== 'nsalem') {
                const userAlreadyExisting = await Users.findOneAndDelete({
-                    username: req.body.username,
+                    _id: new ObjectId(req.body.identifiants._id),
                });
 
                res.send(userAlreadyExisting);

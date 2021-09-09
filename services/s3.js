@@ -15,8 +15,12 @@ async function uploadFile(file) {
           Body: fileStream,
           Key: file.filename,
      };
-
-     return s3.upload(uploadParams).promise();
+     try {
+          var result = s3.upload(uploadParams).promise();
+     } catch (error) {
+          console.log(error);
+     }
+     return result;
 }
 
 function removeFile(fileKey) {
@@ -24,8 +28,12 @@ function removeFile(fileKey) {
           Bucket: keys.awsBucketName,
           Key: fileKey,
      };
-
-     return s3.deleteObject(uploadParams).promise();
+     try {
+          var result = s3.deleteObject(uploadParams).promise();
+     } catch (error) {
+          console.log(error);
+     }
+     return result;
 }
 
 function getFileStream(fileKey) {
@@ -33,7 +41,13 @@ function getFileStream(fileKey) {
           Key: fileKey,
           Bucket: keys.awsBucketName,
      };
-     return s3.getObject(downloadParams).createReadStream();
+     try {
+          var stream = s3.getObject(downloadParams).createReadStream();
+     } catch (error) {
+          console.log(error);
+     }
+
+     return stream;
 }
 
 exports.removeFile = removeFile;
