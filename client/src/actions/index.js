@@ -9,6 +9,7 @@ import {
      FETCH_CLIENT,
      FOCUS_FORM_CONFIGURATION,
      FLASH,
+     FETCH_NOTARIES,
 } from './types';
 
 export const fetchUser = () => async (dispatch) => {
@@ -35,6 +36,10 @@ export const fetchUsers = () => async (dispatch) => {
 export const fetchClients = () => async (dispatch) => {
      const res = await axios.get('/api/allClients');
      dispatch({ type: FETCH_CLIENTS, payload: res.data });
+};
+export const fetchNotaries = () => async (dispatch) => {
+     const res = await axios.get('/api/allNotaries');
+     dispatch({ type: FETCH_NOTARIES, payload: res.data });
 };
 
 export const fetchHomeAds = () => async (dispatch) => {
@@ -128,6 +133,17 @@ export const createHomeAd =
           });
           dispatch({ type: FETCH_HOME_ADS, payload: res.data });
      };
+export const createNotary =
+     (history, form, identifiant) => async (dispatch) => {
+          var res = await axios.post('/api/createNotary', form);
+          res = await axios.get('/api/allNotaries');
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          dispatch({ type: FETCH_NOTARIES, payload: res.data });
+     };
 
 export const deleteHomeAd =
      (history, form, identifiant) => async (dispatch) => {
@@ -204,16 +220,29 @@ export const deleteClient =
           var res = await axios.post('/api/deleteClient', {
                identifiant: identifiant,
           });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
           await history.push('/clients');
           res = await axios.get('/api/allClients');
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({ type: FETCH_CLIENTS, payload: res.data });
+     };
+
+export const deleteNotary =
+     (history, form, identifiant) => async (dispatch) => {
+          var res = await axios.post('/api/deleteNotary', {
+               identifiant: identifiant,
+          });
+          res = await axios.get('/api/allNotaries');
           dispatch({ type: FLASH, payload: { message: false } });
           dispatch({
                type: FOCUS_FORM_CONFIGURATION,
                payload: null,
           });
-          dispatch({ type: FETCH_CLIENTS, payload: res.data });
+          dispatch({ type: FETCH_NOTARIES, payload: res.data });
      };
-
 export const search = (searchValue, history) => async (dispatch) => {
      const res = await axios.get('/api/search', {
           params: { searchValue },
@@ -233,10 +262,27 @@ export const editClientProfile = (form, clientId) => async (dispatch) => {
      dispatch({ type: FLASH, payload: { message: 'Changements sauvegardés' } });
 };
 
+export const editNotary = (history, form, notaryId) => async (dispatch) => {
+     await axios.post('/api/editNotary', {
+          form: form.focusForm.values,
+          notaryId,
+     });
+     var res = await axios.get('/api/allNotaries');
+     dispatch({ type: FETCH_NOTARIES, payload: res.data });
+     dispatch({
+          type: FOCUS_FORM_CONFIGURATION,
+          payload: null,
+     });
+};
+
 export const configureFocusForm = (configuration) => async (dispatch) => {
      dispatch({ type: FLASH, payload: { message: false } });
      dispatch({
           type: FOCUS_FORM_CONFIGURATION,
           payload: { configuration },
      });
+};
+
+export const clearFlashMessage = () => async (dispatch) => {
+     dispatch({ type: FLASH, payload: { message: false } });
 };

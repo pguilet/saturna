@@ -14,6 +14,7 @@ import Search from './Search';
 import { Roles } from '../../actions/types';
 import Nav from 'react-bootstrap/Nav';
 import ClientCases from './ClientCases';
+import Notaries from './Notaries';
 class AgentInterface extends Component {
      render() {
           return (
@@ -31,6 +32,11 @@ class AgentInterface extends Component {
                               path="/agentsList"
                               component={AgentsList}
                               role={Roles.ADMIN}
+                         />
+                         <GuardedRoute
+                              exact
+                              path="/notaries"
+                              component={Notaries}
                          />
                          <GuardedRoute
                               exact

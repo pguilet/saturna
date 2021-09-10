@@ -203,7 +203,7 @@ class HomeAdsList extends Component {
      render() {
           return (
                <div>
-                    <FocusForm />
+                    {this.props.focusFormConfiguration && <FocusForm />}
                     {this.renderContent()}
                     <FixedFloatingButton
                          onClick={() => {
@@ -251,8 +251,8 @@ class HomeAdsList extends Component {
           );
      }
 }
-function mapStateToProps({ homeAds, flash }) {
-     return { homeAds, flash };
+function mapStateToProps({ homeAds, flash, focusFormConfiguration }) {
+     return { homeAds, flash, focusFormConfiguration };
 }
 
 export default connect(mapStateToProps, actions)(HomeAdsList);

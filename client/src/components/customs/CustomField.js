@@ -22,15 +22,25 @@ class CustomField extends Component {
      }
 
      renderFirstOption(valueToSet, selectvalues) {
-          return _.map(selectvalues, (value) => {
-               if (value === valueToSet) {
-                    return (
-                         <option key={value} value={value} defaultValue>
-                              {value}
-                         </option>
-                    );
-               }
-          });
+          if (
+               _.size(
+                    _.filter(selectvalues, (value) => {
+                         return value === valueToSet;
+                    })
+               ) > 0
+          ) {
+               return _.map(selectvalues, (value) => {
+                    if (value === valueToSet) {
+                         return (
+                              <option key={value} value={value} defaultValue>
+                                   {value}
+                              </option>
+                         );
+                    }
+               });
+          } else {
+               return <option key={'none'} value={''} defaultValue></option>;
+          }
      }
      renderOtherOptions(valueToSet, selectvalues) {
           return _.map(selectvalues, (value) => {

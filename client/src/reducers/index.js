@@ -10,6 +10,7 @@ import homeAdsReducer from './homeAdsReducers';
 import clientsReducer from './clientsReducer';
 import clientReducer from './clientReducer';
 import focusFormReducer from './focusFormReducer';
+import notariesReducer from './notariesReducer';
 
 export default combineReducers({
      auth: authReducer,
@@ -20,6 +21,7 @@ export default combineReducers({
      users: allUsers,
      homeAds: homeAdsReducer,
      clients: clientsReducer,
+     notaries: notariesReducer,
      client: clientReducer,
      focusFormConfiguration: focusFormReducer,
 });

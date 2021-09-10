@@ -15,58 +15,9 @@ import { withRouter } from 'react-router-dom';
 
 class FocusForm extends Component {
      state = {
-          stateTriggeredValues: undefined,
           createUserButtonTriggered: false,
      };
-     componentDidMount() {
-          this.closeFocusForm = this.closeFocusForm.bind(this);
-          this.formShouldShow = this.formShouldShow.bind(this);
-          if (
-               this.props.flash &&
-               !this.backButtonTriggered &&
-               !this.state.createUserButtonTriggered
-          ) {
-               this.props.flash.message = false;
-          }
-     }
-     componentWillUnmount() {
-          this.props.configureFocusForm(null);
-     }
-     resetVariables() {
-          if (this.props.flash) {
-               this.props.flash.message = false;
-          }
-          this.backButtonTriggered = false;
-          this.setState({ createUserButtonTriggered: false });
-     }
 
-     formShouldShow(flash, focusFormConfiguration) {
-          if (this.backButtonTriggered) {
-               if (this.focusFormConfiguration !== null) {
-                    this.props.configureFocusForm(null);
-                    this.resetVariables();
-               }
-               return false;
-          } else if (this.state.createUserButtonTriggered) {
-               if (flash && flash.message) {
-                    return true;
-               }
-               if (focusFormConfiguration === null) {
-                    this.resetVariables();
-                    return false;
-               }
-               return true;
-          } else {
-               if (
-                    focusFormConfiguration !== null &&
-                    focusFormConfiguration !== undefined
-               ) {
-                    return true;
-               } else {
-                    return false;
-               }
-          }
-     }
      renderFields() {
           return _.map(
                this.props.focusFormConfiguration.fieldsToDisplay,
@@ -97,9 +48,7 @@ class FocusForm extends Component {
                               id={field.id}
                               identifiant={this.props.identifiant}
                               statetriggeredvaluesupdatefunction={(values) =>
-                                   this.setState({
-                                        stateTriggeredValues: values,
-                                   })
+                                   (this.stateTriggeredValues = values)
                               }
                          />
                     );
@@ -107,125 +56,106 @@ class FocusForm extends Component {
           );
      }
 
-     closeFocusForm(actionFromBackButton, actionFromNewUserButton) {
-          this.backButtonTriggered = actionFromBackButton;
-          this.setState({ createUserButtonTriggered: actionFromNewUserButton });
-     }
-     renderFocusForm() {
-          if (
-               this.formShouldShow(
-                    this.props.flash,
-                    this.props.focusFormConfiguration
-               )
-          ) {
-               return (
-                    <Dialog open={true} aria-labelledby="form-dialog-title">
-                         <Form onSubmit={this.handleSubmit}>
-                              <DialogTitle id="form-dialog-title">
-                                   {this.props.focusFormConfiguration &&
-                                        this.props.focusFormConfiguration.title}
-                              </DialogTitle>
-                              <DialogContent>
-                                   <DialogContentText>
-                                        {this.props.focusFormConfiguration &&
-                                             this.props.focusFormConfiguration
-                                                  .description}
-                                   </DialogContentText>
-
-                                   <Form.Group className="mb-3">
-                                        {this.renderFields()}
-
-                                        <div
-                                             className="text-danger"
-                                             style={{ marginBottom: '20px' }}
-                                        >
-                                             {this.props.flash
-                                                  ? this.props.flash.message
-                                                  : ''}
-                                        </div>
-                                   </Form.Group>
-                              </DialogContent>
-
-                              <DialogActions>
-                                   {!this.state.createUserButtonTriggered && (
-                                        <Button
-                                             variant="warning"
-                                             type="button"
-                                             className="centered"
-                                             onClick={() => {
-                                                  if (
-                                                       this.props
-                                                            .focusFormConfiguration
-                                                            .backButtonCallback
-                                                  ) {
-                                                       this.props.focusFormConfiguration.backButtonCallback();
-                                                  }
-                                                  this.closeFocusForm(
-                                                       true,
-                                                       false
-                                                  );
-                                                  this.props.configureFocusForm(
-                                                       null
-                                                  );
-                                             }}
-                                        >
-                                             Back
-                                             <i className="material-icons separateIcon">
-                                                  cancel
-                                             </i>
-                                        </Button>
-                                   )}
-                                   {this.state.createUserButtonTriggered && (
-                                        <Button variant="primary" disabled>
-                                             <Spinner
-                                                  as="span"
-                                                  animation="border"
-                                                  size="sm"
-                                                  role="status"
-                                                  aria-hidden="true"
-                                             />
-                                             <span className="visually-hidden">
-                                                  Loading...
-                                             </span>
-                                        </Button>
-                                   )}
-                                   {!this.state.createUserButtonTriggered && (
-                                        <Button
-                                             variant="success"
-                                             type="submit"
-                                             className="centered"
-                                        >
-                                             {
-                                                  this.props
-                                                       .focusFormConfiguration
-                                                       .validateButtonLabel
-                                             }
-                                             <i className="material-icons separateIcon">
-                                                  done
-                                             </i>
-                                        </Button>
-                                   )}
-                              </DialogActions>
-                         </Form>
-                    </Dialog>
-               );
-          }
-          return <div></div>;
-     }
-
      handleSubmit = (event) => {
           event.preventDefault();
-          this.closeFocusForm(false, true);
+          this.setState({
+               createUserButtonTriggered: true,
+          });
           this.props.focusFormConfiguration.validateButtonAction(
                this.props.history,
                this.props.form,
                this.props.focusFormConfiguration.identifiant,
-               this.state.stateTriggeredValues
+               this.stateTriggeredValues
           );
      };
 
      render() {
-          return this.renderFocusForm();
+          return (
+               <Dialog open={true} aria-labelledby="form-dialog-title">
+                    <Form onSubmit={this.handleSubmit}>
+                         <DialogTitle id="form-dialog-title">
+                              {this.props.focusFormConfiguration &&
+                                   this.props.focusFormConfiguration.title}
+                         </DialogTitle>
+                         <DialogContent>
+                              <DialogContentText>
+                                   {this.props.focusFormConfiguration &&
+                                        this.props.focusFormConfiguration
+                                             .description}
+                              </DialogContentText>
+
+                              <Form.Group className="mb-3">
+                                   {this.renderFields()}
+
+                                   <div
+                                        className="text-danger"
+                                        style={{ marginBottom: '20px' }}
+                                   >
+                                        {this.props.flash
+                                             ? this.props.flash.message
+                                             : ''}
+                                   </div>
+                              </Form.Group>
+                         </DialogContent>
+
+                         <DialogActions>
+                              {!this.state.createUserButtonTriggered && (
+                                   <Button
+                                        variant="warning"
+                                        type="button"
+                                        className="centered"
+                                        onClick={() => {
+                                             if (
+                                                  this.props
+                                                       .focusFormConfiguration
+                                                       .backButtonCallback
+                                             ) {
+                                                  this.props.focusFormConfiguration.backButtonCallback();
+                                             }
+                                             this.props.configureFocusForm(
+                                                  null
+                                             );
+                                        }}
+                                   >
+                                        Back
+                                        <i className="material-icons separateIcon">
+                                             cancel
+                                        </i>
+                                   </Button>
+                              )}
+                              {this.state.createUserButtonTriggered && (
+                                   <Button variant="primary" disabled>
+                                        <Spinner
+                                             as="span"
+                                             animation="border"
+                                             size="sm"
+                                             role="status"
+                                             aria-hidden="true"
+                                        />
+                                        <span className="visually-hidden">
+                                             Loading...
+                                        </span>
+                                   </Button>
+                              )}
+                              {!this.state.createUserButtonTriggered && (
+                                   <Button
+                                        variant="success"
+                                        type="submit"
+                                        className="centered"
+                                   >
+                                        {
+                                             this.props.focusFormConfiguration
+                                                  .validateButtonLabel
+                                        }
+                                        <i className="material-icons separateIcon">
+                                             done
+                                        </i>
+                                   </Button>
+                              )}
+                         </DialogActions>
+                    </Form>
+               </Dialog>
+          );
      }
 }
 

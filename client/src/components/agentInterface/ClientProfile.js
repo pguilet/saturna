@@ -20,6 +20,7 @@ import FocusForm from './FocusForm';
 class ClientProfile extends Component {
      componentDidMount() {
           this.clientId = this.props.client._id;
+          this.props.clearFlashMessage();
      }
 
      renderFields(client) {
@@ -144,7 +145,7 @@ class ClientProfile extends Component {
                {
                     label: 'Num tel',
                     id: 'phoneNumber',
-                    type: 'number',
+                    type: 'text',
                     valueToSet: client ? client.phoneNumber : undefined,
                     component: CustomField,
                     block: 2,
@@ -265,7 +266,7 @@ class ClientProfile extends Component {
           return (
                this.props.client && (
                     <>
-                         <FocusForm />
+                         {this.props.focusFormConfiguration && <FocusForm />}
                          <Form>
                               {this.renderFields(this.props.client)}
                               <div
@@ -343,6 +344,6 @@ function mapStateToProps(props) {
 }
 ClientProfile = connect(mapStateToProps, actions)(ClientProfile);
 export default reduxForm({
-     destroyOnUnmount: false,
+     destroyOnUnmount: true,
      form: 'clientForm',
 })(withRouter(ClientProfile));

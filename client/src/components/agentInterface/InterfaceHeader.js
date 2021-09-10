@@ -76,14 +76,24 @@ class InterfaceHeader extends Component {
                                    </Link>
 
                                    {this.props.auth && (
-                                        <Link
-                                             to="/clients"
-                                             className={this.getClassNames(
-                                                  'clients'
-                                             )}
-                                        >
-                                             Clients
-                                        </Link>
+                                        <>
+                                             <Link
+                                                  to="/clients"
+                                                  className={this.getClassNames(
+                                                       'clients'
+                                                  )}
+                                             >
+                                                  Clients
+                                             </Link>
+                                             <Link
+                                                  to="/notaries"
+                                                  className={this.getClassNames(
+                                                       'notaries'
+                                                  )}
+                                             >
+                                                  Notaires
+                                             </Link>
+                                        </>
                                    )}
                               </Nav>
 

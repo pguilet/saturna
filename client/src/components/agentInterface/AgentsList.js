@@ -149,7 +149,7 @@ class AgentsList extends Component {
      render() {
           return (
                <div>
-                    <FocusForm />
+                    {this.props.focusFormConfiguration && <FocusForm />}
                     {this.renderContent()}
                     <FixedFloatingButton
                          onClick={() => {
@@ -188,8 +188,8 @@ class AgentsList extends Component {
           );
      }
 }
-function mapStateToProps({ users, flash }) {
-     return { users, flash };
+function mapStateToProps({ users, flash, focusFormConfiguration }) {
+     return { users, flash, focusFormConfiguration };
 }
 
 export default connect(mapStateToProps, actions)(AgentsList);

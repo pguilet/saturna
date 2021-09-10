@@ -5,6 +5,7 @@ const passport = require('passport');
 const keys = require('./config/keys');
 require('./models/User');
 require('./models/Survey');
+require('./models/Notary');
 require('./models/Client');
 require('./models/HomeAds');
 require('./services/passport'); // no need of a variable because the file does not export anything

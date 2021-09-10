@@ -124,14 +124,14 @@ class Search extends Component {
      render() {
           return (
                <div>
-                    <FocusForm />
+                    {this.props.focusFormConfiguration && <FocusForm />}
                     {this.renderContent()}
                </div>
           );
      }
 }
-function mapStateToProps({ clients, flash, auth }) {
-     return { clients, flash, auth };
+function mapStateToProps({ clients, flash, auth, focusFormConfiguration }) {
+     return { clients, flash, auth, focusFormConfiguration };
 }
 
 export default connect(mapStateToProps, actions)(withRouter(Search));

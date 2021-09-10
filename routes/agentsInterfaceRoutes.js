@@ -11,6 +11,7 @@ const requireAdminRole = require('../middlewares/requireAdminRole');
 const Users = mongoose.model('users'); //for testing purpose with node and mongoose we should not get info from Survey.js
 const HomeAds = mongoose.model('homeAds');
 const Clients = mongoose.model('clients');
+const Notaries = mongoose.model('notaries');
 const multer = require('multer');
 const { uploadFile, getFileStream, removeFile } = require('../services/s3');
 const fs = require('fs-extra');
@@ -46,6 +47,11 @@ module.exports = (app) => {
      app.get('/api/allClients', requireLogin, async (req, res) => {
           const clients = await Clients.find().sort({ surname: 1 });
           res.send(clients);
+     });
+
+     app.get('/api/allNotaries', requireLogin, async (req, res) => {
+          const notaries = await Notaries.find().sort({ surname: 1 });
+          res.send(notaries);
      });
 
      app.get('/api/search', requireLogin, async (req, res) => {
@@ -288,6 +294,44 @@ module.exports = (app) => {
           res.send(client);
      });
 
+     app.post('/api/editNotary', requireLogin, async (req, res) => {
+          let notary = await Notaries.findOne({
+               _id: req.body.notaryId,
+          });
+          let form = req.body.form;
+          if (notary && form) {
+               if (form.civility) {
+                    notary.civility = form.civility;
+               }
+               if (form.name) {
+                    notary.name = form.name;
+               }
+               if (form.surname) {
+                    notary.surname = form.surname;
+               }
+               if (form.street) {
+                    notary.street = form.street;
+               }
+               if (form.postalCode) {
+                    notary.postalCode = form.postalCode;
+               }
+               if (form.city) {
+                    notary.city = form.city;
+               }
+               if (form.phoneNumber) {
+                    notary.phoneNumber = form.phoneNumber;
+               }
+               if (form.email) {
+                    notary.email = form.email;
+               }
+               if (form.comment) {
+                    notary.comment = form.comment;
+               }
+          }
+          notary.save();
+          res.send(notary);
+     });
+
      app.post('/api/editHomeAd', requireLogin, async (req, res) => {
           let homeAd = await HomeAds.findOne({ _id: req.body.identifiant });
           if (homeAd && (req.body.form || req.body.stateTriggeredValues)) {
@@ -429,6 +473,14 @@ module.exports = (app) => {
           }
      });
 
+     app.post('/api/deleteNotary', requireAdminRole, async (req, res) => {
+          const notaryAlreadyExisting = await Notaries.findOneAndDelete({
+               _id: req.body.identifiant._id,
+          });
+
+          res.send(notaryAlreadyExisting);
+     });
+
      app.post('/api/deleteClient', requireAdminRole, async (req, res) => {
           const clientAlreadyExisting = await Clients.findOneAndDelete({
                _id: req.body.identifiant._id,
@@ -467,5 +519,40 @@ module.exports = (app) => {
                     message: 'Le client existe déjà.',
                });
           }
+     });
+     app.post('/api/createNotary', requireLogin, async (req, res) => {
+          let notary = await new Notaries();
+          let form = req.body.focusForm.values;
+          if (notary && form) {
+               if (form.civility) {
+                    notary.civility = form.civility;
+               }
+               if (form.name) {
+                    notary.name = form.name;
+               }
+               if (form.surname) {
+                    notary.surname = form.surname;
+               }
+               if (form.street) {
+                    notary.street = form.street;
+               }
+               if (form.postalCode) {
+                    notary.postalCode = form.postalCode;
+               }
+               if (form.city) {
+                    notary.city = form.city;
+               }
+               if (form.phoneNumber) {
+                    notary.phoneNumber = form.phoneNumber;
+               }
+               if (form.email) {
+                    notary.email = form.email;
+               }
+               if (form.comment) {
+                    notary.comment = form.comment;
+               }
+          }
+          notary.save();
+          res.send(notary);
      });
 };

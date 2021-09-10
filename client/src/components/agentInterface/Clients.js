@@ -126,7 +126,7 @@ class Clients extends Component {
      render() {
           return (
                <div>
-                    <FocusForm />
+                    {this.props.focusFormConfiguration && <FocusForm />}
                     {this.renderContent()}
                     <FixedFloatingButton
                          onClick={() => {
@@ -137,8 +137,8 @@ class Clients extends Component {
           );
      }
 }
-function mapStateToProps({ clients, flash, auth }) {
-     return { clients, flash, auth };
+function mapStateToProps({ clients, flash, auth, focusFormConfiguration }) {
+     return { clients, flash, auth, focusFormConfiguration };
 }
 
 export default connect(mapStateToProps, actions)(withRouter(Clients));
