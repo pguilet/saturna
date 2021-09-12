@@ -17,10 +17,11 @@ class HomeAdsList extends Component {
      }
 
      renderImages(images) {
+          var x = 0;
           return _.map(images, (imageKey) => {
                return (
                     <img
-                         key={imageKey}
+                         key={imageKey + x}
                          title={imageKey}
                          className="thumbnail separated"
                          src={'/api/images/' + imageKey}
@@ -47,11 +48,21 @@ class HomeAdsList extends Component {
                               {this.props.homeAds
                                    ? this.props.homeAds.map((homeAd) => {
                                           key += 4;
+                                          var adType;
+                                          if (
+                                               homeAd.adType === AdType.LOCATION
+                                          ) {
+                                               adType = AdType.LOCATION;
+                                          } else if (
+                                               homeAd.adType === AdType.SELLING
+                                          ) {
+                                               adType = AdType.SELLING;
+                                          }
                                           var focusFormConfiguration = {
                                                validateButtonAction:
                                                     this.props.editHomeAd,
-                                               identifiant: {
-                                                    _id: homeAd._id,
+                                               identifiants: {
+                                                    modelInstanceId: homeAd._id,
                                                },
                                                title: "Edition de l'annonce",
                                                description:
@@ -77,13 +88,10 @@ class HomeAdsList extends Component {
                                                     },
                                                     {
                                                          label: 'Type',
-                                                         id: 'type',
+                                                         id: 'adType',
                                                          type: 'select',
                                                          component: CustomField,
-                                                         valueToSet:
-                                                              homeAd.isLocation
-                                                                   ? AdType.LOCATION
-                                                                   : AdType.SELLING,
+                                                         valueToSet: adType,
                                                          valuesToSet: AdType,
                                                     },
                                                     {
@@ -126,9 +134,7 @@ class HomeAdsList extends Component {
                                                               );
                                                          }}
                                                     >
-                                                         {homeAd.isLocation
-                                                              ? 'Location'
-                                                              : 'Vente'}
+                                                         {adType}
                                                     </td>
                                                     <td
                                                          className="selectable"
@@ -165,9 +171,10 @@ class HomeAdsList extends Component {
                                                                                   this
                                                                                        .props
                                                                                        .deleteHomeAd,
-                                                                             identifiant:
+                                                                             identifiants:
                                                                                   {
-                                                                                       _id: homeAd._id,
+                                                                                       modelInstanceId:
+                                                                                            homeAd._id,
                                                                                   },
                                                                              title: "Suppression de l'annonce",
                                                                              description:
@@ -231,10 +238,9 @@ class HomeAdsList extends Component {
                                         },
                                         {
                                              label: 'Type',
-                                             id: 'type',
+                                             id: 'adType',
                                              type: 'select',
                                              component: CustomField,
-                                             valueToSet: AdType.LOCATION,
                                              valuesToSet: AdType,
                                         },
                                         {

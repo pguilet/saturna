@@ -33,8 +33,8 @@ class AgentsList extends Component {
                                           var focusEditConfiguration = {
                                                validateButtonAction:
                                                     this.props.editUser,
-                                               identifiant: {
-                                                    _id: user._id,
+                                               identifiants: {
+                                                    modelInstanceId: user._id,
                                                },
                                                title: "Edition de l'utilisateur",
                                                description:
@@ -113,9 +113,10 @@ class AgentsList extends Component {
                                                                                   this
                                                                                        .props
                                                                                        .deleteUser,
-                                                                             identifiant:
+                                                                             identifiants:
                                                                                   {
-                                                                                       _id: user._id,
+                                                                                       modelInstanceId:
+                                                                                            user._id,
                                                                                        username:
                                                                                             user.username,
                                                                                   },

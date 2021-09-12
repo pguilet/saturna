@@ -8,14 +8,15 @@ const s3 = new S3({
 });
 
 async function uploadFile(file) {
-     const fileStream = fs.createReadStream(file.path);
-
-     const uploadParams = {
-          Bucket: keys.awsBucketName,
-          Body: fileStream,
-          Key: file.filename,
-     };
      try {
+          const fileStream = fs.createReadStream(file.pathOrigin);
+
+          const uploadParams = {
+               Bucket: keys.awsBucketName,
+               Body: fileStream,
+               Key: file.pathDestination,
+          };
+
           var result = s3.upload(uploadParams).promise();
      } catch (error) {
           console.log(error);
@@ -50,6 +51,21 @@ function getFileStream(fileKey) {
      return stream;
 }
 
+function getDownloadSignedLink(fileKey) {
+     const params = {
+          Key: fileKey,
+          Bucket: keys.awsBucketName,
+     };
+     try {
+          var url = s3.getSignedUrl('getObject', params);
+     } catch (error) {
+          console.log(error);
+     }
+
+     return url;
+}
+
 exports.removeFile = removeFile;
 exports.uploadFile = uploadFile;
 exports.getFileStream = getFileStream;
+exports.getDownloadSignedLink = getDownloadSignedLink;

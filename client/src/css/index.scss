@@ -26,9 +26,14 @@ main {
      bottom: 45px;
      right: 24px;
 }
-
+.inline-block {
+     display: inline-block;
+}
 .text-teal {
      color: teal;
+}
+.default-width {
+     width: auto;
 }
 
 .centered {
@@ -41,6 +46,9 @@ main {
 
 .margin-right-15px {
      margin-right: 15px;
+}
+.margin-right-5px {
+     margin-right: 5px;
 }
 
 .button-floating {

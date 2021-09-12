@@ -2,27 +2,23 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../../actions';
-import { reduxForm, Field } from 'redux-form';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
+import * as actions from '../../../actions';
 import Nav from 'react-bootstrap/Nav';
-import CustomField from '../customs/CustomField';
-import moment from 'moment';
-import { FamilySituation, Civility } from '../../actions/types';
 import { Link, withRouter } from 'react-router-dom';
-import * as Sentry from '@sentry/react';
-import { BrowserRouter } from 'react-router-dom';
-import GuardedRoute from '../GuardedRoute';
+import GuardedRoute from '../../GuardedRoute';
 import ClientOpenCases from './ClientOpenCases';
 import ClientClosedCases from './ClientClosedCases';
 import ClientProfile from './ClientProfile';
+import ClientOpenCase from './ClientOpenCase';
+import ClientClosedCase from './ClientClosedCase';
 
 class Client extends Component {
      state = {};
      componentDidMount() {
           //cas where we come directly from url
-          this.props.fetchClient(this.props.match.params.clientId);
+          if (!this.props.client) {
+               this.props.fetchClient(this.props.match.params.clientId);
+          }
           let lastSegment = this.props.match.path.split('/')[3];
           switch (lastSegment) {
                case 'profile':
@@ -37,6 +33,7 @@ class Client extends Component {
                default:
                     break;
           }
+          this.props.fetchPage('');
      }
 
      renderSideBar() {
@@ -58,7 +55,9 @@ class Client extends Component {
                                    ? 'active'
                                    : ''
                          }
-                         // onClick={() => (this.activeTab = 'openCases')}
+                         onClick={() =>
+                              this.props.fetchOpenCases(this.props.client._id)
+                         }
                     >
                          Dossier en cours
                     </Link>
@@ -73,7 +72,9 @@ class Client extends Component {
                                    ? 'active'
                                    : ''
                          }
-                         // onClick={() => (this.state.activeTab = 'closedCases')}
+                         onClick={() =>
+                              this.props.fetchClosedCases(this.props.client._id)
+                         }
                     >
                          Dossiers cloturés
                     </Link>
@@ -108,8 +109,18 @@ class Client extends Component {
                                    />
                                    <GuardedRoute
                                         exact
+                                        path="/client/:clientId/openCases/:caseId"
+                                        component={ClientOpenCase}
+                                   />
+                                   <GuardedRoute
+                                        exact
                                         path="/client/:clientId/closedCases"
                                         component={ClientClosedCases}
+                                   />
+                                   <GuardedRoute
+                                        exact
+                                        path="/client/:clientId/closedCases/:caseId"
+                                        component={ClientClosedCase}
                                    />
                                    <GuardedRoute
                                         exact

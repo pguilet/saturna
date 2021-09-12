@@ -37,6 +37,11 @@ class App extends Component {
                     />
                     <GuardedRoute
                          exact
+                         path="/syndics"
+                         component={AgentInterface}
+                    />
+                    <GuardedRoute
+                         exact
                          path="/agentsList"
                          component={AgentInterface}
                     />
@@ -62,7 +67,17 @@ class App extends Component {
                     />
                     <GuardedRoute
                          exact
+                         path="/client/:clientId/openCases/:caseId"
+                         component={AgentInterface}
+                    />
+                    <GuardedRoute
+                         exact
                          path="/client/:clientId/closedCases"
+                         component={AgentInterface}
+                    />
+                    <GuardedRoute
+                         exact
+                         path="/client/:clientId/closedCases/:caseId"
                          component={AgentInterface}
                     />
                     <GuardedRoute

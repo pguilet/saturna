@@ -10,7 +10,11 @@ import {
      FOCUS_FORM_CONFIGURATION,
      FLASH,
      FETCH_NOTARIES,
+     FETCH_SYNDICS,
+     FETCH_CASES,
+     FETCH_CASE,
 } from './types';
+import bcrypt from 'bcryptjs';
 
 export const fetchUser = () => async (dispatch) => {
      const res = await axios.get('/api/current_user');
@@ -22,11 +26,33 @@ export const fetchClient = (clientId) => async (dispatch) => {
      dispatch({ type: FETCH_CLIENT, payload: res.data });
 };
 
+export const fetchCase = (clientId, caseId) => async (dispatch) => {
+     const res = await axios.post('/api/propertyCase', { caseId });
+     dispatch({ type: FETCH_CASE, payload: res.data });
+};
+
 export const openClient = (history, clientId) => async (dispatch) => {
      const res = await axios.post('/api/client', clientId);
      dispatch({ type: FETCH_CLIENT, payload: res.data });
      history.push('/client/' + clientId + '/profile');
 };
+
+export const openCase =
+     (history, client, theCase, isClosedCase) => async (dispatch) => {
+          const res = await axios.post('/api/propertyCase', {
+               caseId: theCase._id,
+          });
+          await dispatch({ type: FETCH_CASE, payload: res.data });
+          if (isClosedCase) {
+               history.push(
+                    '/client/' + client._id + '/closedCases/' + theCase._id
+               );
+          } else {
+               history.push(
+                    '/client/' + client._id + '/openCases/' + theCase._id
+               );
+          }
+     };
 
 export const fetchUsers = () => async (dispatch) => {
      const res = await axios.get('/api/allUsers');
@@ -37,9 +63,25 @@ export const fetchClients = () => async (dispatch) => {
      const res = await axios.get('/api/allClients');
      dispatch({ type: FETCH_CLIENTS, payload: res.data });
 };
+export const fetchOpenCases = (clientId) => async (dispatch) => {
+     const res = await axios.post('/api/allOpenCases', { clientId: clientId });
+     await dispatch({ type: FETCH_CASES, payload: res.data });
+};
+
+export const fetchClosedCases = (clientId) => async (dispatch) => {
+     const res = await axios.post('/api/allClosedCases', {
+          clientId: clientId,
+     });
+     await dispatch({ type: FETCH_CASES, payload: res.data });
+};
 export const fetchNotaries = () => async (dispatch) => {
      const res = await axios.get('/api/allNotaries');
      dispatch({ type: FETCH_NOTARIES, payload: res.data });
+};
+
+export const fetchSyndics = () => async (dispatch) => {
+     const res = await axios.get('/api/allSyndics');
+     dispatch({ type: FETCH_SYNDICS, payload: res.data });
 };
 
 export const fetchHomeAds = () => async (dispatch) => {
@@ -79,50 +121,116 @@ export const login = (history, username, password) => async (dispatch) => {
      }
 };
 
-export const createUser = (history, form, username) => async (dispatch) => {
-     var res = await axios.post('/api/newUser', form.focusForm.values);
-     if (!res.data.message) {
-          res = await axios.get('/api/allUsers');
-          dispatch({ type: FLASH, payload: { message: false } });
-          dispatch({
-               type: FOCUS_FORM_CONFIGURATION,
-               payload: null,
+export const createUser =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/newUser', {
+               stateTriggeredValues,
+               identifiants,
           });
-          dispatch({ type: FETCH_USERS, payload: res.data });
-     } else {
-          dispatch({ type: FLASH, payload: res.data });
-     }
-};
-
-export const createClient = (history) => async (dispatch) => {
-     var res = await axios.post('/api/newClient');
-     if (!res.data.message) {
-          dispatch({ type: FETCH_CLIENT, payload: res.data });
-          history.push('/client/' + res.data._id + '/profile');
-          dispatch({ type: FLASH, payload: '' });
-     } else {
-          dispatch({ type: FLASH, payload: res.data });
-     }
-};
-
-export const createHomeAd =
-     (history, form, identifiant, stateTriggeredValues) => async (dispatch) => {
-          let data = new FormData();
-          if (form && form.focusForm && form.focusForm.values) {
-               if (form.focusForm.values.title) {
-                    data.append('title', form.focusForm.values.title);
-               }
-               if (form.focusForm.values.description) {
-                    data.append(
-                         'description',
-                         form.focusForm.values.description
-                    );
-               }
+          if (!res.data.message) {
+               res = await axios.get('/api/allUsers');
+               dispatch({ type: FLASH, payload: { message: false } });
+               dispatch({
+                    type: FOCUS_FORM_CONFIGURATION,
+                    payload: null,
+               });
+               dispatch({ type: FETCH_USERS, payload: res.data });
+          } else {
+               dispatch({ type: FLASH, payload: res.data });
           }
+     };
 
-          data.append('stateTriggeredValues', stateTriggeredValues);
+export const createClient =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/newClient');
+          if (!res.data.message) {
+               dispatch({ type: FETCH_CLIENT, payload: res.data });
+               history.push('/client/' + res.data._id + '/profile');
+               dispatch({ type: FLASH, payload: '' });
+          } else {
+               dispatch({ type: FLASH, payload: res.data });
+          }
+     };
 
-          var res = await axios.post('/api/createHomeAd', data, {
+export const createPropertyCase =
+     (history, form, identifiants, stateTriggeredValues, isOpenCase) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/newOpenCase', {
+               stateTriggeredValues: { _user: identifiants._user },
+          });
+          if (!res.data.message) {
+               dispatch({ type: FETCH_CASE, payload: res.data });
+               history.push(
+                    '/client/' +
+                         identifiants._user +
+                         '/openCases/' +
+                         res.data._id
+               );
+               dispatch({ type: FLASH, payload: '' });
+          } else {
+               dispatch({ type: FLASH, payload: res.data });
+          }
+     };
+
+const constructFormData = (identifiants, stateTriggeredValues) => {
+     let data = new FormData();
+     if (stateTriggeredValues) {
+          Object.entries(stateTriggeredValues).forEach(
+               ([keyName, keyIndex]) => {
+                    if (keyName === 'files') {
+                         stateTriggeredValues[keyName].forEach((value) =>
+                              data.append('files', value)
+                         );
+                    } else {
+                         if (Array.isArray(stateTriggeredValues[keyName])) {
+                              if (stateTriggeredValues[keyName].length > 0) {
+                                   Object.entries(
+                                        stateTriggeredValues[keyName]
+                                   ).forEach(([arrayKey, keyIndex]) => {
+                                        data.append(
+                                             'stateTriggeredValues[' +
+                                                  keyName +
+                                                  '][]',
+                                             stateTriggeredValues[keyName][
+                                                  arrayKey
+                                             ]
+                                        );
+                                   });
+                              } else {
+                                   data.append(
+                                        'stateTriggeredValues[' +
+                                             keyName +
+                                             '][]',
+                                        []
+                                   );
+                              }
+                         } else {
+                              data.append(
+                                   'stateTriggeredValues[' + keyName + ']',
+                                   stateTriggeredValues[keyName]
+                              );
+                         }
+                    }
+               }
+          );
+     }
+     if (identifiants) {
+          Object.entries(identifiants).forEach(([keyName, keyIndex]) => {
+               data.append(
+                    'identifiants[' + keyName + ']',
+                    identifiants[keyName]
+               );
+          });
+     }
+     return data;
+};
+export const createHomeAd =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          let data = constructFormData(identifiants, stateTriggeredValues);
+          let res = await axios.post('/api/createHomeAd', data, {
                headers: { 'Content-Type': 'multipart/form-data' },
           });
           res = await axios.get('/api/homeAds');
@@ -134,8 +242,12 @@ export const createHomeAd =
           dispatch({ type: FETCH_HOME_ADS, payload: res.data });
      };
 export const createNotary =
-     (history, form, identifiant) => async (dispatch) => {
-          var res = await axios.post('/api/createNotary', form);
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/createNotary', {
+               identifiants,
+               stateTriggeredValues,
+          });
           res = await axios.get('/api/allNotaries');
           dispatch({ type: FLASH, payload: { message: false } });
           dispatch({
@@ -144,11 +256,26 @@ export const createNotary =
           });
           dispatch({ type: FETCH_NOTARIES, payload: res.data });
      };
-
+export const createSyndic =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/createSyndic', {
+               identifiants,
+               stateTriggeredValues,
+          });
+          res = await axios.get('/api/allSyndics');
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          dispatch({ type: FETCH_SYNDICS, payload: res.data });
+     };
 export const deleteHomeAd =
-     (history, form, identifiant) => async (dispatch) => {
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
           var res = await axios.post('/api/deleteHomeAd', {
-               identifiant: identifiant,
+               identifiants,
           });
           res = await axios.get('/api/homeAds');
           dispatch({ type: FLASH, payload: { message: false } });
@@ -159,11 +286,11 @@ export const deleteHomeAd =
           dispatch({ type: FETCH_HOME_ADS, payload: res.data });
      };
 export const editHomeAd =
-     (history, form, identifiant, stateTriggeredValues) => async (dispatch) => {
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
           var res = await axios.post('/api/editHomeAd', {
-               form: form.focusForm.values,
-               identifiant: identifiant,
-               stateTriggeredValues: stateTriggeredValues,
+               identifiants,
+               stateTriggeredValues,
           });
           res = await axios.get('/api/homeAds');
           dispatch({ type: FLASH, payload: { message: false } });
@@ -188,37 +315,51 @@ export const updateImagesOfHomeAd = async (files, identifiant) => {
      return res;
 };
 
-export const editUser = (history, form, identifiant) => async (dispatch) => {
-     var res = await axios.post('/api/editUser', {
-          form: form.focusForm.values,
-          identifiant: identifiant,
-     });
-     res = await axios.get('/api/allUsers');
-     dispatch({ type: FLASH, payload: { message: false } });
-     dispatch({
-          type: FOCUS_FORM_CONFIGURATION,
-          payload: null,
-     });
-     dispatch({ type: FETCH_USERS, payload: res.data });
-};
+export const editUser =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          if (stateTriggeredValues.password) {
+               const password = stateTriggeredValues.password.trim();
+               if (password && password.length > 0) {
+                    var salt = await bcrypt.genSalt(12);
+                    var hashedPassword = bcrypt.hashSync(password, salt);
+               }
+               stateTriggeredValues.password = hashedPassword;
+          }
+          var res = await axios.post('/api/editUser', {
+               stateTriggeredValues,
+               identifiants,
+          });
 
-export const deleteUser = (history, form, identifiants) => async (dispatch) => {
-     var res = await axios.post('/api/deleteUser', {
-          identifiants: identifiants,
-     });
-     res = await axios.get('/api/allUsers');
-     dispatch({ type: FLASH, payload: { message: false } });
-     dispatch({
-          type: FOCUS_FORM_CONFIGURATION,
-          payload: null,
-     });
-     dispatch({ type: FETCH_USERS, payload: res.data });
-};
+          res = await axios.get('/api/allUsers');
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          dispatch({ type: FETCH_USERS, payload: res.data });
+     };
+
+export const deleteUser =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/deleteUser', {
+               identifiants,
+          });
+          res = await axios.get('/api/allUsers');
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          dispatch({ type: FETCH_USERS, payload: res.data });
+     };
 
 export const deleteClient =
-     (history, form, identifiant) => async (dispatch) => {
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
           var res = await axios.post('/api/deleteClient', {
-               identifiant: identifiant,
+               identifiants,
           });
           dispatch({
                type: FOCUS_FORM_CONFIGURATION,
@@ -230,10 +371,85 @@ export const deleteClient =
           dispatch({ type: FETCH_CLIENTS, payload: res.data });
      };
 
+export const deleteOpenedPropertyCase =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/deletePropertyCase', {
+               identifiants,
+          });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          res = await axios.post('/api/allOpenCases', {
+               clientId: identifiants.clientId,
+          });
+          await history.push(
+               '/client/' + identifiants.clientId + '/openCases/'
+          );
+
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({ type: FETCH_CASES, payload: res.data });
+     };
+
+export const deleteClosedPropertyCase =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/deletePropertyCase', {
+               identifiants,
+          });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          res = await axios.post('/api/allClosedCases', {
+               clientId: identifiants.clientId,
+          });
+          await history.push(
+               '/client/' + identifiants.clientId + '/closedCases/'
+          );
+
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({ type: FETCH_CASES, payload: res.data });
+     };
+export const deleteOpenedPropertyCaseFromList =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/deletePropertyCase', {
+               identifiants,
+          });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          res = await axios.post('/api/allOpenCases', {
+               clientId: identifiants.clientId,
+          });
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({ type: FETCH_CASES, payload: res.data });
+     };
+
+export const deleteClosedPropertyCaseFromList =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/deletePropertyCase', {
+               identifiants,
+          });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          res = await axios.post('/api/allClosedCases', {
+               clientId: identifiants.clientId,
+          });
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({ type: FETCH_CASES, payload: res.data });
+     };
 export const deleteNotary =
-     (history, form, identifiant) => async (dispatch) => {
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
           var res = await axios.post('/api/deleteNotary', {
-               identifiant: identifiant,
+               identifiants,
           });
           res = await axios.get('/api/allNotaries');
           dispatch({ type: FLASH, payload: { message: false } });
@@ -242,6 +458,20 @@ export const deleteNotary =
                payload: null,
           });
           dispatch({ type: FETCH_NOTARIES, payload: res.data });
+     };
+export const deleteSyndic =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/deleteSyndic', {
+               identifiants,
+          });
+          res = await axios.get('/api/allSyndics');
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          dispatch({ type: FETCH_SYNDICS, payload: res.data });
      };
 export const search = (searchValue, history) => async (dispatch) => {
      const res = await axios.get('/api/search', {
@@ -254,26 +484,63 @@ export const search = (searchValue, history) => async (dispatch) => {
           dispatch({ type: FLASH, payload: res.data });
      }
 };
-export const editClientProfile = (form, clientId) => async (dispatch) => {
-     await axios.post('/api/editClientProfile', {
-          form: form.clientForm.values,
-          clientId,
-     });
-     dispatch({ type: FLASH, payload: { message: 'Changements sauvegardés' } });
-};
+export const editClientProfile =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          const res = await axios.post('/api/editClientProfile', {
+               identifiants,
+               stateTriggeredValues,
+          });
+          dispatch({ type: FETCH_CLIENT, payload: res.data });
+          dispatch({
+               type: FLASH,
+               payload: { message: 'Changements sauvegardés' },
+          });
+     };
 
-export const editNotary = (history, form, notaryId) => async (dispatch) => {
-     await axios.post('/api/editNotary', {
-          form: form.focusForm.values,
-          notaryId,
-     });
-     var res = await axios.get('/api/allNotaries');
-     dispatch({ type: FETCH_NOTARIES, payload: res.data });
-     dispatch({
-          type: FOCUS_FORM_CONFIGURATION,
-          payload: null,
-     });
-};
+export const editCase =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          let data = constructFormData(identifiants, stateTriggeredValues);
+          const res = await axios.post('/api/editCase', data, {
+               headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          dispatch({ type: FETCH_CASE, payload: res.data });
+          dispatch({
+               type: FLASH,
+               payload: { message: 'Changements sauvegardés' },
+          });
+     };
+
+export const editNotary =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          await axios.post('/api/editNotary', {
+               identifiants,
+               stateTriggeredValues,
+          });
+          var res = await axios.get('/api/allNotaries');
+          dispatch({ type: FETCH_NOTARIES, payload: res.data });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+     };
+
+export const editSyndic =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          await axios.post('/api/editSyndic', {
+               identifiants,
+               stateTriggeredValues,
+          });
+          var res = await axios.get('/api/allSyndics');
+          dispatch({ type: FETCH_SYNDICS, payload: res.data });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+     };
 
 export const configureFocusForm = (configuration) => async (dispatch) => {
      dispatch({ type: FLASH, payload: { message: false } });

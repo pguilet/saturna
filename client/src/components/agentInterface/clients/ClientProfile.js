@@ -2,27 +2,31 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../../actions';
+import * as actions from '../../../actions';
 import { reduxForm, Field } from 'redux-form';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import Nav from 'react-bootstrap/Nav';
-import CustomField from '../customs/CustomField';
+import CustomField from '../../customs/CustomField';
 import moment from 'moment';
-import { FamilySituation, Civility } from '../../actions/types';
-import { Link, withRouter } from 'react-router-dom';
-import * as Sentry from '@sentry/react';
-import { BrowserRouter } from 'react-router-dom';
-import GuardedRoute from '../GuardedRoute';
-import ClientCases from './ClientCases';
-import FocusForm from './FocusForm';
+import { FamilySituation, Civility } from '../../../actions/types';
+import { withRouter } from 'react-router-dom';
+import { getField } from '../../../utils/forms';
+import FocusForm from '../FocusForm';
 
 class ClientProfile extends Component {
+     state = {
+          stateTriggeredValues: { files: new Set() },
+     };
+
      componentDidMount() {
           this.clientId = this.props.client._id;
           this.props.clearFlashMessage();
+          this.props.fetchOpenCases(this.props.client._id); //avoid to show previous open cases of other client
      }
-
+     constructor(props) {
+          super(props);
+          this.bindedGetFieldFunction = getField.bind(this);
+     }
      renderFields(client) {
           const fieldsToDisplay = [
                {
@@ -78,9 +82,10 @@ class ClientProfile extends Component {
                     label: 'Date de naissance',
                     id: 'birthday',
                     type: 'datePicker',
-                    valueToSet: client
-                         ? moment(client.birthday).format('YYYY-MM-DD')
-                         : undefined,
+                    valueToSet:
+                         client && client.birthday
+                              ? moment(client.birthday).format('YYYY-MM-DD')
+                              : undefined,
                     component: CustomField,
                     block: 1,
                },
@@ -199,11 +204,19 @@ class ClientProfile extends Component {
                     block: 2,
                },
                {
+                    label: 'Total loyer ou crédit par mois',
+                    id: 'propertyDebt',
+                    type: 'number',
+                    component: CustomField,
+                    valueToSet: client ? client.propertyDebt : undefined,
+                    block: 2,
+               },
+               {
                     label: 'Commentaire',
                     id: 'comment',
                     type: 'textarea',
                     component: CustomField,
-                    valueToSet: client.comment,
+                    valueToSet: client ? client.comment : undefined,
                     block: 2,
                },
           ];
@@ -211,52 +224,27 @@ class ClientProfile extends Component {
      }
 
      renderRow(fieldsToDisplay) {
-          return _.map([1, 2], (i) => {
+          let keyObject = { keyValue: 5 };
+          return _.map([1, 2, 3, 4], (i) => {
+               keyObject.keyValue = keyObject.keyValue + 1;
                return (
                     <div key={i} className="col-6">
-                         {this.renderCols(fieldsToDisplay, i)}
+                         {this.renderCols(fieldsToDisplay, i, keyObject)}
                     </div>
                );
           });
      }
-
-     renderCols(fieldsToDisplay, i) {
+     renderCols(fieldsToDisplay, i, keyObject) {
           return _.map(
                fieldsToDisplay.filter((field) => field.block === i),
                (field) => {
-                    return (
-                         <Field
-                              key={field.id}
-                              label={field.label}
-                              type={field.type}
-                              name={field.id}
-                              component={field.component}
-                              disabled={field.disabled ? field.disabled : false}
-                              valuetoset={
-                                   field.valueToSet
-                                        ? field.valueToSet
-                                        : undefined
-                              }
-                              valuestoset={
-                                   field.valuesToSet
-                                        ? field.valuesToSet
-                                        : undefined
-                              }
-                              className={
-                                   field.type === 'select'
-                                        ? 'browser-default'
-                                        : ''
-                              }
-                              id={field.id}
-                              identifiant={this.props.client._id}
-                              statetriggeredvaluesupdatefunction={(values) =>
-                                   this.setState({
-                                        stateTriggeredValues: values,
-                                   })
-                              }
-                              extralabel={field.extraLabel}
-                              br={field.br}
-                         />
+                    keyObject.keyValue = keyObject.keyValue + 4;
+                    return this.bindedGetFieldFunction(
+                         field,
+                         {
+                              identifiants: { parentId: this.props.client._id },
+                         },
+                         keyObject
                     );
                }
           );
@@ -296,8 +284,15 @@ class ClientProfile extends Component {
                                         className="centered margin-right-15px"
                                         onClick={() =>
                                              this.props.editClientProfile(
+                                                  this.props.history,
                                                   this.props.form,
-                                                  this.clientId
+                                                  {
+                                                       modelInstanceId:
+                                                            this.props.client
+                                                                 ._id,
+                                                  },
+                                                  this.state
+                                                       .stateTriggeredValues
                                              )
                                         }
                                    >
@@ -313,9 +308,10 @@ class ClientProfile extends Component {
                                              this.props.configureFocusForm({
                                                   validateButtonAction:
                                                        this.props.deleteClient,
-                                                  identifiant: {
-                                                       _id: this.props.client
-                                                            ._id,
+                                                  identifiants: {
+                                                       modelInstanceId:
+                                                            this.props.client
+                                                                 ._id,
                                                   },
                                                   title: 'Suppression de la fiche du client',
                                                   description:

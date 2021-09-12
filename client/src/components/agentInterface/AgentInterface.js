@@ -1,6 +1,5 @@
 //Rendering layer control (React router content)
 import React, { Component } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import InterfaceHeader from './InterfaceHeader';
@@ -8,13 +7,12 @@ import AgentsHome from './AgentsHome';
 import AgentsList from './AgentsList';
 import GuardedRoute from '../GuardedRoute';
 import HomeAdsList from './HomeAdsList';
-import Clients from './Clients';
-import Client from './Client';
+import Clients from './clients/Clients';
+import Client from './clients/Client';
 import Search from './Search';
 import { Roles } from '../../actions/types';
-import Nav from 'react-bootstrap/Nav';
-import ClientCases from './ClientCases';
 import Notaries from './Notaries';
+import Syndics from './Syndics';
 class AgentInterface extends Component {
      render() {
           return (
@@ -37,6 +35,11 @@ class AgentInterface extends Component {
                               exact
                               path="/notaries"
                               component={Notaries}
+                         />
+                         <GuardedRoute
+                              exact
+                              path="/syndics"
+                              component={Syndics}
                          />
                          <GuardedRoute
                               exact
@@ -66,6 +69,16 @@ class AgentInterface extends Component {
                          <GuardedRoute
                               exact
                               path="/client/:clientId/closedCases"
+                              component={Client}
+                         />
+                         <GuardedRoute
+                              exact
+                              path="/client/:clientId/openCases/:caseId"
+                              component={Client}
+                         />
+                         <GuardedRoute
+                              exact
+                              path="/client/:clientId/closedCases/:caseId"
                               component={Client}
                          />
                     </main>

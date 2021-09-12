@@ -1,10 +1,10 @@
 //Rendering layer control (React router content)
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../../actions';
-import FocusForm from './FocusForm';
-import { Roles } from '../../actions/types';
-import FixedFloatingButton from '../customs/FixedFloatingButton';
+import * as actions from '../../../actions';
+import FocusForm from '../FocusForm';
+import { Roles } from '../../../actions/types';
+import FixedFloatingButton from '../../customs/FixedFloatingButton';
 import Table from 'react-bootstrap/Table';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
@@ -91,9 +91,10 @@ class Clients extends Component {
                                                                                             this
                                                                                                  .props
                                                                                                  .deleteClient,
-                                                                                       identifiant:
+                                                                                       identifiants:
                                                                                             {
-                                                                                                 _id: client._id,
+                                                                                                 modelInstanceId:
+                                                                                                      client._id,
                                                                                             },
                                                                                        title: 'Suppression de la fiche du client',
                                                                                        description:

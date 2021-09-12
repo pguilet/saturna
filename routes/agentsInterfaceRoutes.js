@@ -12,8 +12,15 @@ const Users = mongoose.model('users'); //for testing purpose with node and mongo
 const HomeAds = mongoose.model('homeAds');
 const Clients = mongoose.model('clients');
 const Notaries = mongoose.model('notaries');
+const Syndics = mongoose.model('syndics');
+const PropertyCases = mongoose.model('propertyCases');
 const multer = require('multer');
-const { uploadFile, getFileStream, removeFile } = require('../services/s3');
+const {
+     uploadFile,
+     getFileStream,
+     removeFile,
+     getDownloadSignedLink,
+} = require('../services/s3');
 const fs = require('fs-extra');
 const util = require('util');
 const unlinkFile = util.promisify(fs.unlink);
@@ -35,6 +42,9 @@ const uploader = multer({
                fs.mkdirsSync(path);
                callback(null, path);
           },
+          filename: (req, file, callback) => {
+               callback(null, file.originalname);
+          },
      }),
 });
 
@@ -49,9 +59,29 @@ module.exports = (app) => {
           res.send(clients);
      });
 
+     app.post('/api/allOpenCases', requireLogin, async (req, res) => {
+          const allOpenCases = await PropertyCases.find({
+               caseClosed: false,
+               _user: req.body.clientId,
+          }).sort({ city: 1 });
+          res.send(allOpenCases);
+     });
+
+     app.post('/api/allClosedCases', requireLogin, async (req, res) => {
+          const allClosedCases = await PropertyCases.find({
+               caseClosed: true,
+               _user: req.body.clientId,
+          }).sort({ city: 1 });
+          res.send(allClosedCases);
+     });
+
      app.get('/api/allNotaries', requireLogin, async (req, res) => {
           const notaries = await Notaries.find().sort({ surname: 1 });
           res.send(notaries);
+     });
+     app.get('/api/allSyndics', requireLogin, async (req, res) => {
+          const syndics = await Syndics.find().sort({ name: 1 });
+          res.send(syndics);
      });
 
      app.get('/api/search', requireLogin, async (req, res) => {
@@ -99,24 +129,33 @@ module.exports = (app) => {
           res.send(client);
      });
 
+     app.post('/api/notary', requireLogin, async (req, res) => {
+          if (req.body.notaryId) {
+               const notary = await Notaries.findById(req.body.notaryId);
+               res.send(notary);
+          } else {
+               res.send(null);
+          }
+     });
+
+     app.post('/api/syndic', requireLogin, async (req, res) => {
+          if (req.body.syndicId) {
+               const syndic = await Syndics.findById(req.body.syndicId);
+               res.send(syndic);
+          } else {
+               res.send(null);
+          }
+     });
+
+     app.post('/api/propertyCase', requireLogin, async (req, res) => {
+          const openCase = await PropertyCases.findById(req.body.caseId);
+          res.send(openCase);
+     });
+
      app.get('/api/homeAds', requireLogin, async (req, res) => {
           const homeAds = await HomeAds.find().sort({ title: 1 });
           res.send(homeAds);
      });
-
-     app.get('/api/images/:key', async (req, res) => {
-          try {
-               const key = req.params.key;
-               if (key !== 'undefined') {
-                    const readStream = getFileStream(key);
-                    readStream.pipe(res);
-               }
-          } catch (error) {
-               console.log(error);
-               res.send();
-          }
-     });
-
      app.get('/api/images/:folder/:user/:key', async (req, res) => {
           try {
                const key = req.params.key;
@@ -135,8 +174,60 @@ module.exports = (app) => {
           }
      });
 
+     app.get('/api/images/:modelId/:key', async (req, res) => {
+          try {
+               const key = req.params.key;
+               const modelId = req.params.modelId;
+               if (key !== 'undefined') {
+                    const readStream = getFileStream(modelId + '/' + key);
+                    readStream.pipe(res);
+               }
+          } catch (error) {
+               console.log(error);
+               res.send();
+          }
+     });
+
      app.post(
-          '/api/uploadHomeAdImageLocally',
+          '/api/downloadSignedLinkForFile',
+          requireLogin,
+          async (req, res) => {
+               try {
+                    const key = req.body.path;
+                    if (key !== 'undefined') {
+                         const url = getDownloadSignedLink(key);
+                         res.send(url);
+                    }
+               } catch (error) {
+                    console.log(error);
+                    res.send();
+               }
+          }
+     );
+
+     app.post(
+          '/api/uploadFileLocally',
+          requireLogin,
+          uploader.array('file'),
+          async (req, res) => {
+               var files = req.files;
+               var filePaths = [];
+               var x = 0;
+               if (files) {
+                    for (const file of files) {
+                         filePaths[x] = file.path
+                              .replace('\\', '/')
+                              .replace('\\', '/');
+                         x++;
+                    }
+               }
+
+               res.send(filePaths);
+          }
+     );
+
+     app.post(
+          '/api/uploadImageFileLocally',
           requireLogin,
           uploader.array('file'),
           async (req, res) => {
@@ -152,11 +243,11 @@ module.exports = (app) => {
                     }
                }
                if (
-                    req.body.identifiant &&
+                    req.body.identifiants &&
                     !req.body.identifiant === 'undefined'
                ) {
                     const homeAd = await HomeAds.findOne({
-                         _id: req.body.identifiant,
+                         _id: req.body.identifiants,
                     });
 
                     res.send(filePaths.concat(homeAd.images));
@@ -165,228 +256,236 @@ module.exports = (app) => {
                }
           }
      );
+
+     const clearUploadDirectory = (username) => {
+          if (fs.pathExistsSync('./upload/' + username)) {
+               fs.rmdirSync('./upload/' + username, {
+                    recursive: true,
+                    force: true,
+               });
+          }
+     };
+
+     const updateModel = async (
+          req,
+          res,
+          pdfFields,
+          imagesFields,
+          modelInstance,
+          fields,
+          identifiants
+     ) => {
+          if (modelInstance && fields) {
+               for (const [key, value] of Object.entries(fields)) {
+                    if (key !== 'identifiants')
+                         if (pdfFields.includes(key)) {
+                              if (value) {
+                                   await uploadFile({
+                                        pathOrigin:
+                                             'upload/' +
+                                             req.user.username +
+                                             '/' +
+                                             value,
+                                        pathDestination:
+                                             modelInstance._id + '/' + value,
+                                   });
+                                   modelInstance[key] =
+                                        modelInstance._id + '/' + value;
+                              } else {
+                                   await removeFile(
+                                        modelInstance._id + '/' + value
+                                   );
+                                   modelInstance[key] = value;
+                              }
+                         } else if (imagesFields.includes(key)) {
+                              if (modelInstance[key]) {
+                                   for (const imageKey of modelInstance[key]) {
+                                        if (!fields[key].includes(imageKey)) {
+                                             await removeFile(imageKey);
+                                             modelInstance[key] = modelInstance[
+                                                  key
+                                             ].filter(
+                                                  (item) => item !== imageKey
+                                             );
+                                        }
+                                   }
+                              }
+                              var filesNameOnS3Bucket = [];
+                              var x = 0;
+                              for (const imagePath of fields[key]) {
+                                   if (imagePath.includes('upload')) {
+                                        const uploadedImage = await uploadFile({
+                                             pathOrigin:
+                                                  'upload/' +
+                                                  req.user.username +
+                                                  '/' +
+                                                  imagePath
+                                                       .split('\\')
+                                                       .pop()
+                                                       .split('/')
+                                                       .pop(),
+                                             pathDestination:
+                                                  modelInstance._id +
+                                                  '/' +
+                                                  imagePath
+                                                       .split('\\')
+                                                       .pop()
+                                                       .split('/')
+                                                       .pop(),
+                                        });
+                                        filesNameOnS3Bucket[x] =
+                                             uploadedImage.key;
+                                        x++;
+                                   }
+                              }
+                              modelInstance[key] =
+                                   modelInstance[key].concat(
+                                        filesNameOnS3Bucket
+                                   );
+                         } else {
+                              if (key.includes('_')) {
+                                   //ref to other schema
+                                   modelInstance[key] = new ObjectId(value);
+                              } else {
+                                   modelInstance[key] = value;
+                              }
+                         }
+               }
+          }
+          clearUploadDirectory(req.user.username);
+          const savedModelInstance = await modelInstance.save();
+          return savedModelInstance;
+     };
+
+     const updateModelAndReturnResponse = async (
+          req,
+          res,
+          pdfFields,
+          imagesFields,
+          modelInstance,
+          fields,
+          identifiants
+     ) => {
+          res.send(
+               updateModel(
+                    req,
+                    res,
+                    pdfFields,
+                    imagesFields,
+                    modelInstance,
+                    fields,
+                    identifiants
+               )
+          );
+     };
+
      app.post(
           '/api/createHomeAd',
           requireLogin,
-          uploader.array('file'),
+          uploader.array('files'),
           async (req, res) => {
-               var filesNameOnS3Bucket = [];
-               const homeAd = await new HomeAds({
-                    title: req.body.title,
-                    description: req.body.description,
-                    images: filesNameOnS3Bucket,
-                    isLocation:
-                         !req.body.type || req.body.type === 'location'
-                              ? true
-                              : false,
-               });
-               if (req.body.stateTriggeredValues) {
-                    var x = 0;
-                    for (const imagePath of req.body.stateTriggeredValues.split(
-                         ','
-                    )) {
-                         if (imagePath.includes('upload')) {
-                              const uploadedImage = await uploadFile({
-                                   path: imagePath,
-                                   filename: imagePath.replace(
-                                        'upload/' + req.user.username + '/',
-                                        ''
-                                   ),
-                              });
-                              filesNameOnS3Bucket[x] = uploadedImage.key;
-                              x++;
-                         }
-                    }
-                    homeAd.images = homeAd.images.concat(filesNameOnS3Bucket);
-               }
+               updateModelAndReturnResponse(
+                    req,
+                    res,
+                    [],
+                    ['images'],
+                    await new HomeAds(),
+                    req.body.stateTriggeredValues,
+                    req.body.identifiants
+               );
+          }
+     );
 
-               if (fs.pathExistsSync('./upload/' + req.user.username)) {
-                    fs.rmdirSync('./upload/' + req.user.username, {
-                         recursive: true,
-                         force: true,
-                    });
-               }
-               res.send(homeAd.save());
-          }
-     );
-     app.post(
-          '/api/uploadImage',
-          requireLogin,
-          uploader.single(
-               'file'
-          ) /* name attribute of <file> element in your form */,
-          async (req, res) => {
-               const uploadedImage = await uploadFile(req.file);
-               res.status(200).contentType('text/plain').end('File uploaded!');
-          }
-     );
      app.post('/api/editClientProfile', requireLogin, async (req, res) => {
-          let client = await Clients.findOne({
-               _id: req.body.clientId,
-          });
-          let form = req.body.form;
-          if (client && form) {
-               if (form.civility) {
-                    client.civility = form.civility;
-               }
-               if (form.name) {
-                    client.name = form.name;
-               }
-               if (form.name2) {
-                    client.name2 = form.name2;
-               }
-               if (form.name3) {
-                    client.name3 = form.name3;
-               }
-               if (form.surname) {
-                    client.surname = form.surname;
-               }
-               if (form.womenSurname) {
-                    client.womenSurname = form.womenSurname;
-               }
-               if (form.birthday) {
-                    client.birthday = form.birthday;
-               }
-               if (form.street) {
-                    client.street = form.street;
-               }
-               if (form.postalCode) {
-                    client.postalCode = form.postalCode;
-               }
-               if (form.city) {
-                    client.city = form.city;
-               }
-               if (form.familySituation) {
-                    client.familySituation = form.familySituation;
-               }
-               if (form.childNumber) {
-                    client.childNumber = form.childNumber;
-               }
-               if (form.job) {
-                    client.job = form.job;
-               }
-               if (form.salary) {
-                    client.salary = form.salary;
-               }
-               if (form.phoneNumber) {
-                    client.phoneNumber = form.phoneNumber;
-               }
-               if (form.email) {
-                    client.email = form.email;
-               }
-               if (form.newsletterSuscribing) {
-                    client.newsletterSuscribing = form.newsletterSuscribing;
-               }
-               if (form.profilInvest) {
-                    client.profilInvest = form.profilInvest;
-               }
-               if (form.profilRent) {
-                    client.profilRent = form.profilRent;
-               }
-               if (form.profilOwner) {
-                    client.profilOwner = form.profilOwner;
-               }
-               if (form.comment) {
-                    client.comment = form.comment;
-               }
-          }
-          client.save();
-          res.send(client);
+          updateModelAndReturnResponse(
+               req,
+               res,
+               [],
+               [],
+               await Clients.findById(req.body.identifiants.modelInstanceId),
+               req.body.stateTriggeredValues,
+               req.body.identifiants
+          );
      });
 
-     app.post('/api/editNotary', requireLogin, async (req, res) => {
-          let notary = await Notaries.findOne({
-               _id: req.body.notaryId,
-          });
-          let form = req.body.form;
-          if (notary && form) {
-               if (form.civility) {
-                    notary.civility = form.civility;
-               }
-               if (form.name) {
-                    notary.name = form.name;
-               }
-               if (form.surname) {
-                    notary.surname = form.surname;
-               }
-               if (form.street) {
-                    notary.street = form.street;
-               }
-               if (form.postalCode) {
-                    notary.postalCode = form.postalCode;
-               }
-               if (form.city) {
-                    notary.city = form.city;
-               }
-               if (form.phoneNumber) {
-                    notary.phoneNumber = form.phoneNumber;
-               }
-               if (form.email) {
-                    notary.email = form.email;
-               }
-               if (form.comment) {
-                    notary.comment = form.comment;
-               }
+     app.post(
+          '/api/editCase',
+          uploader.array('files'),
+          requireLogin,
+          async (req, res) => {
+               let model = await updateModel(
+                    req,
+                    res,
+                    [
+                         'carrezLawPdf',
+                         'compromisPdf',
+                         'diagnosticPdf',
+                         'preEtatDatePdf',
+                         'etatDatePdf',
+                         'appelDeFondPdf',
+                         'propertyTaxPdf',
+                         'mortGageContractPdf',
+                    ],
+                    ['estimationImages', 'propertyImages'],
+                    await PropertyCases.findById(
+                         req.body.identifiants.modelInstanceId
+                    ),
+                    req.body.stateTriggeredValues,
+                    req.body.identifiants
+               );
+
+               //we copy to be able to retrieve the data even if its removed from its model database.
+               let notaryVendor = await Notaries.findById(model.notaryVendor);
+               let newNotaryVendor = new Notaries(notaryVendor);
+               model.notaryVendor = newNotaryVendor;
+
+               let notaryBuyer = await Notaries.findById(model.notaryBuyer);
+               let newNotaryBuyer = new Notaries(notaryBuyer);
+               model.notaryBuyer = newNotaryBuyer;
+
+               let syndic = await Syndics.findById(model.syndic);
+               let newSyndic = new Syndics(syndic);
+               model.syndic = newSyndic;
+
+               model.save();
+               res.send(model);
           }
-          notary.save();
-          res.send(notary);
+     );
+
+     app.post('/api/editNotary', requireLogin, async (req, res) => {
+          updateModelAndReturnResponse(
+               req,
+               res,
+               [],
+               [],
+               await Notaries.findById(req.body.identifiants.modelInstanceId),
+               req.body.stateTriggeredValues,
+               req.body.identifiants
+          );
+     });
+
+     app.post('/api/editSyndic', requireLogin, async (req, res) => {
+          updateModelAndReturnResponse(
+               req,
+               res,
+               [],
+               [],
+               await Syndics.findById(req.body.identifiants.modelInstanceId),
+               req.body.stateTriggeredValues,
+               req.body.identifiants
+          );
      });
 
      app.post('/api/editHomeAd', requireLogin, async (req, res) => {
-          let homeAd = await HomeAds.findOne({ _id: req.body.identifiant });
-          if (homeAd && (req.body.form || req.body.stateTriggeredValues)) {
-               if (req.body.form) {
-                    if (req.body.form.type) {
-                         homeAd.isLocation =
-                              req.body.form.type === 'location' ? true : false;
-                    }
-                    if (req.body.form.title) {
-                         homeAd.title = req.body.form.title;
-                    }
-                    if (req.body.form.description) {
-                         homeAd.description = req.body.form.description;
-                    }
-               }
-               if (req.body.stateTriggeredValues && homeAd.images) {
-                    for (const imageKey of homeAd.images) {
-                         if (
-                              !req.body.stateTriggeredValues.includes(imageKey)
-                         ) {
-                              await removeFile(imageKey);
-                              homeAd.images = homeAd.images.filter(
-                                   (item) => item !== imageKey
-                              );
-                         }
-                    }
-               }
-
-               if (req.body.stateTriggeredValues) {
-                    var filesNameOnS3Bucket = [];
-                    var x = 0;
-                    for (const imagePath of req.body.stateTriggeredValues) {
-                         if (imagePath.includes('upload')) {
-                              const uploadedImage = await uploadFile({
-                                   path: imagePath,
-                                   filename: imagePath.replace(
-                                        'upload/' + req.user.username + '/',
-                                        ''
-                                   ),
-                              });
-                              filesNameOnS3Bucket[x] = uploadedImage.key;
-                              x++;
-                         }
-                    }
-                    homeAd.images = homeAd.images.concat(filesNameOnS3Bucket);
-               }
-               if (fs.pathExistsSync('./upload/' + req.user.username)) {
-                    fs.rmdirSync('./upload/' + req.user.username, {
-                         recursive: true,
-                         force: true,
-                    });
-               }
-          }
-          homeAd.save();
-          res.send(homeAd);
+          updateModelAndReturnResponse(
+               req,
+               res,
+               [],
+               ['images'],
+               await HomeAds.findById(req.body.identifiants.modelInstanceId),
+               req.body.stateTriggeredValues,
+               req.body.identifiants
+          );
      });
 
      app.post(
@@ -404,9 +503,9 @@ module.exports = (app) => {
      );
 
      app.post('/api/deleteHomeAd', requireLogin, async (req, res) => {
-          const homeAdAlreadyExisting = await HomeAds.findOne({
-               _id: req.body.identifiant,
-          });
+          const homeAdAlreadyExisting = await HomeAds.findById(
+               req.body.identifiants.modelInstanceId
+          );
 
           for (const imageKey of homeAdAlreadyExisting.images) {
                try {
@@ -421,21 +520,18 @@ module.exports = (app) => {
 
      app.post('/api/newUser', requireAdminRole, async (req, res) => {
           const userAlreadyExisting = await Users.find({
-               username: req.body.username,
+               username: req.body.stateTriggeredValues.username,
           });
           if (!userAlreadyExisting.length) {
-               var salt = await bcrypt.genSalt(12);
-               var hashedPassword = bcrypt.hashSync(
-                    req.body.password.trim(),
-                    salt
+               updateModelAndReturnResponse(
+                    req,
+                    res,
+                    [],
+                    [],
+                    await new Users(),
+                    req.body.stateTriggeredValues,
+                    req.body.identifiants
                );
-               const user = await new Users({
-                    username: req.body.username,
-                    password: hashedPassword,
-                    role: req.body.role,
-               }).save();
-
-               res.send(user);
           } else {
                res.send({
                     message: "Un agent avec ce nom d'utilisateur existe déjà",
@@ -443,29 +539,21 @@ module.exports = (app) => {
           }
      });
      app.post('/api/editUser', requireAdminRole, async (req, res) => {
-          let user = await Users.findOne({ _id: req.body.identifiant });
-
-          if (user) {
-               if (req.body.form && req.body.form.role) {
-                    user.role = req.body.form.role;
-               }
-               if (req.body.form && req.body.form.password) {
-                    const password = req.body.form.password.trim();
-                    if (password && password.length > 0) {
-                         var salt = await bcrypt.genSalt(12);
-                         var hashedPassword = bcrypt.hashSync(password, salt);
-                         user.password = hashedPassword;
-                    }
-               }
-          }
-          user.save();
-          res.send(user);
+          updateModelAndReturnResponse(
+               req,
+               res,
+               [],
+               [],
+               await Users.findById(req.body.identifiants.modelInstanceId),
+               req.body.stateTriggeredValues,
+               req.body.identifiants
+          );
      });
      app.post('/api/deleteUser', requireAdminRole, async (req, res) => {
           if (req.body.identifiants.username !== 'nsalem') {
-               const userAlreadyExisting = await Users.findOneAndDelete({
-                    _id: new ObjectId(req.body.identifiants._id),
-               });
+               const userAlreadyExisting = await Users.findByIdAndDelete(
+                    req.body.identifiants.modelInstanceId
+               );
 
                res.send(userAlreadyExisting);
           } else {
@@ -474,85 +562,81 @@ module.exports = (app) => {
      });
 
      app.post('/api/deleteNotary', requireAdminRole, async (req, res) => {
-          const notaryAlreadyExisting = await Notaries.findOneAndDelete({
-               _id: req.body.identifiant._id,
-          });
+          const notaryAlreadyExisting = await Notaries.findByIdAndDelete(
+               req.body.identifiants.modelInstanceId
+          );
 
           res.send(notaryAlreadyExisting);
      });
 
-     app.post('/api/deleteClient', requireAdminRole, async (req, res) => {
-          const clientAlreadyExisting = await Clients.findOneAndDelete({
-               _id: req.body.identifiant._id,
-          });
+     app.post('/api/deleteSyndic', requireAdminRole, async (req, res) => {
+          const syndicAlreadyExisting = await Syndics.findByIdAndDelete(
+               req.body.identifiants.modelInstanceId
+          );
 
+          res.send(syndicAlreadyExisting);
+     });
+
+     app.post('/api/deleteClient', requireAdminRole, async (req, res) => {
+          const clientAlreadyExisting = await Clients.findByIdAndDelete(
+               req.body.identifiants.modelInstanceId
+          );
           res.send(clientAlreadyExisting);
      });
 
-     app.post('/api/newClient', requireLogin, async (req, res) => {
-          let clientAlreadyExisting = false;
-          let name = undefined;
-          let surname = undefined;
-          let birthday = undefined;
-          if (req.body) {
-               name = req.body.name;
-               surname = req.body.surname;
-               birthday = req.body.birthday;
-               if (name || surname || birthday) {
-                    clientAlreadyExisting = await Clients.find({
-                         name: name,
-                         surname: surname,
-                         birthday: birthday,
-                    });
-               }
-          }
-          if (!clientAlreadyExisting.length) {
-               const client = await new Clients({
-                    surname: surname,
-                    name: name,
-                    birthday: birthday,
-               }).save();
-
-               res.send(client);
-          } else {
-               res.send({
-                    message: 'Le client existe déjà.',
-               });
-          }
+     app.post('/api/deletePropertyCase', requireAdminRole, async (req, res) => {
+          const propertyCaseAlreadyExisting =
+               await PropertyCases.findByIdAndDelete(
+                    req.body.identifiants.modelInstanceId
+               );
+          res.send(propertyCaseAlreadyExisting);
      });
+
+     app.post('/api/newClient', requireLogin, async (req, res) => {
+          updateModelAndReturnResponse(
+               req,
+               res,
+               [],
+               [],
+               await new Clients(),
+               req.body.stateTriggeredValues,
+               req.body.identifiants
+          );
+     });
+
+     app.post('/api/newOpenCase', requireLogin, async (req, res) => {
+          updateModelAndReturnResponse(
+               req,
+               res,
+               [],
+               [],
+               await new PropertyCases(),
+               req.body.stateTriggeredValues,
+               req.body.identifiants
+          );
+     });
+
      app.post('/api/createNotary', requireLogin, async (req, res) => {
-          let notary = await new Notaries();
-          let form = req.body.focusForm.values;
-          if (notary && form) {
-               if (form.civility) {
-                    notary.civility = form.civility;
-               }
-               if (form.name) {
-                    notary.name = form.name;
-               }
-               if (form.surname) {
-                    notary.surname = form.surname;
-               }
-               if (form.street) {
-                    notary.street = form.street;
-               }
-               if (form.postalCode) {
-                    notary.postalCode = form.postalCode;
-               }
-               if (form.city) {
-                    notary.city = form.city;
-               }
-               if (form.phoneNumber) {
-                    notary.phoneNumber = form.phoneNumber;
-               }
-               if (form.email) {
-                    notary.email = form.email;
-               }
-               if (form.comment) {
-                    notary.comment = form.comment;
-               }
-          }
-          notary.save();
-          res.send(notary);
+          updateModelAndReturnResponse(
+               req,
+               res,
+               [],
+               [],
+               await new Notaries(),
+               req.body.stateTriggeredValues,
+               req.body.identifiants
+          );
+     });
+
+     app.post('/api/createSyndic', requireLogin, async (req, res) => {
+          updateModelAndReturnResponse(
+               req,
+               res,
+               [],
+               [],
+               await new Syndics(),
+               req.body.stateTriggeredValues,
+               req.body.identifiants
+          );
      });
 };

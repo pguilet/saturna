@@ -93,6 +93,14 @@ class InterfaceHeader extends Component {
                                              >
                                                   Notaires
                                              </Link>
+                                             <Link
+                                                  to="/syndics"
+                                                  className={this.getClassNames(
+                                                       'syndics'
+                                                  )}
+                                             >
+                                                  Syndics
+                                             </Link>
                                         </>
                                    )}
                               </Nav>

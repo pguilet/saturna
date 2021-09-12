@@ -8,6 +8,7 @@ const clientSchema = new Schema({
      name2: String,
      name3: String,
      surname: String,
+     propertyDebt: Number,
      womenSurname: String,
      birthday: Date,
      street: String,

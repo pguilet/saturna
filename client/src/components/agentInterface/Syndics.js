@@ -10,23 +10,21 @@ import moment from 'moment';
 import { withRouter } from 'react-router-dom';
 import CustomField from '../customs/CustomField';
 
-class Notaries extends Component {
+class Syndics extends Component {
      componentDidMount() {
-          this.props.fetchPage('notaries');
-          this.props.fetchNotaries();
+          this.props.fetchPage('syndics');
+          this.props.fetchSyndics();
      }
 
      renderContent() {
           var key = 0;
           return (
                <div>
-                    <h4>Liste des notaires</h4>
+                    <h4>Liste des syndics</h4>
                     <Table striped bordered hover>
                          <thead>
                               <tr>
-                                   <th>Civilité</th>
                                    <th>Nom</th>
-                                   <th>Prénom</th>
                                    <th>Rue</th>
                                    <th>Code Postal</th>
                                    <th>Ville</th>
@@ -36,46 +34,28 @@ class Notaries extends Component {
                               </tr>
                          </thead>
                          <tbody>
-                              {this.props.notaries
-                                   ? this.props.notaries.map((notary) => {
+                              {this.props.syndics
+                                   ? this.props.syndics.map((syndic) => {
                                           key += 4;
                                           var focusFormConfiguration = {
                                                validateButtonAction:
-                                                    this.props.editNotary,
+                                                    this.props.editSyndic,
                                                identifiants: {
-                                                    modelInstanceId: notary._id,
+                                                    modelInstanceId: syndic._id,
                                                },
-                                               title: 'Edition du notaire',
+                                               title: 'Edition du Syndic',
                                                description:
-                                                    "Formulaire d'édition du notaire.",
+                                                    "Formulaire d'édition du Syndic.",
                                                validateButtonLabel:
-                                                    'Editer le notaire',
+                                                    'Editer le syndic',
                                                fieldsToDisplay: [
                                                     {
-                                                         label: 'Civilité',
-                                                         id: 'civility',
-                                                         type: 'select',
-                                                         valuesToSet: Civility,
-                                                         component: CustomField,
-                                                         valueToSet: notary
-                                                              ? notary.civility
-                                                              : undefined,
-                                                    },
-                                                    {
                                                          label: 'Nom',
-                                                         id: 'surname',
-                                                         type: 'text',
-                                                         component: CustomField,
-                                                         valueToSet:
-                                                              notary.surname,
-                                                    },
-                                                    {
-                                                         label: 'Prénom',
                                                          id: 'name',
                                                          type: 'text',
                                                          component: CustomField,
                                                          valueToSet:
-                                                              notary.name,
+                                                              syndic.name,
                                                     },
                                                     {
                                                          label: 'Rue',
@@ -84,7 +64,7 @@ class Notaries extends Component {
                                                          component: CustomField,
                                                          openBlock: true,
                                                          valueToSet:
-                                                              notary.street,
+                                                              syndic.street,
                                                     },
                                                     {
                                                          label: 'Code postal',
@@ -92,7 +72,7 @@ class Notaries extends Component {
                                                          type: 'number',
                                                          component: CustomField,
                                                          valueToSet:
-                                                              notary.postalCode,
+                                                              syndic.postalCode,
                                                     },
                                                     {
                                                          label: 'Ville',
@@ -100,7 +80,7 @@ class Notaries extends Component {
                                                          type: 'text',
                                                          component: CustomField,
                                                          valueToSet:
-                                                              notary.city,
+                                                              syndic.city,
                                                     },
                                                     {
                                                          label: 'Num tel',
@@ -108,7 +88,7 @@ class Notaries extends Component {
                                                          type: 'text',
                                                          component: CustomField,
                                                          valueToSet:
-                                                              notary.phoneNumber,
+                                                              syndic.phoneNumber,
                                                     },
                                                     {
                                                          label: 'Email',
@@ -116,7 +96,7 @@ class Notaries extends Component {
                                                          type: 'text',
                                                          component: CustomField,
                                                          valueToSet:
-                                                              notary.email,
+                                                              syndic.email,
                                                     },
                                                     {
                                                          label: 'Commentaire',
@@ -124,7 +104,7 @@ class Notaries extends Component {
                                                          type: 'textarea',
                                                          component: CustomField,
                                                          valueToSet:
-                                                              notary.comment,
+                                                              syndic.comment,
                                                     },
                                                ],
                                           };
@@ -138,7 +118,7 @@ class Notaries extends Component {
                                                               );
                                                          }}
                                                     >
-                                                         {notary.civility}
+                                                         {syndic.name}
                                                     </td>
                                                     <td
                                                          className="selectable"
@@ -148,7 +128,7 @@ class Notaries extends Component {
                                                               );
                                                          }}
                                                     >
-                                                         {notary.surname}
+                                                         {syndic.street}
                                                     </td>
                                                     <td
                                                          className="selectable"
@@ -158,7 +138,7 @@ class Notaries extends Component {
                                                               );
                                                          }}
                                                     >
-                                                         {notary.name}
+                                                         {syndic.postalCode}
                                                     </td>
                                                     <td
                                                          className="selectable"
@@ -168,7 +148,7 @@ class Notaries extends Component {
                                                               );
                                                          }}
                                                     >
-                                                         {notary.street}
+                                                         {syndic.city}
                                                     </td>
                                                     <td
                                                          className="selectable"
@@ -178,7 +158,7 @@ class Notaries extends Component {
                                                               );
                                                          }}
                                                     >
-                                                         {notary.postalCode}
+                                                         {syndic.phoneNumber}
                                                     </td>
                                                     <td
                                                          className="selectable"
@@ -188,7 +168,7 @@ class Notaries extends Component {
                                                               );
                                                          }}
                                                     >
-                                                         {notary.city}
+                                                         {syndic.email}
                                                     </td>
                                                     <td
                                                          className="selectable"
@@ -198,27 +178,7 @@ class Notaries extends Component {
                                                               );
                                                          }}
                                                     >
-                                                         {notary.phoneNumber}
-                                                    </td>
-                                                    <td
-                                                         className="selectable"
-                                                         onClick={() => {
-                                                              this.props.configureFocusForm(
-                                                                   focusFormConfiguration
-                                                              );
-                                                         }}
-                                                    >
-                                                         {notary.email}
-                                                    </td>
-                                                    <td
-                                                         className="selectable"
-                                                         onClick={() => {
-                                                              this.props.configureFocusForm(
-                                                                   focusFormConfiguration
-                                                              );
-                                                         }}
-                                                    >
-                                                         {notary.comment}
+                                                         {syndic.comment}
                                                     </td>
                                                     <td
                                                          className="selectable"
@@ -246,17 +206,17 @@ class Notaries extends Component {
                                                                                        validateButtonAction:
                                                                                             this
                                                                                                  .props
-                                                                                                 .deleteNotary,
+                                                                                                 .deleteSyndic,
                                                                                        identifiants:
                                                                                             {
                                                                                                  modelInstanceId:
-                                                                                                      notary._id,
+                                                                                                      syndic._id,
                                                                                             },
-                                                                                       title: 'Suppression le notaire',
+                                                                                       title: 'Suppression le syndic',
                                                                                        description:
-                                                                                            'Etes-vous sûr de vouloir supprimer le notaire?',
+                                                                                            'Etes-vous sûr de vouloir supprimer le syndic?',
                                                                                        validateButtonLabel:
-                                                                                            'Supprimer le notaire',
+                                                                                            'Supprimer le syndic',
                                                                                        fieldsToDisplay:
                                                                                             [],
                                                                                   }
@@ -289,27 +249,14 @@ class Notaries extends Component {
                          onClick={() => {
                               this.props.configureFocusForm({
                                    validateButtonAction:
-                                        this.props.createNotary,
-                                   title: "Ajout d'un nouveau notaire",
+                                        this.props.createSyndic,
+                                   title: "Ajout d'un nouveau syndic",
                                    description:
-                                        "Formulaire d'ajout d'un nouveau notaire.",
-                                   validateButtonLabel: 'Ajouter le notaire',
+                                        "Formulaire d'ajout d'un nouveau syndic.",
+                                   validateButtonLabel: 'Ajouter le syndic',
                                    fieldsToDisplay: [
                                         {
-                                             label: 'Civilité',
-                                             id: 'civility',
-                                             type: 'select',
-                                             valuesToSet: Civility,
-                                             component: CustomField,
-                                        },
-                                        {
                                              label: 'Nom',
-                                             id: 'surname',
-                                             type: 'text',
-                                             component: CustomField,
-                                        },
-                                        {
-                                             label: 'Prénom',
                                              id: 'name',
                                              type: 'text',
                                              component: CustomField,
@@ -359,8 +306,8 @@ class Notaries extends Component {
           );
      }
 }
-function mapStateToProps({ notaries, flash, auth, focusFormConfiguration }) {
-     return { notaries, flash, auth, focusFormConfiguration };
+function mapStateToProps({ syndics, flash, auth, focusFormConfiguration }) {
+     return { syndics, flash, auth, focusFormConfiguration };
 }
 
-export default connect(mapStateToProps, actions)(withRouter(Notaries));
+export default connect(mapStateToProps, actions)(withRouter(Syndics));

@@ -11,6 +11,9 @@ import clientsReducer from './clientsReducer';
 import clientReducer from './clientReducer';
 import focusFormReducer from './focusFormReducer';
 import notariesReducer from './notariesReducer';
+import syndicsReducer from './syndicsReducer';
+import openCasesReducer from './casesReducer';
+import openCaseReducer from './caseReducer';
 
 export default combineReducers({
      auth: authReducer,
@@ -22,6 +25,9 @@ export default combineReducers({
      homeAds: homeAdsReducer,
      clients: clientsReducer,
      notaries: notariesReducer,
+     syndics: syndicsReducer,
      client: clientReducer,
+     theCases: openCasesReducer,
+     theCase: openCaseReducer,
      focusFormConfiguration: focusFormReducer,
 });

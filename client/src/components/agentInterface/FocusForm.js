@@ -12,48 +12,53 @@ import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';
 import { withRouter } from 'react-router-dom';
+import { getField } from '../../utils/forms';
 
 class FocusForm extends Component {
      state = {
           createUserButtonTriggered: false,
+          stateTriggeredValues: { files: new Set() },
+          fieldsToDisplay: undefined,
      };
-
-     renderFields() {
-          return _.map(
-               this.props.focusFormConfiguration.fieldsToDisplay,
-               (field) => {
-                    return (
-                         <Field
-                              key={field.id}
-                              label={field.label}
-                              type={field.type}
-                              name={field.id}
-                              component={field.component}
-                              disabled={field.disabled ? field.disabled : false}
-                              valuetoset={
-                                   field.valueToSet
-                                        ? field.valueToSet
-                                        : undefined
-                              }
-                              valuestoset={
-                                   field.valuesToSet
-                                        ? field.valuesToSet
-                                        : undefined
-                              }
-                              className={
-                                   field.type === 'select'
-                                        ? 'browser-default'
-                                        : ''
-                              }
-                              id={field.id}
-                              identifiant={this.props.identifiant}
-                              statetriggeredvaluesupdatefunction={(values) =>
-                                   (this.stateTriggeredValues = values)
-                              }
-                         />
+     constructor(props) {
+          super(props);
+          this.bindedGetFieldFunction = getField.bind(this);
+     }
+     componentDidMount() {
+          if (
+               this.props.focusFormConfiguration.fieldsToDisplay instanceof
+               Function
+          ) {
+               this.props.focusFormConfiguration
+                    .fieldsToDisplay(
+                         this.props.focusFormConfiguration.identifiants
+                              .modelInstanceId
+                    )
+                    .then((fieldsToDisplay) =>
+                         this.setState({
+                              fieldsToDisplay: fieldsToDisplay,
+                         })
                     );
-               }
-          );
+          } else {
+               this.setState({
+                    fieldsToDisplay:
+                         this.props.focusFormConfiguration.fieldsToDisplay,
+               });
+          }
+     }
+     renderFields() {
+          let keyObject = { keyValue: 0 };
+          return _.map(this.state.fieldsToDisplay, (field) => {
+               const identifiants = this.props.identifiants
+                    ? this.props.identifiants.modelParentId
+                    : null;
+               keyObject.keyValue = keyObject.keyValue + 4;
+               return this.bindedGetFieldFunction(
+                    field,
+                    identifiants,
+                    keyObject
+               );
+          });
      }
 
      handleSubmit = (event) => {
@@ -64,8 +69,8 @@ class FocusForm extends Component {
           this.props.focusFormConfiguration.validateButtonAction(
                this.props.history,
                this.props.form,
-               this.props.focusFormConfiguration.identifiant,
-               this.stateTriggeredValues
+               this.props.focusFormConfiguration.identifiants,
+               this.state.stateTriggeredValues
           );
      };
 
@@ -85,7 +90,10 @@ class FocusForm extends Component {
                               </DialogContentText>
 
                               <Form.Group className="mb-3">
-                                   {this.renderFields()}
+                                   {this.props.focusFormConfiguration &&
+                                        this.props.focusFormConfiguration
+                                             .fieldsToDisplay &&
+                                        this.renderFields()}
 
                                    <div
                                         className="text-danger"
@@ -137,21 +145,27 @@ class FocusForm extends Component {
                                         </span>
                                    </Button>
                               )}
-                              {!this.state.createUserButtonTriggered && (
-                                   <Button
-                                        variant="success"
-                                        type="submit"
-                                        className="centered"
-                                   >
-                                        {
-                                             this.props.focusFormConfiguration
-                                                  .validateButtonLabel
-                                        }
-                                        <i className="material-icons separateIcon">
-                                             done
-                                        </i>
-                                   </Button>
-                              )}
+                              {!this.state.createUserButtonTriggered &&
+                                   !(
+                                        this.props.focusFormConfiguration
+                                             .fieldsToDisplay instanceof
+                                        Function
+                                   ) && (
+                                        <Button
+                                             variant="success"
+                                             type="submit"
+                                             className="centered"
+                                        >
+                                             {
+                                                  this.props
+                                                       .focusFormConfiguration
+                                                       .validateButtonLabel
+                                             }
+                                             <i className="material-icons separateIcon">
+                                                  done
+                                             </i>
+                                        </Button>
+                                   )}
                          </DialogActions>
                     </Form>
                </Dialog>
