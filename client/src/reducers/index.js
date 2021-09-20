@@ -14,6 +14,8 @@ import notariesReducer from './notariesReducer';
 import syndicsReducer from './syndicsReducer';
 import openCasesReducer from './casesReducer';
 import openCaseReducer from './caseReducer';
+import rentingCaseReducer from './rentingCaseReducer';
+import rentingCasesReducer from './rentingCasesReducer';
 
 export default combineReducers({
      auth: authReducer,
@@ -30,4 +32,6 @@ export default combineReducers({
      theCases: openCasesReducer,
      theCase: openCaseReducer,
      focusFormConfiguration: focusFormReducer,
+     rentingCase: rentingCaseReducer,
+     rentingCases: rentingCasesReducer,
 });

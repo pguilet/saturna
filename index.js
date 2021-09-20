@@ -10,6 +10,7 @@ require('./models/Syndic');
 require('./models/PropertyCase');
 require('./models/Client');
 require('./models/HomeAds');
+require('./models/RentingCase');
 require('./services/passport'); // no need of a variable because the file does not export anything
 var flash = require('connect-flash');
 // const Sentry = require('@sentry/node');

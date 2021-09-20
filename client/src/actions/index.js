@@ -13,6 +13,8 @@ import {
      FETCH_SYNDICS,
      FETCH_CASES,
      FETCH_CASE,
+     FETCH_RENTING_CASES,
+     FETCH_RENTING_CASE,
 } from './types';
 import bcrypt from 'bcryptjs';
 
@@ -29,6 +31,11 @@ export const fetchClient = (clientId) => async (dispatch) => {
 export const fetchCase = (clientId, caseId) => async (dispatch) => {
      const res = await axios.post('/api/propertyCase', { caseId });
      dispatch({ type: FETCH_CASE, payload: res.data });
+};
+
+export const fetchRentingCase = (clientId, caseId) => async (dispatch) => {
+     const res = await axios.post('/api/rentingCase', { caseId });
+     dispatch({ type: FETCH_RENTING_CASE, payload: res.data });
 };
 
 export const openClient = (history, clientId) => async (dispatch) => {
@@ -54,6 +61,29 @@ export const openCase =
           }
      };
 
+export const openRentingCase =
+     (history, client, theCase, isClosedCase) => async (dispatch) => {
+          const res = await axios.post('/api/rentingCase', {
+               caseId: theCase._id,
+          });
+          await dispatch({ type: FETCH_RENTING_CASE, payload: res.data });
+          if (isClosedCase) {
+               history.push(
+                    '/client/' +
+                         client._id +
+                         '/closedRentingCases/' +
+                         theCase._id
+               );
+          } else {
+               history.push(
+                    '/client/' +
+                         client._id +
+                         '/openedRentingCases/' +
+                         theCase._id
+               );
+          }
+     };
+
 export const fetchUsers = () => async (dispatch) => {
      const res = await axios.get('/api/allUsers');
      dispatch({ type: FETCH_USERS, payload: res.data });
@@ -67,7 +97,18 @@ export const fetchOpenCases = (clientId) => async (dispatch) => {
      const res = await axios.post('/api/allOpenCases', { clientId: clientId });
      await dispatch({ type: FETCH_CASES, payload: res.data });
 };
-
+export const fetchOpenedRentingCases = (clientId) => async (dispatch) => {
+     const res = await axios.post('/api/allOpenedRentingCases', {
+          clientId: clientId,
+     });
+     await dispatch({ type: FETCH_RENTING_CASES, payload: res.data });
+};
+export const fetchClosedRentingCases = (clientId) => async (dispatch) => {
+     const res = await axios.post('/api/allClosedRentingCases', {
+          clientId: clientId,
+     });
+     await dispatch({ type: FETCH_RENTING_CASES, payload: res.data });
+};
 export const fetchClosedCases = (clientId) => async (dispatch) => {
      const res = await axios.post('/api/allClosedCases', {
           clientId: clientId,
@@ -166,6 +207,26 @@ export const createPropertyCase =
                     '/client/' +
                          identifiants._user +
                          '/openCases/' +
+                         res.data._id
+               );
+               dispatch({ type: FLASH, payload: '' });
+          } else {
+               dispatch({ type: FLASH, payload: res.data });
+          }
+     };
+
+export const createRentingCase =
+     (history, form, identifiants, stateTriggeredValues, isOpenCase) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/newOpenedRentingCase', {
+               stateTriggeredValues: { _user: identifiants._user },
+          });
+          if (!res.data.message) {
+               dispatch({ type: FETCH_RENTING_CASES, payload: res.data });
+               history.push(
+                    '/client/' +
+                         identifiants._user +
+                         '/openedRentingCases/' +
                          res.data._id
                );
                dispatch({ type: FLASH, payload: '' });
@@ -392,6 +453,27 @@ export const deleteOpenedPropertyCase =
           dispatch({ type: FETCH_CASES, payload: res.data });
      };
 
+export const deleteOpenedRentingCase =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/deleteRentingCase', {
+               identifiants,
+          });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          res = await axios.post('/api/allOpenedRentingCases', {
+               clientId: identifiants.clientId,
+          });
+          await history.push(
+               '/client/' + identifiants.clientId + '/openedRentingCases/'
+          );
+
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({ type: FETCH_RENTING_CASES, payload: res.data });
+     };
+
 export const deleteClosedPropertyCase =
      (history, form, identifiants, stateTriggeredValues) =>
      async (dispatch) => {
@@ -412,6 +494,27 @@ export const deleteClosedPropertyCase =
           dispatch({ type: FLASH, payload: { message: false } });
           dispatch({ type: FETCH_CASES, payload: res.data });
      };
+
+export const deleteClosedRentingCase =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/deleteRentingCase', {
+               identifiants,
+          });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          res = await axios.post('/api/allClosedRentingCases', {
+               clientId: identifiants.clientId,
+          });
+          await history.push(
+               '/client/' + identifiants.clientId + '/closedRentingCases/'
+          );
+
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({ type: FETCH_RENTING_CASES, payload: res.data });
+     };
 export const deleteOpenedPropertyCaseFromList =
      (history, form, identifiants, stateTriggeredValues) =>
      async (dispatch) => {
@@ -429,6 +532,23 @@ export const deleteOpenedPropertyCaseFromList =
           dispatch({ type: FETCH_CASES, payload: res.data });
      };
 
+export const deleteOpenedRentingCaseFromList =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/deleteRentingCase', {
+               identifiants,
+          });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          res = await axios.post('/api/allOpenedRentingCases', {
+               clientId: identifiants.clientId,
+          });
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({ type: FETCH_RENTING_CASES, payload: res.data });
+     };
+
 export const deleteClosedPropertyCaseFromList =
      (history, form, identifiants, stateTriggeredValues) =>
      async (dispatch) => {
@@ -444,6 +564,23 @@ export const deleteClosedPropertyCaseFromList =
           });
           dispatch({ type: FLASH, payload: { message: false } });
           dispatch({ type: FETCH_CASES, payload: res.data });
+     };
+
+export const deleteClosedRentingCaseFromList =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/deleteRentingCase', {
+               identifiants,
+          });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          res = await axios.post('/api/allClosedRentingCases', {
+               clientId: identifiants.clientId,
+          });
+          dispatch({ type: FLASH, payload: { message: false } });
+          dispatch({ type: FETCH_RENTING_CASES, payload: res.data });
      };
 export const deleteNotary =
      (history, form, identifiants, stateTriggeredValues) =>
@@ -506,6 +643,20 @@ export const editCase =
                headers: { 'Content-Type': 'multipart/form-data' },
           });
           dispatch({ type: FETCH_CASE, payload: res.data });
+          dispatch({
+               type: FLASH,
+               payload: { message: 'Changements sauvegardés' },
+          });
+     };
+
+export const editRentingCase =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          let data = constructFormData(identifiants, stateTriggeredValues);
+          const res = await axios.post('/api/editRentingCase', data, {
+               headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          dispatch({ type: FETCH_RENTING_CASES, payload: res.data });
           dispatch({
                type: FLASH,
                payload: { message: 'Changements sauvegardés' },

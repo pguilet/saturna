@@ -147,20 +147,21 @@ class FocusForm extends Component {
                               )}
                               {!this.state.createUserButtonTriggered &&
                                    !(
+                                        this.props.focusFormConfiguration &&
                                         this.props.focusFormConfiguration
                                              .fieldsToDisplay instanceof
-                                        Function
+                                             Function
                                    ) && (
                                         <Button
                                              variant="success"
                                              type="submit"
                                              className="centered"
                                         >
-                                             {
+                                             {this.props
+                                                  .focusFormConfiguration &&
                                                   this.props
                                                        .focusFormConfiguration
-                                                       .validateButtonLabel
-                                             }
+                                                       .validateButtonLabel}
                                              <i className="material-icons separateIcon">
                                                   done
                                              </i>

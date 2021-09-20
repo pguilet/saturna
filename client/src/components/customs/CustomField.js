@@ -18,6 +18,7 @@ class CustomField extends Component {
           valuesToSet: [],
           imagesToShow: [],
           pdfValueToSet: '',
+          deletedImages: [],
      };
 
      constructor(props) {
@@ -262,9 +263,13 @@ class CustomField extends Component {
                          multiple
                     />
                );
+
                var x = 0;
                const images = _.map(this.state.imagesToShow, (imageKey) => {
-                    if (!this.state.deletedImages.includes(imageKey)) {
+                    if (
+                         !this.state.deletedImages.includes(imageKey) ||
+                         imageKey.includes('upload')
+                    ) {
                          return (
                               <div
                                    key={imageKey + x}
@@ -278,39 +283,62 @@ class CustomField extends Component {
                                         alt="thumbnail"
                                    />
                                    <span
-                                        onClick={() => {
-                                             const newValues =
-                                                  this.state.imagesToShow.filter(
-                                                       (item) =>
-                                                            item !== imageKey
-                                                  );
-                                             this.setState({
-                                                  deletedImages:
-                                                       this.state.deletedImages.concat(
-                                                            imageKey
-                                                       ),
-                                                  imagesToShow: newValues,
-                                             });
-
-                                             this.props.statetriggeredvaluesupdatefunction(
-                                                  id,
-                                                  newValues
-                                             );
-                                        }}
-                                        className="overlay selectable"
+                                        className="overlay"
                                         key={imageKey + x + x}
                                    >
-                                        <span className="material-icons text-danger">
-                                             {' '}
+                                        <div
+                                             className="material-icons text-danger selectable"
                                              key={imageKey + x + x + x}
+                                             onClick={() => {
+                                                  const newValues =
+                                                       this.state.imagesToShow.filter(
+                                                            (item) =>
+                                                                 item !==
+                                                                 imageKey
+                                                       );
+                                                  this.setState({
+                                                       deletedImages:
+                                                            this.state.deletedImages.concat(
+                                                                 imageKey
+                                                            ),
+                                                       imagesToShow: newValues,
+                                                  });
+
+                                                  this.props.statetriggeredvaluesupdatefunction(
+                                                       id,
+                                                       newValues
+                                                  );
+                                             }}
+                                        >
                                              delete
-                                        </span>
+                                        </div>
+                                        <div
+                                             key={20}
+                                             className="material-icons selectable text-success"
+                                             onClick={async () => {
+                                                  if (
+                                                       imageKey &&
+                                                       !imageKey.includes(
+                                                            'upload'
+                                                       )
+                                                  ) {
+                                                       const url =
+                                                            await getDownloadSignedLink(
+                                                                 imageKey
+                                                            );
+                                                       window.open(url);
+                                                  }
+                                             }}
+                                        >
+                                             download
+                                        </div>
                                    </span>
                               </div>
                          );
                     }
                     x++;
                });
+
                return [
                     <br key={5} />,
                     result,

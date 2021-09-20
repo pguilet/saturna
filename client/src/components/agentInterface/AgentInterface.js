@@ -81,6 +81,27 @@ class AgentInterface extends Component {
                               path="/client/:clientId/closedCases/:caseId"
                               component={Client}
                          />
+
+                         <GuardedRoute
+                              exact
+                              path="/client/:clientId/openedRentingCases"
+                              component={Client}
+                         />
+                         <GuardedRoute
+                              exact
+                              path="/client/:clientId/closedRentingCases"
+                              component={Client}
+                         />
+                         <GuardedRoute
+                              exact
+                              path="/client/:clientId/openedRentingCases/:caseId"
+                              component={Client}
+                         />
+                         <GuardedRoute
+                              exact
+                              path="/client/:clientId/closedRentingCases/:caseId"
+                              component={Client}
+                         />
                     </main>
                </>
           );

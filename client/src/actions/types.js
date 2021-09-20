@@ -10,6 +10,8 @@ export const FETCH_NOTARIES = 'fetch_notaries';
 export const FETCH_SYNDICS = 'fetch_syndics';
 export const FOCUS_FORM_CONFIGURATION = 'focus_form_configuration';
 export const FETCH_CASES = 'fetch_cases';
+export const FETCH_RENTING_CASES = 'fetch_renting_cases';
+export const FETCH_RENTING_CASE = 'fetch_renting_case';
 
 export const Roles = {
      AGENT: 'agent',
@@ -36,6 +38,11 @@ export const MandateKind = {
      SIMPLE: 'simple',
      EXCLUSIF: 'exclusif',
      NONE: 'pas de mandat',
+};
+export const PaymentKind = {
+     CHEQUE: 'chèque',
+     CASH: 'liquide',
+     TRANSFERT: 'virement',
 };
 export const AdType = {
      LOCATION: 'location',

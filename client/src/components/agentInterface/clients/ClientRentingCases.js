@@ -1,4 +1,3 @@
-//Rendering layer control (React router content)
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../../actions';
@@ -8,10 +7,9 @@ import FixedFloatingButton from '../../customs/FixedFloatingButton';
 import Table from 'react-bootstrap/Table';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
-
-class ClientCases extends Component {
-     openOpenedCaseRecord(theCase) {
-          this.props.openCase(
+class ClientRentingCases extends Component {
+     openOpenedRentingCaseRecord(theCase) {
+          this.props.openRentingCase(
                this.props.history,
                this.props.client,
                theCase,
@@ -24,7 +22,7 @@ class ClientCases extends Component {
                <td
                     className="selectable"
                     onClick={() => {
-                         this.openOpenedCaseRecord(theCase);
+                         this.openOpenedRentingCaseRecord(theCase);
                     }}
                >
                     {isDate ? moment(value).format('DD/MM/YYYY') : value}
@@ -40,28 +38,22 @@ class ClientCases extends Component {
                     <Table striped bordered hover>
                          <thead>
                               <tr>
-                                   <th>Mandat</th>
-                                   <th>Prix de la transaction</th>
                                    <th>Rue</th>
                                    <th>Code postal</th>
                                    <th>Ville</th>
+                                   <th>Dette</th>
+                                   <th>Réclamation</th>
+                                   <th>Procédures en cours</th>
+                                   <th>Type de paiement</th>
                               </tr>
                          </thead>
                          <tbody>
-                              {this.props.theCases &&
-                              this.props.theCases.length > 0
-                                   ? this.props.theCases.map((theCase) => {
+                              {this.props.rentingCases &&
+                              this.props.rentingCases.length > 0
+                                   ? this.props.rentingCases.map((theCase) => {
                                           key += 4;
                                           return (
                                                <tr key={key + 1}>
-                                                    {this.renderOpenRecordTableAction(
-                                                         theCase,
-                                                         theCase.mandateKind
-                                                    )}
-                                                    {this.renderOpenRecordTableAction(
-                                                         theCase,
-                                                         theCase.transactionPrice
-                                                    )}
                                                     {this.renderOpenRecordTableAction(
                                                          theCase,
                                                          theCase.street
@@ -73,6 +65,22 @@ class ClientCases extends Component {
                                                     {this.renderOpenRecordTableAction(
                                                          theCase,
                                                          theCase.city
+                                                    )}
+                                                    {this.renderOpenRecordTableAction(
+                                                         theCase,
+                                                         theCase.notPayed
+                                                    )}
+                                                    {this.renderOpenRecordTableAction(
+                                                         theCase,
+                                                         theCase.reclamation
+                                                    )}
+                                                    {this.renderOpenRecordTableAction(
+                                                         theCase,
+                                                         theCase.inProgressProcedure
+                                                    )}
+                                                    {this.renderOpenRecordTableAction(
+                                                         theCase,
+                                                         theCase.paymentKind
                                                     )}
                                                     <td
                                                          className="selectable"
@@ -111,7 +119,7 @@ class ClientCases extends Component {
                                                                                                            .client
                                                                                                            ._id,
                                                                                             },
-                                                                                       title: "Suppression de la fiche d'achat/vente",
+                                                                                       title: 'Suppression de la fiche de gestion locative',
                                                                                        description:
                                                                                             'Etes-vous sûr de vouloir supprimer la fiche?',
                                                                                        validateButtonLabel:
@@ -164,4 +172,7 @@ class ClientCases extends Component {
 function mapStateToProps(props) {
      return props;
 }
-export default connect(mapStateToProps, actions)(withRouter(ClientCases));
+export default connect(
+     mapStateToProps,
+     actions
+)(withRouter(ClientRentingCases));

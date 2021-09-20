@@ -11,6 +11,10 @@ import ClientClosedCases from './ClientClosedCases';
 import ClientProfile from './ClientProfile';
 import ClientOpenCase from './ClientOpenCase';
 import ClientClosedCase from './ClientClosedCase';
+import ClientOpenedRentingCases from './ClientOpenedRentingCases';
+import ClientClosedRentingCases from './ClientClosedRentingCases';
+import ClientOpenedRentingCase from './ClientOpenedRentingCase';
+import ClientClosedRentingCase from './ClientClosedRentingCase';
 
 class Client extends Component {
      state = {};
@@ -29,6 +33,12 @@ class Client extends Component {
                     break;
                case 'closedCases':
                     this.setState({ activeTab: 'closedCases' });
+                    break;
+               case 'openedRentingCases':
+                    this.setState({ activeTab: 'openedRentingCases' });
+                    break;
+               case 'closedRentingCases':
+                    this.setState({ activeTab: 'closedRentingCases' });
                     break;
                default:
                     break;
@@ -79,15 +89,42 @@ class Client extends Component {
                          Dossiers cloturés
                     </Link>
                     <Link
-                         to={'/client/' + this.props.client._id}
+                         to={
+                              '/client/' +
+                              this.props.client._id +
+                              '/openedRentingCases'
+                         }
                          className={
-                              this.state.activeTab === 'location'
+                              this.state.activeTab === 'openedRentingCases'
                                    ? 'active'
                                    : ''
                          }
-                         // onClick={() => (this.activeTab = 'location')}
+                         onClick={() =>
+                              this.props.fetchOpenedRentingCases(
+                                   this.props.client._id
+                              )
+                         }
                     >
-                         Gestion locative
+                         Gestion locative en cours
+                    </Link>
+                    <Link
+                         to={
+                              '/client/' +
+                              this.props.client._id +
+                              '/closedRentingCases'
+                         }
+                         className={
+                              this.state.activeTab === 'closedRentingCases'
+                                   ? 'active'
+                                   : ''
+                         }
+                         onClick={() =>
+                              this.props.fetchClosedRentingCases(
+                                   this.props.client._id
+                              )
+                         }
+                    >
+                         Gestion locative cloturées
                     </Link>
                </Nav>
           );
@@ -119,8 +156,28 @@ class Client extends Component {
                                    />
                                    <GuardedRoute
                                         exact
+                                        path="/client/:clientId/openedRentingCases"
+                                        component={ClientOpenedRentingCases}
+                                   />
+                                   <GuardedRoute
+                                        exact
+                                        path="/client/:clientId/closedRentingCases"
+                                        component={ClientClosedRentingCases}
+                                   />
+                                   <GuardedRoute
+                                        exact
                                         path="/client/:clientId/closedCases/:caseId"
                                         component={ClientClosedCase}
+                                   />
+                                   <GuardedRoute
+                                        exact
+                                        path="/client/:clientId/openedRentingCases/:caseId"
+                                        component={ClientOpenedRentingCase}
+                                   />
+                                   <GuardedRoute
+                                        exact
+                                        path="/client/:clientId/closedRentingCases/:caseId"
+                                        component={ClientClosedRentingCase}
                                    />
                                    <GuardedRoute
                                         exact

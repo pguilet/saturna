@@ -85,6 +85,26 @@ class App extends Component {
                          path="/search"
                          component={AgentInterface}
                     />
+                    <GuardedRoute
+                         exact
+                         path="/client/:clientId/openedRentingCases"
+                         component={AgentInterface}
+                    />
+                    <GuardedRoute
+                         exact
+                         path="/client/:clientId/openedRentingCases/:caseId"
+                         component={AgentInterface}
+                    />
+                    <GuardedRoute
+                         exact
+                         path="/client/:clientId/closedRentingCases"
+                         component={AgentInterface}
+                    />
+                    <GuardedRoute
+                         exact
+                         path="/client/:clientId/closedRentingCases/:caseId"
+                         component={AgentInterface}
+                    />
                </BrowserRouter>
           );
      }

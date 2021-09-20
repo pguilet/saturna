@@ -14,6 +14,7 @@ const Clients = mongoose.model('clients');
 const Notaries = mongoose.model('notaries');
 const Syndics = mongoose.model('syndics');
 const PropertyCases = mongoose.model('propertyCases');
+const RentingCases = mongoose.model('rentingCases');
 const multer = require('multer');
 const {
      uploadFile,
@@ -65,6 +66,22 @@ module.exports = (app) => {
                _user: req.body.clientId,
           }).sort({ city: 1 });
           res.send(allOpenCases);
+     });
+
+     app.post('/api/allOpenedRentingCases', requireLogin, async (req, res) => {
+          const allRentingCases = await RentingCases.find({
+               caseClosed: false,
+               _user: req.body.clientId,
+          }).sort({ city: 1 });
+          res.send(allRentingCases);
+     });
+
+     app.post('/api/allClosedRentingCases', requireLogin, async (req, res) => {
+          const allClosedRentingCases = await RentingCases.find({
+               caseClosed: true,
+               _user: req.body.clientId,
+          }).sort({ city: 1 });
+          res.send(allClosedRentingCases);
      });
 
      app.post('/api/allClosedCases', requireLogin, async (req, res) => {
@@ -150,6 +167,11 @@ module.exports = (app) => {
      app.post('/api/propertyCase', requireLogin, async (req, res) => {
           const openCase = await PropertyCases.findById(req.body.caseId);
           res.send(openCase);
+     });
+
+     app.post('/api/rentingCase', requireLogin, async (req, res) => {
+          const rentingCase = await RentingCases.findById(req.body.caseId);
+          res.send(rentingCase);
      });
 
      app.get('/api/homeAds', requireLogin, async (req, res) => {
@@ -367,7 +389,7 @@ module.exports = (app) => {
           identifiants
      ) => {
           res.send(
-               updateModel(
+               await updateModel(
                     req,
                     res,
                     pdfFields,
@@ -449,6 +471,33 @@ module.exports = (app) => {
 
                model.save();
                res.send(model);
+          }
+     );
+
+     app.post(
+          '/api/editRentingCase',
+          uploader.array('files'),
+          requireLogin,
+          async (req, res) => {
+               let model = await updateModelAndReturnResponse(
+                    req,
+                    res,
+                    [
+                         'bail',
+                         'rentReceipts',
+                         'entryForm',
+                         'exitForm',
+                         'ownerInsurrance',
+                         'renterInsurrance',
+                         'rib',
+                    ],
+                    ['lastEntryFormImages'],
+                    await RentingCases.findById(
+                         req.body.identifiants.modelInstanceId
+                    ),
+                    req.body.stateTriggeredValues,
+                    req.body.identifiants
+               );
           }
      );
 
@@ -592,6 +641,14 @@ module.exports = (app) => {
           res.send(propertyCaseAlreadyExisting);
      });
 
+     app.post('/api/deleteRentingCase', requireAdminRole, async (req, res) => {
+          const rentingCaseAlreadyExisting =
+               await RentingCases.findByIdAndDelete(
+                    req.body.identifiants.modelInstanceId
+               );
+          res.send(rentingCaseAlreadyExisting);
+     });
+
      app.post('/api/newClient', requireLogin, async (req, res) => {
           updateModelAndReturnResponse(
                req,
@@ -611,6 +668,18 @@ module.exports = (app) => {
                [],
                [],
                await new PropertyCases(),
+               req.body.stateTriggeredValues,
+               req.body.identifiants
+          );
+     });
+
+     app.post('/api/newOpenedRentingCase', requireLogin, async (req, res) => {
+          updateModelAndReturnResponse(
+               req,
+               res,
+               [],
+               [],
+               await new RentingCases(),
                req.body.stateTriggeredValues,
                req.body.identifiants
           );
