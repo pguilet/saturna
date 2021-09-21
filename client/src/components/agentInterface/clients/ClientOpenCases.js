@@ -7,7 +7,7 @@ import ClientCases from './ClientCases';
 
 class ClientOpenCases extends Component {
      componentDidMount() {
-          if (!this.props.theCases) {
+          if (!this.props.propertyCases) {
                this.props.fetchOpenCases(this.props.client._id);
           }
      }

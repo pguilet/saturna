@@ -45,26 +45,26 @@ export const openClient = (history, clientId) => async (dispatch) => {
 };
 
 export const openCase =
-     (history, client, theCase, isClosedCase) => async (dispatch) => {
+     (history, client, propertyCase, isClosedCase) => async (dispatch) => {
           const res = await axios.post('/api/propertyCase', {
-               caseId: theCase._id,
+               caseId: propertyCase._id,
           });
           await dispatch({ type: FETCH_CASE, payload: res.data });
           if (isClosedCase) {
                history.push(
-                    '/client/' + client._id + '/closedCases/' + theCase._id
+                    '/client/' + client._id + '/closedCases/' + propertyCase._id
                );
           } else {
                history.push(
-                    '/client/' + client._id + '/openCases/' + theCase._id
+                    '/client/' + client._id + '/openCases/' + propertyCase._id
                );
           }
      };
 
 export const openRentingCase =
-     (history, client, theCase, isClosedCase) => async (dispatch) => {
+     (history, client, propertyCase, isClosedCase) => async (dispatch) => {
           const res = await axios.post('/api/rentingCase', {
-               caseId: theCase._id,
+               caseId: propertyCase._id,
           });
           await dispatch({ type: FETCH_RENTING_CASE, payload: res.data });
           if (isClosedCase) {
@@ -72,14 +72,14 @@ export const openRentingCase =
                     '/client/' +
                          client._id +
                          '/closedRentingCases/' +
-                         theCase._id
+                         propertyCase._id
                );
           } else {
                history.push(
                     '/client/' +
                          client._id +
                          '/openedRentingCases/' +
-                         theCase._id
+                         propertyCase._id
                );
           }
      };
@@ -193,6 +193,38 @@ export const createClient =
           } else {
                dispatch({ type: FLASH, payload: res.data });
           }
+     };
+export const generateRentingReceipt =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          let res = await axios.post('/api/generateRentingReceipt', {
+               identifiants,
+               stateTriggeredValues,
+          });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          dispatch({ type: FETCH_RENTING_CASE, payload: res.data });
+     };
+
+export const sendRentReceipt = (identifiants) => async (dispatch) => {
+     let res = await axios.post('/api/sendRentReceipt', identifiants);
+     dispatch({ type: FLASH, payload: { message: 'Quittance envoyée' } });
+     dispatch({ type: FETCH_RENTING_CASE, payload: res.data });
+};
+
+export const deleteRentingReceipt =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          let res = await axios.post('/api/deletRentingReceipt', {
+               identifiants,
+          });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          dispatch({ type: FETCH_RENTING_CASE, payload: res.data });
      };
 
 export const createPropertyCase =

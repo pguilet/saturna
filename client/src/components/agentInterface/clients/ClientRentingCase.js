@@ -326,7 +326,7 @@ class ClientRentingCase extends Component {
                                    </Button>
                                    <Button
                                         variant="danger"
-                                        className="centered"
+                                        className="centered margin-right-15px"
                                         onClick={() => {
                                              this.props.configureFocusForm({
                                                   validateButtonAction:
@@ -352,6 +352,22 @@ class ClientRentingCase extends Component {
                                         Supprimer le dossier
                                         <i className="material-icons separateIcon">
                                              delete
+                                        </i>
+                                   </Button>
+                                   <Button
+                                        variant="primary"
+                                        className="centered "
+                                        onClick={() => {
+                                             this.props.history.push(
+                                                  this.props.history.location
+                                                       .pathname +
+                                                       '/rentingReceipts'
+                                             );
+                                        }}
+                                   >
+                                        Voir les quittances
+                                        <i className="material-icons separateIcon">
+                                             description
                                         </i>
                                    </Button>
                               </div>

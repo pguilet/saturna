@@ -4,12 +4,12 @@ const cookieSession = require('cookie-session');
 const passport = require('passport');
 const keys = require('./config/keys');
 require('./models/User');
-require('./models/Survey');
 require('./models/Notary');
 require('./models/Syndic');
 require('./models/PropertyCase');
 require('./models/Client');
 require('./models/HomeAds');
+require('./models/Receipt');
 require('./models/RentingCase');
 require('./services/passport'); // no need of a variable because the file does not export anything
 var flash = require('connect-flash');
@@ -78,8 +78,8 @@ app.use(passport.session());
 
 require('./routes/authRoutes')(app);
 require('./routes/billingRoutes')(app);
-require('./routes/surveyRoutes')(app);
 require('./routes/agentsInterfaceRoutes')(app);
+require('./routes/rentingReceiptsRoutes')(app);
 
 if (process.env.NODE_ENV === 'production') {
      // express will serve up production assets like our mains.js file built from npm run build or main.css file.

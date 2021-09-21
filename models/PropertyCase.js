@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose; //equivalent to const Schema =  mongoose.Schema;
 const NotarySchema = require('./Notary');
 const SyndicSchema = require('./Syndic');
+const UserSchema = require('./User');
 
 const propertyCaseSchema = new Schema({
      personalContribution: Number,
@@ -45,6 +46,10 @@ const propertyCaseSchema = new Schema({
      notaryVendor: NotarySchema,
      notaryBuyer: NotarySchema,
      syndic: SyndicSchema,
+     contactUser: UserSchema,
+     estimationUser: UserSchema,
+     mandateUser: UserSchema,
+     sellingUser: UserSchema,
      caseClosed: { type: Boolean, default: false },
      propertyTransactionKind: String,
      civility: String,

@@ -4,11 +4,11 @@ const keys = require('../config/keys');
 const sgMail = require('@sendgrid/mail');
 
 class Mailer {
-     constructor({ subject, recipients }, content) {
+     constructor(config, content) {
           this.message = {
-               to: recipients,
-               from: 'pierre.guilet@gmail.com',
-               subject: subject,
+               to: config.to,
+               from: config.from,
+               subject: config.subject,
                html: content,
                trackingSettings: {
                     clickTracking: { enable: true },

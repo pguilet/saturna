@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose; //equivalent to const Schema =  mongoose.Schema;
-
+const ReceiptSchema = require('./Receipt');
 const rentingCaseSchema = new Schema({
      rentingPrice: Number,
      rentingCharges: Number,
@@ -24,7 +24,7 @@ const rentingCaseSchema = new Schema({
      rib: String,
      city: String,
      comment: String,
-     rentReceipts: [String],
+     rentReceipts: [ReceiptSchema],
      lastEntryFormImages: [String],
      _user: { type: Schema.Types.ObjectId, ref: 'User' },
 });

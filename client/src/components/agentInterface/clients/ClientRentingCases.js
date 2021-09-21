@@ -8,21 +8,21 @@ import Table from 'react-bootstrap/Table';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
 class ClientRentingCases extends Component {
-     openOpenedRentingCaseRecord(theCase) {
+     openOpenedRentingCaseRecord(propertyCase) {
           this.props.openRentingCase(
                this.props.history,
                this.props.client,
-               theCase,
+               propertyCase,
                this.props.isClosedCase
           );
      }
 
-     renderOpenRecordTableAction(theCase, value, isDate) {
+     renderOpenRecordTableAction(propertyCase, value, isDate) {
           return (
                <td
                     className="selectable"
                     onClick={() => {
-                         this.openOpenedRentingCaseRecord(theCase);
+                         this.openOpenedRentingCaseRecord(propertyCase);
                     }}
                >
                     {isDate ? moment(value).format('DD/MM/YYYY') : value}
@@ -50,96 +50,100 @@ class ClientRentingCases extends Component {
                          <tbody>
                               {this.props.rentingCases &&
                               this.props.rentingCases.length > 0
-                                   ? this.props.rentingCases.map((theCase) => {
-                                          key += 4;
-                                          return (
-                                               <tr key={key + 1}>
-                                                    {this.renderOpenRecordTableAction(
-                                                         theCase,
-                                                         theCase.street
-                                                    )}
-                                                    {this.renderOpenRecordTableAction(
-                                                         theCase,
-                                                         theCase.postalCode
-                                                    )}
-                                                    {this.renderOpenRecordTableAction(
-                                                         theCase,
-                                                         theCase.city
-                                                    )}
-                                                    {this.renderOpenRecordTableAction(
-                                                         theCase,
-                                                         theCase.notPayed
-                                                    )}
-                                                    {this.renderOpenRecordTableAction(
-                                                         theCase,
-                                                         theCase.reclamation
-                                                    )}
-                                                    {this.renderOpenRecordTableAction(
-                                                         theCase,
-                                                         theCase.inProgressProcedure
-                                                    )}
-                                                    {this.renderOpenRecordTableAction(
-                                                         theCase,
-                                                         theCase.paymentKind
-                                                    )}
-                                                    <td
-                                                         className="selectable"
-                                                         onClick={() => {
-                                                              this.openOpenedCaseRecord(
-                                                                   theCase
-                                                              );
-                                                         }}
-                                                    >
-                                                         <div className="inline secondary-content text-teal">
-                                                              <i className="material-icons">
-                                                                   visibility
-                                                              </i>
-                                                         </div>
-                                                    </td>
-                                                    <td>
-                                                         {this.props.auth &&
-                                                              this.props.auth
-                                                                   .role ===
-                                                                   Roles.ADMIN && (
-                                                                   <div
-                                                                        onClick={() => {
-                                                                             this.props.configureFocusForm(
-                                                                                  {
-                                                                                       validateButtonAction:
-                                                                                            this
-                                                                                                 .props
-                                                                                                 .deleteAction,
-                                                                                       identifiants:
-                                                                                            {
-                                                                                                 modelInstanceId:
-                                                                                                      theCase._id,
-                                                                                                 clientId:
-                                                                                                      this
-                                                                                                           .props
-                                                                                                           .client
-                                                                                                           ._id,
-                                                                                            },
-                                                                                       title: 'Suppression de la fiche de gestion locative',
-                                                                                       description:
-                                                                                            'Etes-vous sûr de vouloir supprimer la fiche?',
-                                                                                       validateButtonLabel:
-                                                                                            'Supprimer la fiche',
-                                                                                       fieldsToDisplay:
-                                                                                            [],
-                                                                                  }
-                                                                             );
-                                                                        }}
-                                                                        className="selectable inline secondary-content text-danger"
-                                                                   >
-                                                                        <i className="material-icons">
-                                                                             delete
-                                                                        </i>
-                                                                   </div>
-                                                              )}
-                                                    </td>
-                                               </tr>
-                                          );
-                                     })
+                                   ? this.props.rentingCases.map(
+                                          (propertyCase) => {
+                                               key += 4;
+                                               return (
+                                                    <tr key={key + 1}>
+                                                         {this.renderOpenRecordTableAction(
+                                                              propertyCase,
+                                                              propertyCase.street
+                                                         )}
+                                                         {this.renderOpenRecordTableAction(
+                                                              propertyCase,
+                                                              propertyCase.postalCode
+                                                         )}
+                                                         {this.renderOpenRecordTableAction(
+                                                              propertyCase,
+                                                              propertyCase.city
+                                                         )}
+                                                         {this.renderOpenRecordTableAction(
+                                                              propertyCase,
+                                                              propertyCase.notPayed
+                                                         )}
+                                                         {this.renderOpenRecordTableAction(
+                                                              propertyCase,
+                                                              propertyCase.reclamation
+                                                         )}
+                                                         {this.renderOpenRecordTableAction(
+                                                              propertyCase,
+                                                              propertyCase.inProgressProcedure
+                                                         )}
+                                                         {this.renderOpenRecordTableAction(
+                                                              propertyCase,
+                                                              propertyCase.paymentKind
+                                                         )}
+                                                         <td
+                                                              className="selectable"
+                                                              onClick={() => {
+                                                                   this.openOpenedCaseRecord(
+                                                                        propertyCase
+                                                                   );
+                                                              }}
+                                                         >
+                                                              <div className="inline secondary-content text-teal">
+                                                                   <i className="material-icons">
+                                                                        visibility
+                                                                   </i>
+                                                              </div>
+                                                         </td>
+                                                         <td>
+                                                              {this.props
+                                                                   .auth &&
+                                                                   this.props
+                                                                        .auth
+                                                                        .role ===
+                                                                        Roles.ADMIN && (
+                                                                        <div
+                                                                             onClick={() => {
+                                                                                  this.props.configureFocusForm(
+                                                                                       {
+                                                                                            validateButtonAction:
+                                                                                                 this
+                                                                                                      .props
+                                                                                                      .deleteAction,
+                                                                                            identifiants:
+                                                                                                 {
+                                                                                                      modelInstanceId:
+                                                                                                           propertyCase._id,
+                                                                                                      clientId:
+                                                                                                           this
+                                                                                                                .props
+                                                                                                                .client
+                                                                                                                ._id,
+                                                                                                 },
+                                                                                            title: 'Suppression de la fiche de gestion locative',
+                                                                                            description:
+                                                                                                 'Etes-vous sûr de vouloir supprimer la fiche?',
+                                                                                            validateButtonLabel:
+                                                                                                 'Supprimer la fiche',
+                                                                                            fieldsToDisplay:
+                                                                                                 [],
+                                                                                       }
+                                                                                  );
+                                                                             }}
+                                                                             className="selectable inline secondary-content text-danger"
+                                                                        >
+                                                                             <i className="material-icons">
+                                                                                  delete
+                                                                             </i>
+                                                                        </div>
+                                                                   )}
+                                                         </td>
+                                                    </tr>
+                                               );
+                                          }
+                                     )
                                    : null}
                          </tbody>
                     </Table>

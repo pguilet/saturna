@@ -24,7 +24,10 @@ const clientSchema = new Schema({
      profilInvest: { type: Boolean, default: false },
      profilRent: { type: Boolean, default: false },
      profilOwner: { type: Boolean, default: false },
+     seekRenting: { type: Boolean, default: false },
+     seekBuying: { type: Boolean, default: false },
      comment: String,
+     searchCriteria: String,
 });
 
 mongoose.model('clients', clientSchema); //don't do anything if collection already exists if the same.

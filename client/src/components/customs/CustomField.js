@@ -389,21 +389,24 @@ class CustomField extends Component {
                                    true
                               )}
                          </Form.Select>
-                         <Button
-                              type="button"
-                              key="detailViewerButton"
-                              className="teal btn-flat white-text"
-                              onClick={() =>
-                                   this.props.viewDetailAction(
-                                        document.getElementById(id).options[
+                         {this.props.viewDetailAction && (
+                              <Button
+                                   type="button"
+                                   key="detailViewerButton"
+                                   className="teal btn-flat white-text"
+                                   onClick={() =>
+                                        this.props.viewDetailAction(
                                              document.getElementById(id)
-                                                  .selectedIndex
-                                        ].value
-                                   )
-                              }
-                         >
-                              ?
-                         </Button>
+                                                  .options[
+                                                  document.getElementById(id)
+                                                       .selectedIndex
+                                             ].value
+                                        )
+                                   }
+                              >
+                                   ?
+                              </Button>
+                         )}
                     </>
                );
           } else if (type === 'select') {

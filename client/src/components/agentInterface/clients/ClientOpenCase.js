@@ -8,7 +8,7 @@ import { withRouter } from 'react-router-dom';
 
 class ClientOpenCase extends Component {
      componentDidMount() {
-          if (!this.props.theCase) {
+          if (!this.props.propertyCase) {
                this.props.fetchCase(
                     this.props.match.params.clientId,
                     this.props.match.params.caseId

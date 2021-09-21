@@ -18,7 +18,7 @@ module.exports = (app) => {
      ); //passport do the code verification and call the callback service that log profile infos in the defined google strategy.
      app.get('/api/logout', (req, res) => {
           req.logout();
-          res.redirect('/');
+          res.redirect('/login');
      });
      app.get('/api/current_user', (req, res) => {
           res.send(req.user);

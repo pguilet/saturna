@@ -1,6 +1,6 @@
 import { FETCH_CASE } from '../actions/types';
 
-const theCase = function (state = null, action) {
+const propertyCase = function (state = null, action) {
      switch (action.type) {
           case FETCH_CASE:
                return action.payload || false; //payload with empty string = false
@@ -9,4 +9,4 @@ const theCase = function (state = null, action) {
      }
 };
 
-export default theCase;
+export default propertyCase;

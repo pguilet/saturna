@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const requireLogin = require('../middlewares/requireLogin');
 const requireCredits = require('../middlewares/requireCredits');
 const Mailer = require('../services/Mailer');
-const surveyTemplate = require('../services/emailTemplates/surveyTemplate');
+const surveyTemplate = require('../services/emailTemplates/rentingReceiptTemplate');
 const bcrypt = require('bcrypt');
 const requireAdminRole = require('../middlewares/requireAdminRole');
 const Users = mongoose.model('users'); //for testing purpose with node and mongoose we should not get info from Survey.js
@@ -24,6 +24,7 @@ const {
 } = require('../services/s3');
 const fs = require('fs-extra');
 const util = require('util');
+const Roles = require('../types/types');
 const unlinkFile = util.promisify(fs.unlink);
 const moment = require('moment');
 const ObjectId = require('mongodb').ObjectId;
@@ -50,6 +51,173 @@ const uploader = multer({
 });
 
 module.exports = (app) => {
+     app.get('/api/stats', requireLogin, async (req, res) => {
+          let tempStats = {};
+          let contactNumber = 0;
+          let estimationNumber = 0;
+          let simpleMandateNumber = 0;
+          let exclusiveMandateNumber = 0;
+          let sellingNumber = 0;
+
+          const allPropertyCases = await PropertyCases.find();
+          for (const propertyCase of allPropertyCases) {
+               if (propertyCase.estimation && propertyCase.estimationUser) {
+                    estimationNumber++;
+                    if (
+                         !(
+                              req.user.role === Roles.AGENT &&
+                              req.user.username !==
+                                   propertyCase.estimationUser.username
+                         )
+                    ) {
+                         if (!tempStats[propertyCase.estimationUser.username]) {
+                              tempStats[propertyCase.estimationUser.username] =
+                                   {};
+                         }
+                         if (
+                              !tempStats[propertyCase.estimationUser.username]
+                                   .estimationNumber
+                         ) {
+                              tempStats[
+                                   propertyCase.estimationUser.username
+                              ].estimationNumber = 0;
+                         }
+
+                         tempStats[
+                              propertyCase.estimationUser.username
+                         ].estimationNumber =
+                              tempStats[propertyCase.estimationUser.username]
+                                   .estimationNumber + 1;
+                    }
+               }
+               if (propertyCase.contactUser) {
+                    contactNumber++;
+                    if (
+                         !(
+                              req.user.role === Roles.AGENT &&
+                              req.user.username !==
+                                   propertyCase.contactUser.username
+                         )
+                    ) {
+                         if (!tempStats[propertyCase.contactUser.username]) {
+                              tempStats[propertyCase.contactUser.username] = {};
+                         }
+                         if (
+                              !tempStats[propertyCase.contactUser.username]
+                                   .contactNumber
+                         ) {
+                              tempStats[
+                                   propertyCase.contactUser.username
+                              ].contactNumber = 0;
+                         }
+                         tempStats[
+                              propertyCase.contactUser.username
+                         ].contactNumber =
+                              tempStats[propertyCase.contactUser.username]
+                                   .contactNumber + 1;
+                    }
+               }
+               if (
+                    propertyCase.mandateKind &&
+                    propertyCase.mandateKind === 'simple' &&
+                    propertyCase.mandateUser
+               ) {
+                    simpleMandateNumber++;
+                    if (
+                         !(
+                              req.user.role === Roles.AGENT &&
+                              req.user.username !==
+                                   propertyCase.mandateUser.username
+                         )
+                    ) {
+                         if (!tempStats[propertyCase.mandateUser.username]) {
+                              tempStats[propertyCase.mandateUser.username] = {};
+                         }
+                         if (
+                              !tempStats[propertyCase.mandateUser.username]
+                                   .simpleMandateNumber
+                         ) {
+                              tempStats[
+                                   propertyCase.mandateUser.username
+                              ].simpleMandateNumber = 0;
+                         }
+                         tempStats[
+                              propertyCase.mandateUser.username
+                         ].simpleMandateNumber =
+                              tempStats[propertyCase.mandateUser.username]
+                                   .simpleMandateNumber + 1;
+                    }
+               }
+               if (
+                    propertyCase.mandateKind &&
+                    propertyCase.mandateKind === 'exclusif' &&
+                    propertyCase.mandateUser
+               ) {
+                    exclusiveMandateNumber++;
+                    if (
+                         !(
+                              req.user.role === Roles.AGENT &&
+                              req.user.username !==
+                                   propertyCase.mandateUser.username
+                         )
+                    ) {
+                         if (!tempStats[propertyCase.mandateUser.username]) {
+                              tempStats[propertyCase.mandateUser.username] = {};
+                         }
+                         if (
+                              !tempStats[propertyCase.mandateUser.username]
+                                   .exclusiveMandateNumber
+                         ) {
+                              tempStats[
+                                   propertyCase.mandateUser.username
+                              ].exclusiveMandateNumber = 0;
+                         }
+                         tempStats[
+                              propertyCase.mandateUser.username
+                         ].exclusiveMandateNumber =
+                              tempStats[propertyCase.mandateUser.username]
+                                   .exclusiveMandateNumber + 1;
+                    }
+               }
+               if (propertyCase.caseClosed && propertyCase.sellingUser) {
+                    sellingNumber++;
+                    if (
+                         !(
+                              req.user.role === Roles.AGENT &&
+                              req.user.username !==
+                                   propertyCase.sellingUser.username
+                         )
+                    ) {
+                         if (!tempStats[propertyCase.sellingUser.username]) {
+                              tempStats[propertyCase.sellingUser.username] = {};
+                         }
+                         if (
+                              !tempStats[propertyCase.sellingUser.username]
+                                   .sellingNumber
+                         ) {
+                              tempStats[
+                                   propertyCase.sellingUser.username
+                              ].sellingNumber = 0;
+                         }
+                         tempStats[
+                              propertyCase.sellingUser.username
+                         ].sellingNumber =
+                              tempStats[propertyCase.sellingUser.username]
+                                   .sellingNumber + 1;
+                    }
+               }
+          }
+          if (req.user.role === Roles.ADMIN)
+               tempStats.all = {
+                    contactNumber,
+                    estimationNumber,
+                    simpleMandateNumber,
+                    exclusiveMandateNumber,
+                    sellingNumber,
+               };
+          res.send(tempStats);
+     });
+
      app.get('/api/allUsers', requireLogin, async (req, res) => {
           const users = await Users.find().sort({ username: 1 });
           res.send(users);
@@ -456,7 +624,7 @@ module.exports = (app) => {
                     req.body.identifiants
                );
 
-               //we copy to be able to retrieve the data even if its removed from its model database.
+               //we copy to be able to retrieve the data even if its removed from its base model database.
                let notaryVendor = await Notaries.findById(model.notaryVendor);
                let newNotaryVendor = new Notaries(notaryVendor);
                model.notaryVendor = newNotaryVendor;
@@ -468,6 +636,30 @@ module.exports = (app) => {
                let syndic = await Syndics.findById(model.syndic);
                let newSyndic = new Syndics(syndic);
                model.syndic = newSyndic;
+
+               let contactUser = await Users.findById(model.contactUser);
+               let newContactUser = new Users();
+               newContactUser._id = contactUser._id;
+               newContactUser.username = contactUser.username;
+               model.contactUser = newContactUser;
+
+               let estimationUser = await Users.findById(model.estimationUser);
+               let newEstimationUser = new Users();
+               newEstimationUser._id = estimationUser._id;
+               newEstimationUser.username = estimationUser.username;
+               model.estimationUser = newEstimationUser;
+
+               let mandateUser = await Users.findById(model.mandateUser);
+               let newMandateUser = new Users();
+               newMandateUser._id = mandateUser._id;
+               newMandateUser.username = mandateUser.username;
+               model.mandateUser = newMandateUser;
+
+               let sellingUser = await Users.findById(model.sellingUser);
+               let newSellingUser = new Users();
+               newSellingUser._id = sellingUser._id;
+               newSellingUser.username = sellingUser.username;
+               model.sellingUser = newSellingUser;
 
                model.save();
                res.send(model);
@@ -617,6 +809,21 @@ module.exports = (app) => {
 
           res.send(notaryAlreadyExisting);
      });
+     app.post(
+          '/api/deletRentingReceipt',
+          requireAdminRole,
+          async (req, res) => {
+               const rentingCase = await RentingCases.findById(
+                    req.body.identifiants.modelInstanceId
+               );
+               rentingCase.rentReceipts = _.filter(
+                    rentingCase.rentReceipts,
+                    (receipt) =>
+                         receipt._id != req.body.identifiants.receiptIdToDelete
+               );
+               res.send(await rentingCase.save());
+          }
+     );
 
      app.post('/api/deleteSyndic', requireAdminRole, async (req, res) => {
           const syndicAlreadyExisting = await Syndics.findByIdAndDelete(

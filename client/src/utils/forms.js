@@ -38,6 +38,21 @@ export async function getSyndicsIdToNamesObjects() {
      return response;
 }
 
+export async function getUserIdToNamesObjects() {
+     let response = [];
+     const res = await axios.get('/api/allUsers');
+     const users = res.data;
+     if (users) {
+          for (let user of users) {
+               response.push({
+                    objectId: user._id,
+                    objectLabel: user.username,
+               });
+          }
+     }
+     return response;
+}
+
 export async function getSyndicFieldsToDisplay(syndicId) {
      const res = await axios.post('/api/syndic', { syndicId });
      const syndic = res.data;

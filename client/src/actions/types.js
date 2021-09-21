@@ -27,6 +27,7 @@ export const FamilySituation = {
      MARRIED: 'marié',
      PACSED: 'pacsé',
      CONCUBINE: 'en concubinage',
+     VEUF: 'veuf',
 };
 export const Garage = {
      CLOSED_BOX: 'box fermé',
@@ -37,7 +38,6 @@ export const Garage = {
 export const MandateKind = {
      SIMPLE: 'simple',
      EXCLUSIF: 'exclusif',
-     NONE: 'pas de mandat',
 };
 export const PaymentKind = {
      CHEQUE: 'chèque',

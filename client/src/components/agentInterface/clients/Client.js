@@ -15,6 +15,7 @@ import ClientOpenedRentingCases from './ClientOpenedRentingCases';
 import ClientClosedRentingCases from './ClientClosedRentingCases';
 import ClientOpenedRentingCase from './ClientOpenedRentingCase';
 import ClientClosedRentingCase from './ClientClosedRentingCase';
+import RentingReceipts from './RentingReceipts';
 
 class Client extends Component {
      state = {};
@@ -183,6 +184,16 @@ class Client extends Component {
                                         exact
                                         path="/client/:clientId/profile"
                                         component={ClientProfile}
+                                   />
+                                   <GuardedRoute
+                                        exact
+                                        path="/client/:clientId/openedRentingCases/:caseId/rentingReceipts"
+                                        component={RentingReceipts}
+                                   />
+                                   <GuardedRoute
+                                        exact
+                                        path="/client/:clientId/closedRentingCases/:caseId/rentingReceipts"
+                                        component={RentingReceipts}
                                    />
                               </div>
                          </div>

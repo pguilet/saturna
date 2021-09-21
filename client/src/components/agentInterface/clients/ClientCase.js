@@ -21,6 +21,7 @@ import {
      getNotaryFieldsToDisplay,
      getSyndicFieldsToDisplay,
      getSyndicsIdToNamesObjects,
+     getUserIdToNamesObjects,
 } from '../../../utils/forms';
 import { withRouter } from 'react-router-dom';
 import FocusForm from '../FocusForm';
@@ -29,6 +30,7 @@ class ClientCase extends Component {
           stateTriggeredValues: { files: new Set() },
           notairesIdToNamesObjects: null,
           syndicsIdToNamesObjects: null,
+          userIdToNamesObjects: null,
      };
      componentDidMount() {
           this.updateNotaries();
@@ -43,6 +45,11 @@ class ClientCase extends Component {
           getSyndicsIdToNamesObjects().then((result) =>
                this.setState({
                     syndicsIdToNamesObjects: result,
+               })
+          );
+          getUserIdToNamesObjects().then((result) =>
+               this.setState({
+                    userIdToNamesObjects: result,
                })
           );
      }
@@ -200,6 +207,54 @@ class ClientCase extends Component {
                          : undefined,
                     component: CustomField,
                     block: 2,
+               },
+               {
+                    label: 'Contact agent',
+                    id: 'contactUser',
+                    type: 'selectWithDetailViewer',
+                    valueToSet:
+                         openCase && openCase.contactUser
+                              ? openCase.contactUser._id
+                              : undefined,
+                    valuesToSet: this.state.userIdToNamesObjects,
+                    component: CustomField,
+                    block: 1,
+               },
+               {
+                    label: 'Estimation agent',
+                    id: 'estimationUser',
+                    type: 'selectWithDetailViewer',
+                    valueToSet:
+                         openCase && openCase.estimationUser
+                              ? openCase.estimationUser._id
+                              : undefined,
+                    valuesToSet: this.state.userIdToNamesObjects,
+                    component: CustomField,
+                    block: 1,
+               },
+               {
+                    label: 'Mandat agent',
+                    id: 'mandateUser',
+                    type: 'selectWithDetailViewer',
+                    valueToSet:
+                         openCase && openCase.mandateUser
+                              ? openCase.mandateUser._id
+                              : undefined,
+                    valuesToSet: this.state.userIdToNamesObjects,
+                    component: CustomField,
+                    block: 1,
+               },
+               {
+                    label: 'Vente agent',
+                    id: 'sellingUser',
+                    type: 'selectWithDetailViewer',
+                    valueToSet:
+                         openCase && openCase.sellingUser
+                              ? openCase.sellingUser._id
+                              : undefined,
+                    valuesToSet: this.state.userIdToNamesObjects,
+                    component: CustomField,
+                    block: 1,
                },
                {
                     label: 'Loi carrez',
@@ -619,13 +674,14 @@ class ClientCase extends Component {
 
      render() {
           return (
-               this.props.theCase &&
+               this.props.propertyCase &&
                this.state.notairesIdToNamesObjects !== null &&
-               this.state.syndicsIdToNamesObjects !== null && (
+               this.state.syndicsIdToNamesObjects !== null &&
+               this.state.userIdToNamesObjects !== null && (
                     <>
                          {this.props.focusFormConfiguration && <FocusForm />}
                          <Form>
-                              {this.renderFields(this.props.theCase)}
+                              {this.renderFields(this.props.propertyCase)}
                               <div
                                    className="text-danger"
                                    style={{ marginBottom: '20px' }}
@@ -657,7 +713,8 @@ class ClientCase extends Component {
                                                   this.props.form,
                                                   {
                                                        modelInstanceId:
-                                                            this.props.theCase
+                                                            this.props
+                                                                 .propertyCase
                                                                  ._id,
                                                   },
                                                   this.state
@@ -679,7 +736,8 @@ class ClientCase extends Component {
                                                        this.props.deleteAction,
                                                   identifiants: {
                                                        modelInstanceId:
-                                                            this.props.theCase
+                                                            this.props
+                                                                 .propertyCase
                                                                  ._id,
                                                        clientId:
                                                             this.props.client
