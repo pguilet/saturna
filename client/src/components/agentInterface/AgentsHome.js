@@ -1,6 +1,4 @@
-//Rendering layer control (React router content)
 import React, { Component } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import _ from 'lodash';

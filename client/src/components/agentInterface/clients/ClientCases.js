@@ -1,4 +1,3 @@
-//Rendering layer control (React router content)
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../../actions';
@@ -145,7 +144,7 @@ class ClientCases extends Component {
 
      render() {
           return (
-               <div>
+               <div className="container">
                     {this.props.focusFormConfiguration && <FocusForm />}
                     {this.renderContent()}
                     {!this.props.noCreateButton && (

@@ -6,11 +6,9 @@ import * as actions from '../../actions';
 
 import Header from './Header';
 import Landing from './Landing';
-import Dashboard from './Dashboard';
 import About from './About';
 import Contact from './Contact';
 import Services from './Services';
-import SurveyNew from './surveys/SurveyNew';
 
 class Front extends Component {
      componentDidMount() {

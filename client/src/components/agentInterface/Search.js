@@ -1,4 +1,3 @@
-//Rendering layer control (React router content)
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
@@ -25,7 +24,7 @@ class Search extends Component {
                          this.openClientRecord(client._id);
                     }}
                >
-                    s{isDate ? moment(value).format('L') : value}
+                    {isDate ? moment(value).format('L') : value}
                </td>
           );
      }

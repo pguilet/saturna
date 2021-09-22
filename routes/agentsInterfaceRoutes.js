@@ -1,12 +1,6 @@
 const _ = require('lodash');
-const { Path } = require('path-parser');
-const { URL } = require('url');
 const mongoose = require('mongoose');
 const requireLogin = require('../middlewares/requireLogin');
-const requireCredits = require('../middlewares/requireCredits');
-const Mailer = require('../services/Mailer');
-const surveyTemplate = require('../services/emailTemplates/rentingReceiptTemplate');
-const bcrypt = require('bcrypt');
 const requireAdminRole = require('../middlewares/requireAdminRole');
 const Users = mongoose.model('users'); //for testing purpose with node and mongoose we should not get info from Survey.js
 const HomeAds = mongoose.model('homeAds');
@@ -23,17 +17,9 @@ const {
      getDownloadSignedLink,
 } = require('../services/s3');
 const fs = require('fs-extra');
-const util = require('util');
 const Roles = require('../types/types');
-const unlinkFile = util.promisify(fs.unlink);
 const moment = require('moment');
 const ObjectId = require('mongodb').ObjectId;
-
-const handleError = (err, res) => {
-     res.status(500)
-          .contentType('text/plain')
-          .end('An error occurred while sending image');
-};
 
 const uploader = multer({
      // dest: './upload/',
@@ -625,41 +611,61 @@ module.exports = (app) => {
                );
 
                //we copy to be able to retrieve the data even if its removed from its base model database.
-               let notaryVendor = await Notaries.findById(model.notaryVendor);
-               let newNotaryVendor = new Notaries(notaryVendor);
-               model.notaryVendor = newNotaryVendor;
+               if (model.notaryVendor) {
+                    let notaryVendor = await Notaries.findById(
+                         model.notaryVendor
+                    );
+                    let newNotaryVendor = new Notaries(notaryVendor);
+                    model.notaryVendor = newNotaryVendor;
+               }
 
-               let notaryBuyer = await Notaries.findById(model.notaryBuyer);
-               let newNotaryBuyer = new Notaries(notaryBuyer);
-               model.notaryBuyer = newNotaryBuyer;
+               if (model.notaryBuyer) {
+                    let notaryBuyer = await Notaries.findById(
+                         model.notaryBuyer
+                    );
+                    let newNotaryBuyer = new Notaries(notaryBuyer);
+                    model.notaryBuyer = newNotaryBuyer;
+               }
 
-               let syndic = await Syndics.findById(model.syndic);
-               let newSyndic = new Syndics(syndic);
-               model.syndic = newSyndic;
+               if (model.syndic) {
+                    let syndic = await Syndics.findById(model.syndic);
+                    let newSyndic = new Syndics(syndic);
+                    model.syndic = newSyndic;
+               }
 
-               let contactUser = await Users.findById(model.contactUser);
-               let newContactUser = new Users();
-               newContactUser._id = contactUser._id;
-               newContactUser.username = contactUser.username;
-               model.contactUser = newContactUser;
+               if (model.contactUser) {
+                    let contactUser = await Users.findById(model.contactUser);
+                    let newContactUser = new Users();
+                    newContactUser._id = contactUser._id;
+                    newContactUser.username = contactUser.username;
+                    model.contactUser = newContactUser;
+               }
 
-               let estimationUser = await Users.findById(model.estimationUser);
-               let newEstimationUser = new Users();
-               newEstimationUser._id = estimationUser._id;
-               newEstimationUser.username = estimationUser.username;
-               model.estimationUser = newEstimationUser;
+               if (model.estimationUser) {
+                    let estimationUser = await Users.findById(
+                         model.estimationUser
+                    );
+                    let newEstimationUser = new Users();
+                    newEstimationUser._id = estimationUser._id;
+                    newEstimationUser.username = estimationUser.username;
+                    model.estimationUser = newEstimationUser;
+               }
 
-               let mandateUser = await Users.findById(model.mandateUser);
-               let newMandateUser = new Users();
-               newMandateUser._id = mandateUser._id;
-               newMandateUser.username = mandateUser.username;
-               model.mandateUser = newMandateUser;
+               if (model.mandateUser) {
+                    let mandateUser = await Users.findById(model.mandateUser);
+                    let newMandateUser = new Users();
+                    newMandateUser._id = mandateUser._id;
+                    newMandateUser.username = mandateUser.username;
+                    model.mandateUser = newMandateUser;
+               }
 
-               let sellingUser = await Users.findById(model.sellingUser);
-               let newSellingUser = new Users();
-               newSellingUser._id = sellingUser._id;
-               newSellingUser.username = sellingUser.username;
-               model.sellingUser = newSellingUser;
+               if (model.sellingUser) {
+                    let sellingUser = await Users.findById(model.sellingUser);
+                    let newSellingUser = new Users();
+                    newSellingUser._id = sellingUser._id;
+                    newSellingUser.username = sellingUser.username;
+                    model.sellingUser = newSellingUser;
+               }
 
                model.save();
                res.send(model);

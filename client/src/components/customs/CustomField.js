@@ -1,9 +1,7 @@
-//Rendering layer control (React router content)
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
-import axios from 'axios';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import TextField from '@material-ui/core/TextField';

@@ -1,4 +1,3 @@
-//Rendering layer control (React router content)
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
@@ -33,7 +32,7 @@ class HomeAdsList extends Component {
      renderContent() {
           var key = 0;
           return (
-               <div>
+               <div className="container">
                     <h4>Liste des annonces immobilières</h4>
                     <Table striped bordered hover>
                          <thead>

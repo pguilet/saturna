@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { fetchPage } from '../../actions';
-import Header from './Header';
 
 class Landing extends Component {
      componentDidMount() {

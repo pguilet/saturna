@@ -1,28 +1,13 @@
-//Rendering layer control (React router content)
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../../actions';
-import { reduxForm, Field } from 'redux-form';
+import { reduxForm } from 'redux-form';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import CustomField from '../../customs/CustomField';
-import moment from 'moment';
-import {
-     Civility,
-     MandateKind,
-     Garage,
-     PropertyKind,
-     PropertyTransactionKind,
-     PaymentKind,
-} from '../../../actions/types';
-import {
-     getField,
-     getNotairesIdToNamesObjects,
-     getNotaryFieldsToDisplay,
-     getSyndicFieldsToDisplay,
-     getSyndicsIdToNamesObjects,
-} from '../../../utils/forms';
+import { PaymentKind } from '../../../actions/types';
+import { getField } from '../../../utils/forms';
 import { withRouter } from 'react-router-dom';
 import FocusForm from '../FocusForm';
 class ClientRentingCase extends Component {

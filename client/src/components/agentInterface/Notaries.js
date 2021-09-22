@@ -1,4 +1,3 @@
-//Rendering layer control (React router content)
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
@@ -6,7 +5,6 @@ import FocusForm from './FocusForm';
 import { Roles, Civility } from '../../actions/types';
 import FixedFloatingButton from '../customs/FixedFloatingButton';
 import Table from 'react-bootstrap/Table';
-import moment from 'moment';
 import { withRouter } from 'react-router-dom';
 import CustomField from '../customs/CustomField';
 
@@ -19,7 +17,7 @@ class Notaries extends Component {
      renderContent() {
           var key = 0;
           return (
-               <div>
+               <div className="container">
                     <h4>Liste des notaires</h4>
                     <Table striped bordered hover>
                          <thead>

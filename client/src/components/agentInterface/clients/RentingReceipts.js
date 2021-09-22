@@ -1,4 +1,3 @@
-//Rendering layer control (React router content)
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../../actions';
@@ -6,9 +5,7 @@ import FocusForm from '../FocusForm';
 import FixedFloatingButton from '../../customs/FixedFloatingButton';
 import CustomField from '../../customs/CustomField';
 import _ from 'lodash';
-import axios from 'axios';
 import Table from 'react-bootstrap/Table';
-import { getDownloadSignedLink } from '../../../utils/filesHandling.js';
 import moment from 'moment';
 import Button from 'react-bootstrap/Button';
 import { withRouter } from 'react-router-dom';

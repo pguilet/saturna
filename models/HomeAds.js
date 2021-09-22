@@ -6,9 +6,6 @@ const homeAdsSchema = new Schema({
      description: String,
      images: [String],
      adType: String,
-     // googleId: String,
-     // role:{type: String, default:Roles.AGENT},
-     // credits: {type: Number, default:0}
 });
 
 mongoose.model('homeAds', homeAdsSchema); //don't do anything if collection already exists if the same.

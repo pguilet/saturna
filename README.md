@@ -1,6 +1,6 @@
 # pierreNantaise
 
-Mongo db, heroku, AWS s3 bucket, Bootstrap css
+Mongo db, heroku, AWS s3 bucket, material ui, sendgrid, react bootstrap
 
 # sentry
 

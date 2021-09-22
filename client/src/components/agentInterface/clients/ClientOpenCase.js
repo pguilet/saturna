@@ -1,5 +1,3 @@
-//Rendering layer control (React router content)
-import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../../actions';
