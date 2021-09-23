@@ -1,6 +1,6 @@
 # pierreNantaise
 
-Mongo db, heroku, AWS s3 bucket, material ui, sendgrid, react bootstrap
+Mongo db, heroku, AWS s3 bucket, material ui, sendgrid, react bootstrap, cloudflare for domain name
 
 # sentry
 
