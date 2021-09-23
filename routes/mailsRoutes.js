@@ -6,6 +6,7 @@ const rentingReceiptTemplate = require('../services/emailTemplates/rentingReceip
 const Clients = mongoose.model('clients');
 const RentingCases = mongoose.model('rentingCases');
 const Receipts = mongoose.model('receipt');
+const NewsletterMails = mongoose.model('newsletterMail');
 const keys = require('../config/keys');
 const moment = require('moment');
 
@@ -132,6 +133,74 @@ module.exports = (app) => {
                }
           } catch (err) {
                res.status(422).send(err);
+          }
+     });
+
+     app.post('/api/sendMail', requireLogin, async (req, res) => {
+          let mail = await NewsletterMails.findById(
+               req.body.identifiants.modelInstanceId
+          );
+          let query = [];
+          let clientToSend = 0;
+          if (mail.object) {
+               if (mail.newsletterSuscribing) {
+                    query.push({ newsletterSuscribing: true });
+               }
+               if (mail.profilInvest) {
+                    query.push({ profilInvest: true });
+               }
+               if (mail.profilRent) {
+                    query.push({ profilRent: true });
+               }
+               if (mail.profilOwner) {
+                    query.push({ profilOwner: true });
+               }
+               if (query.length > 0) {
+                    let clients = await Clients.find({
+                         $or: query,
+                    });
+
+                    const emails = _.map(clients, (client) => {
+                         if (client.email) {
+                              clientToSend++;
+                              return client.email;
+                         }
+                    }).join(',');
+                    if (emails) {
+                         let config = {
+                              to: emails,
+                              from: keys.emailToSend,
+                              subject: mail.object ? mail.object : '',
+                         };
+                         const mailer = new Mailer(config, mail.mailContent);
+                         try {
+                              const sendGridResponse = await mailer.send();
+                              if (sendGridResponse[0].statusCode === 202) {
+                                   mail.lastSendingDate = new Date();
+                                   mail.lastClientsBatch = clientToSend;
+                                   res.send(await mail.save());
+                              } else {
+                                   res.status(422).send(
+                                        sendGridResponse[0].statusCode
+                                   );
+                              }
+                         } catch (err) {
+                              res.status(422).send(err);
+                         }
+                    } else {
+                         mail.lastSendingDate = new Date();
+                         mail.lastClientsBatch = clientToSend;
+                         res.send(await mail.save());
+                    }
+               } else {
+                    mail.lastSendingDate = new Date();
+                    mail.lastClientsBatch = clientToSend;
+                    res.send(await mail.save());
+               }
+          } else {
+               res.send({
+                    message: "Veuillez renseigner un objet pour pouvoir procéder à l'envoi",
+               });
           }
      });
 };

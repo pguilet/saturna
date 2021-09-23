@@ -12,7 +12,7 @@ export const FOCUS_FORM_CONFIGURATION = 'focus_form_configuration';
 export const FETCH_CASES = 'fetch_cases';
 export const FETCH_RENTING_CASES = 'fetch_renting_cases';
 export const FETCH_RENTING_CASE = 'fetch_renting_case';
-
+export const FETCH_MAILS = 'fetch_mails';
 export const Roles = {
      AGENT: 'agent',
      ADMIN: 'admin',

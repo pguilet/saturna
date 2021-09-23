@@ -40,6 +40,11 @@ class InterfaceHeader extends Component {
                                    Liste des agents
                               </Link>
                          )}
+                         {isAdmin && (
+                              <Link to="/mailsSender" className="dropdown-item">
+                                   Envoi de mails
+                              </Link>
+                         )}
                     </NavDropdown>
                );
           }

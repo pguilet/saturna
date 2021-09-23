@@ -11,6 +11,7 @@ require('./models/Client');
 require('./models/HomeAds');
 require('./models/Receipt');
 require('./models/RentingCase');
+require('./models/NewsletterMail');
 require('./services/passport'); // no need of a variable because the file does not export anything
 var flash = require('connect-flash');
 // const Sentry = require('@sentry/node');
@@ -79,7 +80,7 @@ app.use(passport.session());
 require('./routes/authRoutes')(app);
 require('./routes/billingRoutes')(app);
 require('./routes/agentsInterfaceRoutes')(app);
-require('./routes/rentingReceiptsRoutes')(app);
+require('./routes/mailsRoutes')(app);
 
 if (process.env.NODE_ENV === 'production') {
      // express will serve up production assets like our mains.js file built from npm run build or main.css file.

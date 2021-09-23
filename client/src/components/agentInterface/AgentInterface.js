@@ -12,6 +12,7 @@ import Search from './Search';
 import { Roles } from '../../actions/types';
 import Notaries from './Notaries';
 import Syndics from './Syndics';
+import MailsSender from './MailsSender';
 class AgentInterface extends Component {
      render() {
           return (
@@ -23,6 +24,11 @@ class AgentInterface extends Component {
                               exact
                               path="/agentsHome"
                               component={AgentsHome}
+                         />
+                         <GuardedRoute
+                              exact
+                              path="/mailsSender"
+                              component={MailsSender}
                          />
                          <GuardedRoute
                               exact

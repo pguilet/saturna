@@ -9,7 +9,11 @@ import {
      getDownloadSignedLink,
      uploadImageFileLocally,
 } from '../../utils/filesHandling.js';
-
+import { EditorState, convertToRaw, ContentState } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
 class CustomField extends Component {
      state = {
           valueToSet: '',
@@ -17,6 +21,7 @@ class CustomField extends Component {
           imagesToShow: [],
           pdfValueToSet: '',
           deletedImages: [],
+          editorState: EditorState.createEmpty(),
      };
 
      constructor(props) {
@@ -42,6 +47,18 @@ class CustomField extends Component {
                          : '',
                deletedImages: [],
           });
+          if (this.props.type === 'wEditor' && this.props.valuetoset) {
+               const blocksFromHtml = htmlToDraft(this.props.valuetoset);
+               const { contentBlocks, entityMap } = blocksFromHtml;
+               const contentState = ContentState.createFromBlockArray(
+                    contentBlocks,
+                    entityMap
+               );
+               let valueToSet = EditorState.createWithContent(contentState);
+               this.setState({
+                    valueToSet: valueToSet,
+               });
+          }
      }
 
      renderOtherOptions(valueToSet, selectvalues, objectIdToLabelRender) {
@@ -97,6 +114,31 @@ class CustomField extends Component {
                               }}
                          />
                     </>
+               );
+          } else if (type === 'wEditor') {
+               return (
+                    <Editor
+                         editorState={
+                              this.state.valueToSet
+                                   ? this.state.valueToSet
+                                   : undefined
+                         }
+                         wrapperClassName="wrapper-mails-sending"
+                         editorClassName="editor-mails-sending"
+                         toolbarClassName="toolbar-mails-sending"
+                         onEditorStateChange={(editorState) => {
+                              let editorHtmlContent = draftToHtml(
+                                   convertToRaw(editorState.getCurrentContent())
+                              );
+                              this.setState({
+                                   valueToSet: editorState,
+                              });
+                              this.props.statetriggeredvaluesupdatefunction(
+                                   id,
+                                   editorHtmlContent
+                              );
+                         }}
+                    />
                );
           } else if (type === 'textarea') {
                return (

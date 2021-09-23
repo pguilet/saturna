@@ -9,6 +9,7 @@ const Notaries = mongoose.model('notaries');
 const Syndics = mongoose.model('syndics');
 const PropertyCases = mongoose.model('propertyCases');
 const RentingCases = mongoose.model('rentingCases');
+const NewsletterMails = mongoose.model('newsletterMail');
 const multer = require('multer');
 const {
      uploadFile,
@@ -212,6 +213,13 @@ module.exports = (app) => {
      app.get('/api/allClients', requireLogin, async (req, res) => {
           const clients = await Clients.find().sort({ surname: 1 });
           res.send(clients);
+     });
+
+     app.get('/api/allMails', requireLogin, async (req, res) => {
+          const mails = await NewsletterMails.find().sort({
+               lastSendingDate: 1,
+          });
+          res.send(mails);
      });
 
      app.post('/api/allOpenCases', requireLogin, async (req, res) => {
@@ -711,6 +719,20 @@ module.exports = (app) => {
           );
      });
 
+     app.post('/api/editMail', requireLogin, async (req, res) => {
+          updateModelAndReturnResponse(
+               req,
+               res,
+               [],
+               [],
+               await NewsletterMails.findById(
+                    req.body.identifiants.modelInstanceId
+               ),
+               req.body.stateTriggeredValues,
+               req.body.identifiants
+          );
+     });
+
      app.post('/api/editSyndic', requireLogin, async (req, res) => {
           updateModelAndReturnResponse(
                req,
@@ -815,6 +837,13 @@ module.exports = (app) => {
 
           res.send(notaryAlreadyExisting);
      });
+     app.post('/api/deleteMail', requireAdminRole, async (req, res) => {
+          const mailAlreadyExisting = await NewsletterMails.findByIdAndDelete(
+               req.body.identifiants.modelInstanceId
+          );
+
+          res.send(mailAlreadyExisting);
+     });
      app.post(
           '/api/deletRentingReceipt',
           requireAdminRole,
@@ -881,6 +910,18 @@ module.exports = (app) => {
                [],
                [],
                await new PropertyCases(),
+               req.body.stateTriggeredValues,
+               req.body.identifiants
+          );
+     });
+
+     app.post('/api/newMail', requireLogin, async (req, res) => {
+          updateModelAndReturnResponse(
+               req,
+               res,
+               [],
+               [],
+               await new NewsletterMails(),
                req.body.stateTriggeredValues,
                req.body.identifiants
           );

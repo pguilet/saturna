@@ -15,7 +15,7 @@ import openCasesReducer from './casesReducer';
 import openCaseReducer from './caseReducer';
 import rentingCaseReducer from './rentingCaseReducer';
 import rentingCasesReducer from './rentingCasesReducer';
-
+import mailsReducer from './mailsReducer';
 export default combineReducers({
      auth: authReducer,
      form: reduxForm,
@@ -32,4 +32,5 @@ export default combineReducers({
      focusFormConfiguration: focusFormReducer,
      rentingCase: rentingCaseReducer,
      rentingCases: rentingCasesReducer,
+     mails: mailsReducer,
 });

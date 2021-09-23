@@ -31,6 +31,11 @@ class App extends Component {
                     />
                     <GuardedRoute
                          exact
+                         path="/mailsSender"
+                         component={AgentInterface}
+                    />
+                    <GuardedRoute
+                         exact
                          path="/notaries"
                          component={AgentInterface}
                     />

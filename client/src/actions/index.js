@@ -15,6 +15,7 @@ import {
      FETCH_CASE,
      FETCH_RENTING_CASES,
      FETCH_RENTING_CASE,
+     FETCH_MAILS,
 } from './types';
 import bcrypt from 'bcryptjs';
 
@@ -130,6 +131,12 @@ export const fetchHomeAds = () => async (dispatch) => {
      dispatch({ type: FETCH_HOME_ADS, payload: res.data });
 };
 
+export const fetchMails = () => async (dispatch) => {
+     const res = await axios.get('/api/allMails');
+     dispatch({ type: FLASH, payload: { message: '' } });
+     dispatch({ type: FETCH_MAILS, payload: res.data });
+};
+
 export const handleToken = (token) => async (dispatch) => {
      const res = await axios.post('/api/stripe', token);
      dispatch({ type: FETCH_USER, payload: res.data });
@@ -181,7 +188,59 @@ export const createUser =
                dispatch({ type: FLASH, payload: res.data });
           }
      };
-
+export const newMail =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/newMail', {
+               stateTriggeredValues,
+               identifiants,
+          });
+          if (!res.data.message) {
+               res = await axios.get('/api/allMails');
+               dispatch({ type: FLASH, payload: { message: false } });
+               dispatch({
+                    type: FOCUS_FORM_CONFIGURATION,
+                    payload: null,
+               });
+               dispatch({ type: FETCH_MAILS, payload: res.data });
+          } else {
+               dispatch({ type: FLASH, payload: res.data });
+          }
+     };
+export const editMail =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          var res = await axios.post('/api/editMail', {
+               stateTriggeredValues,
+               identifiants,
+          });
+          if (!res.data.message) {
+               res = await axios.get('/api/allMails');
+               dispatch({ type: FLASH, payload: { message: false } });
+               dispatch({
+                    type: FOCUS_FORM_CONFIGURATION,
+                    payload: null,
+               });
+               dispatch({ type: FETCH_MAILS, payload: res.data });
+          } else {
+               dispatch({ type: FLASH, payload: res.data });
+          }
+     };
+export const deleteMail =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          let res = await axios.post('/api/deleteMail', {
+               identifiants,
+          });
+          res = await axios.get('/api/allMails', {
+               identifiants,
+          });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+          dispatch({ type: FETCH_MAILS, payload: res.data });
+     };
 export const createClient =
      (history, form, identifiants, stateTriggeredValues) =>
      async (dispatch) => {
@@ -213,6 +272,37 @@ export const sendRentReceipt = (identifiants) => async (dispatch) => {
      dispatch({ type: FLASH, payload: { message: 'Quittance envoyée' } });
      dispatch({ type: FETCH_RENTING_CASE, payload: res.data });
 };
+
+export const sendMail =
+     (history, form, identifiants, stateTriggeredValues) =>
+     async (dispatch) => {
+          let resSending = await axios.post('/api/sendMail', { identifiants });
+          if (resSending.data.message) {
+               dispatch({
+                    type: FLASH,
+                    payload: {
+                         message: resSending.data.message,
+                    },
+               });
+          } else {
+               dispatch({
+                    type: FLASH,
+                    payload: {
+                         message:
+                              'Mail envoyé à ' +
+                              resSending.data.lastClientsBatch +
+                              ' clients',
+                    },
+               });
+          }
+          let res = await axios.get('/api/allMails', { identifiants });
+
+          dispatch({ type: FETCH_MAILS, payload: res.data });
+          dispatch({
+               type: FOCUS_FORM_CONFIGURATION,
+               payload: null,
+          });
+     };
 
 export const deleteRentingReceipt =
      (history, form, identifiants, stateTriggeredValues) =>
