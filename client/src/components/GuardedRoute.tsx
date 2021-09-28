@@ -1,11 +1,21 @@
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, RouteComponentProps } from 'react-router-dom';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps, ConnectedComponent } from 'react-redux';
 import * as actions from '../actions';
 import { Roles } from '../actions/types';
 
-class GuardedRoute extends Component {
-     renderContent(props) {
+interface RootState {
+     auth: { role: String } | null | false;
+     role: String;
+}
+interface Props extends PropsFromRedux {
+     path: string;
+     exact: boolean | undefined;
+     component: ConnectedComponent<any, any>;
+}
+
+class GuardedRoute extends Component<Props> {
+     renderContent(props: RouteComponentProps) {
           let Component = this.props.component;
           //auth is either null when not initialized, false when initialized but user is not identified and is true when identified.
           if (
@@ -30,7 +40,14 @@ class GuardedRoute extends Component {
           );
      }
 }
-function mapStateToProps(props) {
-     return props;
-}
-export default connect(mapStateToProps, actions)(GuardedRoute);
+
+const mapState = (state: RootState) => ({
+     auth: state.auth,
+     role: state.role,
+});
+const mapDispatch = {};
+const connector = connect(mapState, mapDispatch);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export default connector(GuardedRoute);

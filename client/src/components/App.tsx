@@ -10,7 +10,12 @@ import Login from './agentInterface/Login';
 import AgentInterface from './agentInterface/AgentInterface';
 import '../css/index.scss';
 import * as Sentry from '@sentry/react';
-class App extends Component {
+
+interface Props {
+     fetchUser: Function;
+}
+
+class App extends Component<Props> {
      componentDidMount() {
           this.props.fetchUser();
      }
@@ -21,7 +26,6 @@ class App extends Component {
                     <Route exact path="/" component={Home} />
                     <Route exact path="/about" component={Home} />
                     <Route exact path="/login" component={Login} />
-                    <GuardedRoute exact path="/surveys" component={Dashboard} />
                     <Route exact path="/contact" component={Home} />
                     <Route exact path="/services" component={Home} />
                     <GuardedRoute
