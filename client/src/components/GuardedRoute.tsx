@@ -1,11 +1,10 @@
 import { Route, Redirect, RouteComponentProps } from 'react-router-dom';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect, ConnectedProps, ConnectedComponent } from 'react-redux';
-import * as actions from '../actions';
 import { Roles } from '../actions/types';
 
 interface RootState {
-     auth: { role: String } | null | false;
+     auth: { role: String } | null | false; //auth is either null when not initialized, false when initialized but user is not identified and is true when identified.
      role: String;
 }
 interface Props extends PropsFromRedux {
@@ -17,7 +16,6 @@ interface Props extends PropsFromRedux {
 class GuardedRoute extends Component<Props> {
      renderContent(props: RouteComponentProps) {
           let Component = this.props.component;
-          //auth is either null when not initialized, false when initialized but user is not identified and is true when identified.
           if (
                (!this.props.auth && this.props.auth !== null) ||
                (this.props.auth &&

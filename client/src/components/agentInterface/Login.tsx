@@ -1,31 +1,46 @@
-import React, { Component } from 'react';
-import { BrowserRouter, Redirect } from 'react-router-dom';
+import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import * as actions from '../../actions';
+import { login } from '../../actions';
 import { reduxForm, Field } from 'redux-form';
-import { withRouter } from 'react-router-dom';
-
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import InterfaceHeader from './InterfaceHeader';
 import CustomField from '../customs/CustomField';
 import Button from 'react-bootstrap/Button';
 
-class Login extends Component {
-     state = {};
+interface RootProps {
+     auth: { username: string } | null; //auth is either null when not initialized, false when initialized but user is not identified and is true when identified.
+     flash: { message: string | null | false } | null;
+     history: RouteComponentProps;
+}
 
-     constructor(props) {
+interface RootState {
+     username: String | null;
+     password: String | null;
+}
+
+interface Actions {
+     login: any;
+}
+
+interface Props extends Actions, RootProps, RootState {}
+
+class Login extends React.Component<Props> {
+     constructor(props: any) {
           super(props);
+          this.setState({ username: null, password: null });
           this.handleUsernameChange = this.handleUsernameChange.bind(this);
           this.handlePasswordChange = this.handlePasswordChange.bind(this);
      }
 
-     handleUsernameChange(e) {
+     handleUsernameChange(e: any) {
           this.setState({ username: e.target.value });
      }
-     handlePasswordChange(e) {
+     handlePasswordChange(e: any) {
           this.setState({ password: e.target.value });
      }
 
-     handleSubmit = (event) => {
+     handleSubmit = (event: any): void => {
           event.preventDefault();
           this.props.login(
                this.props.history,
@@ -36,7 +51,7 @@ class Login extends Component {
      renderContent() {
           if (this.props.auth === null || !this.props.auth.username) {
                return (
-                    <BrowserRouter>
+                    <>
                          <InterfaceHeader />
                          <main className="container">
                               <form onSubmit={this.handleSubmit}>
@@ -77,7 +92,7 @@ class Login extends Component {
                                    </Button>
                               </form>
                          </main>
-                    </BrowserRouter>
+                    </>
                );
           } else {
                return <Redirect to="/agentsHome" />;
@@ -88,11 +103,15 @@ class Login extends Component {
      }
 }
 
-function mapStateToProps(props) {
-     return props;
-}
-Login = connect(mapStateToProps, actions)(Login);
-export default reduxForm({
+const mapStateToProps = (state: RootProps) => ({
+     auth: state.auth,
+     flash: state.flash,
+     history: state.history,
+});
+const actions = { login };
+
+const form = reduxForm<{}, any>({
      destroyOnUnmount: false,
      form: 'loginForm',
-})(withRouter(Login));
+})(Login);
+export default connect(mapStateToProps, actions)(withRouter(form));

@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
 
 import Home from './front/Home';
-import Dashboard from './front/Dashboard';
 import GuardedRoute from './GuardedRoute';
 import Login from './agentInterface/Login';
 import AgentInterface from './agentInterface/AgentInterface';
