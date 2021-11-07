@@ -11,7 +11,6 @@ import Table from 'react-bootstrap/Table';
 
 class HomeAdsList extends Component {
      componentDidMount() {
-          this.props.fetchPage('homeAdsList');
           this.props.fetchHomeAds();
      }
 

@@ -8,7 +8,7 @@ import Button from 'react-bootstrap/Button';
 import CustomField from '../../customs/CustomField';
 import moment from 'moment';
 import { FamilySituation, Civility } from '../../../actions/types';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../../utils/routing';
 import { getField } from '../../../utils/forms';
 import FocusForm from '../FocusForm';
 

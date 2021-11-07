@@ -22,7 +22,7 @@ import {
      getSyndicsIdToNamesObjects,
      getUserIdToNamesObjects,
 } from '../../../utils/forms';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../../utils/routing';
 import FocusForm from '../FocusForm';
 class ClientCase extends Component {
      state = {

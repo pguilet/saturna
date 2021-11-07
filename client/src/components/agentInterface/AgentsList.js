@@ -9,7 +9,6 @@ import Table from 'react-bootstrap/Table';
 
 class AgentsList extends Component {
      componentDidMount() {
-          this.props.fetchPage('agentsList');
           this.props.fetchUsers();
      }
 

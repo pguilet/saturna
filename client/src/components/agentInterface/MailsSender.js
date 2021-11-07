@@ -9,7 +9,6 @@ import moment from 'moment';
 
 class MailsSender extends Component {
      componentDidMount() {
-          this.props.fetchPage('');
           this.props.fetchMails();
      }
 

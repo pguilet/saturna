@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../../actions';
 import ClientCase from './ClientCase';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../../utils/routing';
 
 class ClientOpenCase extends Component {
      componentDidMount() {
           if (!this.props.propertyCase) {
                this.props.fetchCase(
-                    this.props.match.params.clientId,
-                    this.props.match.params.caseId
+                    this.props.params.clientId,
+                    this.props.params.caseId
                );
           }
           this.props.clearFlashMessage();

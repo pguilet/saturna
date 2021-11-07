@@ -10,7 +10,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import { Roles } from '../../actions/types.js';
 import * as actions from '../../actions';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../utils/routing';
 
 class InterfaceHeader extends Component {
      constructor(props) {
@@ -31,17 +31,26 @@ class InterfaceHeader extends Component {
                               Logout
                          </NavDropdown.Item>
                          {(isAgent || isAdmin) && (
-                              <Link to="/homeAdsList" className="dropdown-item">
+                              <Link
+                                   to="/agentInterface/homeAdsList"
+                                   className="dropdown-item"
+                              >
                                    Annonces immobilières
                               </Link>
                          )}
                          {isAdmin && (
-                              <Link to="/agentsList" className="dropdown-item">
+                              <Link
+                                   to="/agentInterface/agentsList"
+                                   className="dropdown-item"
+                              >
                                    Liste des agents
                               </Link>
                          )}
                          {isAdmin && (
-                              <Link to="/mailsSender" className="dropdown-item">
+                              <Link
+                                   to="/agentInterface/mailsSender"
+                                   className="dropdown-item"
+                              >
                                    Envoi de mails
                               </Link>
                          )}
@@ -56,7 +65,7 @@ class InterfaceHeader extends Component {
      };
      getClassNames(pageName) {
           var className = 'nav-link';
-          if (this.props.pageSelected === pageName) {
+          if (this.props.location.pathname.includes(pageName)) {
                className = className + ' active';
           }
           return className;
@@ -72,9 +81,9 @@ class InterfaceHeader extends Component {
                          <Navbar.Collapse id="basic-navbar-nav">
                               <Nav className="me-auto">
                                    <Link
-                                        to="/agentsHome"
+                                        to="/agentInterface/agentsHome"
                                         className={this.getClassNames(
-                                             'dashboard'
+                                             'agentsHome'
                                         )}
                                    >
                                         Dashboard
@@ -83,15 +92,15 @@ class InterfaceHeader extends Component {
                                    {this.props.auth && (
                                         <>
                                              <Link
-                                                  to="/clients"
+                                                  to="/agentInterface/clients"
                                                   className={this.getClassNames(
-                                                       'clients'
+                                                       'client'
                                                   )}
                                              >
                                                   Clients
                                              </Link>
                                              <Link
-                                                  to="/notaries"
+                                                  to="/agentInterface/notaries"
                                                   className={this.getClassNames(
                                                        'notaries'
                                                   )}
@@ -99,7 +108,7 @@ class InterfaceHeader extends Component {
                                                   Notaires
                                              </Link>
                                              <Link
-                                                  to="/syndics"
+                                                  to="/agentInterface/syndics"
                                                   className={this.getClassNames(
                                                        'syndics'
                                                   )}

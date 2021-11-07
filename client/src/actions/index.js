@@ -42,7 +42,9 @@ export const fetchRentingCase = (clientId, caseId) => async (dispatch) => {
 export const openClient = (history, clientId) => async (dispatch) => {
      const res = await axios.post('/api/client', clientId);
      dispatch({ type: FETCH_CLIENT, payload: res.data });
-     history.push('/client/' + clientId + '/profile');
+     history('/agentInterface/client/' + clientId + '/profile', {
+          replace: false,
+     });
 };
 
 export const openCase =
@@ -52,12 +54,20 @@ export const openCase =
           });
           await dispatch({ type: FETCH_CASE, payload: res.data });
           if (isClosedCase) {
-               history.push(
-                    '/client/' + client._id + '/closedCases/' + propertyCase._id
+               history(
+                    '/agentInterface/client/' +
+                         client._id +
+                         '/closedCases/' +
+                         propertyCase._id,
+                    { replace: false }
                );
           } else {
-               history.push(
-                    '/client/' + client._id + '/openCases/' + propertyCase._id
+               history(
+                    '/agentInterface/client/' +
+                         client._id +
+                         '/openCases/' +
+                         propertyCase._id,
+                    { replace: false }
                );
           }
      };
@@ -69,18 +79,20 @@ export const openRentingCase =
           });
           await dispatch({ type: FETCH_RENTING_CASE, payload: res.data });
           if (isClosedCase) {
-               history.push(
-                    '/client/' +
+               history(
+                    '/agentInterface/client/' +
                          client._id +
                          '/closedRentingCases/' +
-                         propertyCase._id
+                         propertyCase._id,
+                    { replace: false }
                );
           } else {
-               history.push(
-                    '/client/' +
+               history(
+                    '/agentInterface/client/' +
                          client._id +
                          '/openedRentingCases/' +
-                         propertyCase._id
+                         propertyCase._id,
+                    { replace: false }
                );
           }
      };
@@ -142,27 +154,12 @@ export const handleToken = (token) => async (dispatch) => {
      dispatch({ type: FETCH_USER, payload: res.data });
 };
 
-export const submitSurvey = (values, history) => async (dispatch) => {
-     const res = await axios.post('/api/surveys', values);
-     history.push('/surveys');
-     dispatch({ type: FETCH_USER, payload: res.data });
-};
-
-export const fetchSurveys = () => async (dispatch) => {
-     const res = await axios.get('/api/surveys');
-     dispatch({ type: FETCH_SURVEYS, payload: res.data });
-};
-
-export const fetchPage = (pageName) => async (dispatch) => {
-     dispatch({ type: FETCH_PAGE, payload: pageName });
-};
-
 export const login = (history, username, password) => async (dispatch) => {
      const res = await axios.get('/api/loginUser', {
           params: { username, password },
      });
      if (!res.data.message) {
-          history.push('/agentsHome');
+          history('/agentInterface/agentsHome', { replace: false });
           dispatch({ type: FETCH_USER, payload: res.data });
      } else {
           dispatch({ type: FLASH, payload: res.data });
@@ -247,7 +244,11 @@ export const createClient =
           var res = await axios.post('/api/newClient');
           if (!res.data.message) {
                dispatch({ type: FETCH_CLIENT, payload: res.data });
-               history.push('/client/' + res.data._id + '/profile');
+
+               history('/agentInterface/client/' + res.data._id + '/profile', {
+                    replace: false,
+               });
+
                dispatch({ type: FLASH, payload: '' });
           } else {
                dispatch({ type: FLASH, payload: res.data });
@@ -325,11 +326,12 @@ export const createPropertyCase =
           });
           if (!res.data.message) {
                dispatch({ type: FETCH_CASE, payload: res.data });
-               history.push(
-                    '/client/' +
+               history(
+                    '/agentInterface/client/' +
                          identifiants._user +
                          '/openCases/' +
-                         res.data._id
+                         res.data._id,
+                    { replace: false }
                );
                dispatch({ type: FLASH, payload: '' });
           } else {
@@ -345,12 +347,14 @@ export const createRentingCase =
           });
           if (!res.data.message) {
                dispatch({ type: FETCH_RENTING_CASES, payload: res.data });
-               history.push(
-                    '/client/' +
+               history(
+                    '/agentInterface/client/' +
                          identifiants._user +
                          '/openedRentingCases/' +
-                         res.data._id
+                         res.data._id,
+                    { replace: false }
                );
+
                dispatch({ type: FLASH, payload: '' });
           } else {
                dispatch({ type: FLASH, payload: res.data });
@@ -548,7 +552,7 @@ export const deleteClient =
                type: FOCUS_FORM_CONFIGURATION,
                payload: null,
           });
-          await history.push('/clients');
+          await history('/agentInterface/clients', { replace: false });
           res = await axios.get('/api/allClients');
           dispatch({ type: FLASH, payload: { message: false } });
           dispatch({ type: FETCH_CLIENTS, payload: res.data });
@@ -567,10 +571,12 @@ export const deleteOpenedPropertyCase =
           res = await axios.post('/api/allOpenCases', {
                clientId: identifiants.clientId,
           });
-          await history.push(
-               '/client/' + identifiants.clientId + '/openCases/'
+          await history(
+               '/agentInterface/client/' +
+                    identifiants.clientId +
+                    '/openCases/',
+               { replace: false }
           );
-
           dispatch({ type: FLASH, payload: { message: false } });
           dispatch({ type: FETCH_CASES, payload: res.data });
      };
@@ -588,8 +594,11 @@ export const deleteOpenedRentingCase =
           res = await axios.post('/api/allOpenedRentingCases', {
                clientId: identifiants.clientId,
           });
-          await history.push(
-               '/client/' + identifiants.clientId + '/openedRentingCases/'
+          await history(
+               '/agentInterface/client/' +
+                    identifiants.clientId +
+                    '/openedRentingCases/',
+               { replace: false }
           );
 
           dispatch({ type: FLASH, payload: { message: false } });
@@ -609,10 +618,15 @@ export const deleteClosedPropertyCase =
           res = await axios.post('/api/allClosedCases', {
                clientId: identifiants.clientId,
           });
-          await history.push(
-               '/client/' + identifiants.clientId + '/closedCases/'
-          );
 
+          await history(
+               '/agentInterface/client/' +
+                    identifiants.clientId +
+                    '/closedCases/' +
+                    identifiants.clientId +
+                    '/openedRentingCases/',
+               { replace: false }
+          );
           dispatch({ type: FLASH, payload: { message: false } });
           dispatch({ type: FETCH_CASES, payload: res.data });
      };
@@ -630,10 +644,13 @@ export const deleteClosedRentingCase =
           res = await axios.post('/api/allClosedRentingCases', {
                clientId: identifiants.clientId,
           });
-          await history.push(
-               '/client/' + identifiants.clientId + '/closedRentingCases/'
-          );
 
+          await history(
+               '/agentInterface/client/' +
+                    identifiants.clientId +
+                    '/closedRentingCases/',
+               { replace: false }
+          );
           dispatch({ type: FLASH, payload: { message: false } });
           dispatch({ type: FETCH_RENTING_CASES, payload: res.data });
      };
@@ -737,7 +754,7 @@ export const search = (searchValue, history) => async (dispatch) => {
           params: { searchValue },
      });
      if (!res.data.message) {
-          await history.push('/search');
+          await history('/search', { replace: false });
           dispatch({ type: FETCH_CLIENTS, payload: res.data });
      } else {
           dispatch({ type: FLASH, payload: res.data });

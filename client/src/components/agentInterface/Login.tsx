@@ -1,17 +1,16 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { login } from '../../actions';
 import { reduxForm, Field } from 'redux-form';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import InterfaceHeader from './InterfaceHeader';
 import CustomField from '../customs/CustomField';
 import Button from 'react-bootstrap/Button';
-
+import { withRouter } from '../../utils/routing';
 interface RootProps {
      auth: { username: string } | null; //auth is either null when not initialized, false when initialized but user is not identified and is true when identified.
      flash: { message: string | null | false } | null;
-     history: RouteComponentProps;
+     history: any;
 }
 
 interface RootState {
@@ -95,7 +94,7 @@ class Login extends React.Component<Props> {
                     </>
                );
           } else {
-               return <Redirect to="/agentsHome" />;
+               return <Navigate to="/agentInterface/agentsHome" />;
           }
      }
      render() {

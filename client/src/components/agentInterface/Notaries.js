@@ -5,12 +5,11 @@ import FocusForm from './FocusForm';
 import { Roles, Civility } from '../../actions/types';
 import FixedFloatingButton from '../customs/FixedFloatingButton';
 import Table from 'react-bootstrap/Table';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../utils/routing';
 import CustomField from '../customs/CustomField';
 
 class Notaries extends Component {
      componentDidMount() {
-          this.props.fetchPage('notaries');
           this.props.fetchNotaries();
      }
 

@@ -11,7 +11,7 @@ import * as actions from '../../actions';
 import Form from 'react-bootstrap/Form';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../utils/routing';
 import { getField } from '../../utils/forms';
 
 class FocusForm extends Component {

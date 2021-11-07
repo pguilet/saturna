@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchPage } from '../../actions';
 
 class Contact extends Component {
-     componentDidMount() {
-          this.props.fetchPage('contact');
-     }
      render() {
           return (
                <div style={{ textAlign: 'center' }}>
@@ -15,4 +11,4 @@ class Contact extends Component {
           );
      }
 }
-export default connect(null, { fetchPage })(Contact);
+export default connect(null, null)(Contact);

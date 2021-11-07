@@ -8,7 +8,7 @@ import Button from 'react-bootstrap/Button';
 import CustomField from '../../customs/CustomField';
 import { PaymentKind } from '../../../actions/types';
 import { getField } from '../../../utils/forms';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../../utils/routing';
 import FocusForm from '../FocusForm';
 class ClientRentingCase extends Component {
      state = {
@@ -343,10 +343,10 @@ class ClientRentingCase extends Component {
                                         variant="primary"
                                         className="centered "
                                         onClick={() => {
-                                             this.props.history.push(
-                                                  this.props.history.location
-                                                       .pathname +
-                                                       '/rentingReceipts'
+                                             this.props.history(
+                                                  this.props.location.pathname +
+                                                       '/rentingReceipts',
+                                                  { replace: false }
                                              );
                                         }}
                                    >

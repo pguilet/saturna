@@ -1,14 +1,10 @@
 //Rendering layer control (React router content)
-import React, { Component } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { Component } from 'react';
+import { Outlet } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 
 import Header from './Header';
-import Landing from './Landing';
-import About from './About';
-import Contact from './Contact';
-import Services from './Services';
 
 class Front extends Component {
      componentDidMount() {
@@ -17,15 +13,12 @@ class Front extends Component {
 
      render() {
           return (
-               <BrowserRouter>
+               <>
                     <Header />
                     <div className="container">
-                         <Route exact path="/" component={Landing} />
-                         <Route exact path="/about" component={About} />
-                         <Route exact path="/contact" component={Contact} />
-                         <Route exact path="/services" component={Services} />
+                         <Outlet />
                     </div>
-               </BrowserRouter>
+               </>
           );
      }
 }

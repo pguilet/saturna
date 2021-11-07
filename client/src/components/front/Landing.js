@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchPage } from '../../actions';
 
 class Landing extends Component {
-     componentDidMount() {
-          this.props.fetchPage('landing');
-     }
      render() {
           return (
                <div style={{ textAlign: 'center' }}>
@@ -14,4 +10,4 @@ class Landing extends Component {
           );
      }
 }
-export default connect(null, { fetchPage })(Landing);
+export default connect(null, null)(Landing);

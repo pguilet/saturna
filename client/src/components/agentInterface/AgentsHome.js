@@ -8,7 +8,6 @@ import { getStats } from '../../utils/stats';
 class AgentsHome extends Component {
      state = { statsInfos: null };
      componentDidMount() {
-          this.props.fetchPage('dashboard');
           getStats().then((stats) => this.setState({ statsInfos: stats }));
      }
      renderContent() {

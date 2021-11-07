@@ -6,11 +6,10 @@ import { Roles } from '../../../actions/types';
 import FixedFloatingButton from '../../customs/FixedFloatingButton';
 import Table from 'react-bootstrap/Table';
 import moment from 'moment';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../../utils/routing';
 
 class Clients extends Component {
      componentDidMount() {
-          this.props.fetchPage('clients');
           this.props.fetchClients();
      }
 

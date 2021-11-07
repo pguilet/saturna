@@ -8,13 +8,14 @@ import _ from 'lodash';
 import Table from 'react-bootstrap/Table';
 import moment from 'moment';
 import Button from 'react-bootstrap/Button';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../../utils/routing';
+
 class RentingReceipts extends Component {
      componentDidMount() {
           if (!this.props.rentingCase) {
                this.props.fetchRentingCase(
-                    this.props.match.params.clientId,
-                    this.props.match.params.caseId
+                    this.props.params.clientId,
+                    this.props.params.caseId
                );
           }
      }
@@ -138,10 +139,11 @@ class RentingReceipts extends Component {
                          onClick={() => {
                               let pathArray =
                                    this.props.location.pathname.split('/');
-                              this.props.history.push(
+                              this.props.history(
                                    pathArray
                                         .slice(0, pathArray.length - 1)
-                                        .join('/')
+                                        .join('/'),
+                                   { replace: false }
                               );
                          }}
                     >
@@ -155,9 +157,8 @@ class RentingReceipts extends Component {
                                         this.props.generateRentingReceipt,
                                    identifiants: {
                                         modelInstanceId:
-                                             this.props.match.params.caseId,
-                                        clientId:
-                                             this.props.match.params.clientId,
+                                             this.props.params.caseId,
+                                        clientId: this.props.params.clientId,
                                    },
                                    title: "Création d'une nouvelle quittance de loyer",
                                    description:

@@ -2,7 +2,6 @@
 import { combineReducers } from 'redux';
 import authReducer from './authReducer';
 import { reducer as reduxForm } from 'redux-form';
-import pageSelectedReducer from './pageSelectedReducer';
 import flashReducer from './flashReducer';
 import allUsers from './agentsInterfaceReducers';
 import homeAdsReducer from './homeAdsReducers';
@@ -19,7 +18,6 @@ import mailsReducer from './mailsReducer';
 export default combineReducers({
      auth: authReducer,
      form: reduxForm,
-     pageSelected: pageSelectedReducer,
      flash: flashReducer,
      users: allUsers,
      homeAds: homeAdsReducer,

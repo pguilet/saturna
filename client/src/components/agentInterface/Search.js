@@ -5,13 +5,9 @@ import FocusForm from './FocusForm';
 import { Roles } from '../../actions/types';
 import Table from 'react-bootstrap/Table';
 import moment from 'moment';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../utils/routing';
 
 class Search extends Component {
-     componentDidMount() {
-          this.props.fetchPage('clients');
-     }
-
      openClientRecord(clientId) {
           this.props.openClient(this.props.history, clientId);
      }

@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../../actions';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../../utils/routing';
 import ClientRentingCase from './ClientRentingCase';
 
 class ClientClosedRentingCase extends Component {
      componentDidMount() {
           if (!this.props.rentingCase) {
                this.props.fetchRentingCase(
-                    this.props.match.params.clientId,
-                    this.props.match.params.caseId
+                    this.props.params.clientId,
+                    this.props.params.caseId
                );
           }
           this.props.clearFlashMessage();

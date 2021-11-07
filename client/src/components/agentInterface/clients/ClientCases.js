@@ -6,7 +6,7 @@ import { Roles } from '../../../actions/types';
 import FixedFloatingButton from '../../customs/FixedFloatingButton';
 import Table from 'react-bootstrap/Table';
 import moment from 'moment';
-import { withRouter } from 'react-router-dom';
+import { withRouter } from '../../../utils/routing';
 
 class ClientCases extends Component {
      openOpenedCaseRecord(propertyCase) {
@@ -144,7 +144,7 @@ class ClientCases extends Component {
 
      render() {
           return (
-               <div className="container">
+               <>
                     {this.props.focusFormConfiguration && <FocusForm />}
                     {this.renderContent()}
                     {!this.props.noCreateButton && (
@@ -159,7 +159,7 @@ class ClientCases extends Component {
                               }}
                          />
                     )}
-               </div>
+               </>
           );
      }
 }
