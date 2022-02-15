@@ -7,39 +7,23 @@ import InterfaceHeader from './InterfaceHeader';
 import CustomField from '../customs/CustomField';
 import Button from 'react-bootstrap/Button';
 import { withRouter } from '../../utils/routing';
-interface RootProps {
-     auth: { username: string } | null; //auth is either null when not initialized, false when initialized but user is not identified and is true when identified.
-     flash: { message: string | null | false } | null;
-     history: any;
-}
 
-interface RootState {
-     username: String | null;
-     password: String | null;
-}
-
-interface Actions {
-     login: any;
-}
-
-interface Props extends Actions, RootProps, RootState {}
-
-class Login extends React.Component<Props> {
-     constructor(props: any) {
+class Login extends React.Component {
+     constructor(props) {
           super(props);
           this.setState({ username: null, password: null });
           this.handleUsernameChange = this.handleUsernameChange.bind(this);
           this.handlePasswordChange = this.handlePasswordChange.bind(this);
      }
 
-     handleUsernameChange(e: any) {
+     handleUsernameChange(e) {
           this.setState({ username: e.target.value });
      }
-     handlePasswordChange(e: any) {
+     handlePasswordChange(e) {
           this.setState({ password: e.target.value });
      }
 
-     handleSubmit = (event: any): void => {
+     handleSubmit = (event) => {
           event.preventDefault();
           this.props.login(
                this.props.history,
@@ -102,14 +86,14 @@ class Login extends React.Component<Props> {
      }
 }
 
-const mapStateToProps = (state: RootProps) => ({
+const mapStateToProps = (state) => ({
      auth: state.auth,
      flash: state.flash,
      history: state.history,
 });
 const actions = { login };
 
-const form = reduxForm<{}, any>({
+const form = reduxForm({
      destroyOnUnmount: false,
      form: 'loginForm',
 })(Login);
