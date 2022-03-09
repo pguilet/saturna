@@ -30,9 +30,15 @@ class Header extends Component {
                     <div className="container">
                          <h1 className="brand"> La Pierre Nantaise</h1>
                          <p className="brand-description">
-                              Agence immobilière créée par un petit beurre et
-                              pour tous le monde. Béni par le dieu Pierre
-                              Guilet.
+                              Eu sint ipsum velit pariatur quis exercitation
+                              aliqua cupidatat ullamco aute anim ullamco. Fugiat
+                              consequat adipisicing mollit officia eiusmod aute
+                              Lorem. Sit quis aute eu consectetur. Duis est duis
+                              exercitation ut ipsum deserunt amet eu officia in
+                              qui incididunt. Eu cupidatat sint nostrud et
+                              eiusmod sunt deserunt nisi. Esse consequat amet
+                              est aliqua. Irure aliquip elit aliqua voluptate
+                              adipisicing.
                          </p>
 
                          <ul class="nav nav-fill">

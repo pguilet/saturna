@@ -6,7 +6,13 @@ class Contact extends Component {
           return (
                <div style={{ textAlign: 'center' }}>
                     <h1>Contact</h1>
-                    <p>3615 ULA</p>
+                    <p>
+                         Lorem enim commodo ad id eu et in ad. Reprehenderit qui
+                         occaecat labore nulla do dolor est minim est. Non anim
+                         duis nostrud nulla veniam ut laboris qui do pariatur.
+                         Labore sit laboris nostrud proident id esse voluptate
+                         proident dolor laboris aliquip sunt.
+                    </p>
                </div>
           );
      }
