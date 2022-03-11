@@ -1,8 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { withRouter } from '../../utils/routing';
 
 class Header extends Component {
+     getClassNames(pageName) {
+          var className = 'nav-link';
+          if (
+               this.props.location.pathname &&
+               this.props.location.pathname === pageName
+          ) {
+               className = className + ' active';
+          }
+          return className;
+     }
+
      renderContent() {
           switch (this.props.auth) {
                case null:
@@ -45,12 +57,7 @@ class Header extends Component {
                               <li className="nav-item">
                                    <Link
                                         to="/"
-                                        className={
-                                             this.props.pageSelected ===
-                                             'landing'
-                                                  ? 'nav-link active'
-                                                  : 'nav-link'
-                                        }
+                                        className={this.getClassNames('/')}
                                    >
                                         Accueil
                                    </Link>
@@ -58,11 +65,7 @@ class Header extends Component {
                               <li className="nav-item">
                                    <Link
                                         to="/about"
-                                        className={
-                                             this.props.pageSelected === 'about'
-                                                  ? 'nav-link active'
-                                                  : 'nav-link'
-                                        }
+                                        className={this.getClassNames('/about')}
                                    >
                                         À Propos
                                    </Link>
@@ -70,12 +73,9 @@ class Header extends Component {
                               <li className="nav-item">
                                    <Link
                                         to="/services"
-                                        className={
-                                             this.props.pageSelected ===
-                                             'services'
-                                                  ? 'nav-link active'
-                                                  : 'nav-link'
-                                        }
+                                        className={this.getClassNames(
+                                             '/services'
+                                        )}
                                    >
                                         Services
                                    </Link>
@@ -83,12 +83,9 @@ class Header extends Component {
                               <li className="nav-item">
                                    <Link
                                         to="/contact"
-                                        className={
-                                             this.props.pageSelected ===
-                                             'contact'
-                                                  ? 'nav-link active'
-                                                  : 'nav-link'
-                                        }
+                                        className={this.getClassNames(
+                                             '/contact'
+                                        )}
                                    >
                                         Nous Contacter
                                    </Link>
@@ -107,4 +104,4 @@ class Header extends Component {
 function mapStateToProps({ auth, pageSelected }) {
      return { auth, pageSelected };
 }
-export default connect(mapStateToProps)(Header);
+export default connect(mapStateToProps)(withRouter(Header));
