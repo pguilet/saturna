@@ -754,7 +754,7 @@ export const search = (searchValue, history) => async (dispatch) => {
           params: { searchValue },
      });
      if (!res.data.message) {
-          await history('/search', { replace: false });
+          await history('/agentInterface/search', { replace: false });
           dispatch({ type: FETCH_CLIENTS, payload: res.data });
      } else {
           dispatch({ type: FLASH, payload: res.data });

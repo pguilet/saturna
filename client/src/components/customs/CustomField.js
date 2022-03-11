@@ -11,7 +11,7 @@ import {
 } from '../../utils/filesHandling.js';
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 class CustomField extends Component {
@@ -561,3 +561,35 @@ function mapStateToProps(props) {
      return props;
 }
 export default connect(mapStateToProps, actions)(CustomField);
+
+function test({
+     id,
+     input,
+     e,
+     setState,
+     statetriggeredvaluesupdatefunction,
+     valueToSet,
+}) {
+     return (
+          <>
+               <br key={8} />
+               <TextField
+                    id={id}
+                    name={id}
+                    {...input}
+                    key={id}
+                    value={valueToSet}
+                    type="date"
+                    InputLabelProps={{
+                         shrink: true,
+                    }}
+                    onChange={(e) => {
+                         setState({
+                              valueToSet: e.target.value,
+                         });
+                         statetriggeredvaluesupdatefunction(id, e.target.value);
+                    }}
+               />
+          </>
+     );
+}

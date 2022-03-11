@@ -41,8 +41,8 @@ class Header extends Component {
                               adipisicing.
                          </p>
 
-                         <ul class="nav nav-fill">
-                              <li class="nav-item">
+                         <ul className="nav nav-fill">
+                              <li className="nav-item">
                                    <Link
                                         to="/"
                                         className={
@@ -55,7 +55,7 @@ class Header extends Component {
                                         Accueil
                                    </Link>
                               </li>
-                              <li class="nav-item">
+                              <li className="nav-item">
                                    <Link
                                         to="/about"
                                         className={
@@ -67,7 +67,7 @@ class Header extends Component {
                                         À Propos
                                    </Link>
                               </li>
-                              <li class="nav-item">
+                              <li className="nav-item">
                                    <Link
                                         to="/services"
                                         className={
@@ -80,7 +80,7 @@ class Header extends Component {
                                         Services
                                    </Link>
                               </li>
-                              <li class="nav-item">
+                              <li className="nav-item">
                                    <Link
                                         to="/contact"
                                         className={
@@ -95,21 +95,9 @@ class Header extends Component {
                               </li>
                          </ul>
 
-                         {/* <nav>
-                        <div className="nav-wrapper">
-                            <Link 
-                            className="left brand-logo" 
-                            to={this.props.auth?'/surveys':'/'}
-                            >
-                                Emaily
-                            </Link>    
-                            <ul className="right">
-                                {this.renderContent()}
-                            
-                            </ul>
-                        </div>             
-
-                    </nav> */}
+                         <div id="hiddenLinkToLogin">
+                              <Link to="/login">Login</Link>
+                         </div>
                     </div>
                </div>
           );

@@ -1,9 +1,13 @@
-@import '~bootstrap/scss/bootstrap';
+@import '../../node_modules/bootstrap/scss/bootstrap';
 
 @mixin centered {
      display: flex;
      align-items: center;
      justify-content: center;
+}
+
+#hiddenLinkToLogin {
+     display: none;
 }
 main {
      padding-top: 70px;

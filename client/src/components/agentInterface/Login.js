@@ -9,9 +9,12 @@ import Button from 'react-bootstrap/Button';
 import { withRouter } from '../../utils/routing';
 
 class Login extends React.Component {
+     componentDidMount() {
+          this.setState({ username: null, password: null });
+     }
      constructor(props) {
           super(props);
-          this.setState({ username: null, password: null });
+
           this.handleUsernameChange = this.handleUsernameChange.bind(this);
           this.handlePasswordChange = this.handlePasswordChange.bind(this);
      }
@@ -24,12 +27,10 @@ class Login extends React.Component {
      }
 
      handleSubmit = (event) => {
+          const { username, password } = event.target;
           event.preventDefault();
-          this.props.login(
-               this.props.history,
-               event.target.username.value,
-               event.target.password.value
-          );
+
+          this.props.login(this.props.history, username.value, password.value);
      };
      renderContent() {
           if (this.props.auth === null || !this.props.auth.username) {
@@ -67,6 +68,7 @@ class Login extends React.Component {
                                         variant="success"
                                         className="centered"
                                         type="submit"
+                                        id="loginButton"
                                    >
                                         Log-in
                                         <i className="material-icons separateIcon">
