@@ -11,16 +11,13 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import Login from '../src/components/agentInterface/Login';
 import App from '../src/components/App';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import reducers from '../src/reducers';
-import { composeWithDevTools } from 'remote-redux-devtools';
 import reduxThunk from 'redux-thunk';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import assert from 'assert';
 
 const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
