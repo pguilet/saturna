@@ -2,13 +2,11 @@ import ReactDom from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import reduxThunk from 'redux-thunk';
-import { connect, ConnectedProps } from 'react-redux';
 import App from './components/App';
 import reducers from './reducers';
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import { composeWithDevTools } from 'remote-redux-devtools';
-import React, { Component } from 'react';
 
 // import axios from 'axios';
 // window.axios =axios;//used to be able to use axios in browser console to do post requests.

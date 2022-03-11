@@ -561,35 +561,3 @@ function mapStateToProps(props) {
      return props;
 }
 export default connect(mapStateToProps, actions)(CustomField);
-
-function test({
-     id,
-     input,
-     e,
-     setState,
-     statetriggeredvaluesupdatefunction,
-     valueToSet,
-}) {
-     return (
-          <>
-               <br key={8} />
-               <TextField
-                    id={id}
-                    name={id}
-                    {...input}
-                    key={id}
-                    value={valueToSet}
-                    type="date"
-                    InputLabelProps={{
-                         shrink: true,
-                    }}
-                    onChange={(e) => {
-                         setState({
-                              valueToSet: e.target.value,
-                         });
-                         statetriggeredvaluesupdatefunction(id, e.target.value);
-                    }}
-               />
-          </>
-     );
-}
