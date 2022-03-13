@@ -7,6 +7,7 @@ import InterfaceHeader from './InterfaceHeader';
 import CustomField from '../customs/CustomField';
 import Button from 'react-bootstrap/Button';
 import { withRouter } from '../../utils/routing';
+
 interface RootProps {
      auth: { username: string } | null; //auth is either null when not initialized, false when initialized but user is not identified and is true when identified.
      flash: { message: string | null | false } | null;

@@ -11,6 +11,7 @@ import Button from 'react-bootstrap/Button';
 import { Roles } from '../../actions/types.js';
 import * as actions from '../../actions';
 import { withRouter } from '../../utils/routing';
+import '../../css/agentInterface.scss';
 
 class InterfaceHeader extends Component {
      constructor(props) {
@@ -74,9 +75,13 @@ class InterfaceHeader extends Component {
           return (
                <Navbar bg="light" expand="lg" fixed="top">
                     <Container>
-                         <Navbar.Brand href="/">
-                              La Pierre Nantaise
-                         </Navbar.Brand>
+                         <Link to="/">
+                              <img
+                                   className="intranetLogo"
+                                   src={require('../../images/saturnaLogo.jpg')}
+                              />
+                         </Link>
+
                          <Navbar.Toggle aria-controls="basic-navbar-nav" />
                          <Navbar.Collapse id="basic-navbar-nav">
                               <Nav className="me-auto">

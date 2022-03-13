@@ -1,11 +1,15 @@
 @import '../../node_modules/bootstrap/scss/bootstrap';
-
+@import './front.scss';
 @mixin centered {
      display: flex;
      align-items: center;
      justify-content: center;
 }
 
+.intranetLogo {
+     height: 60px;
+     width: 60px;
+}
 #hiddenLinkToLogin {
      display: none;
 }
@@ -119,13 +123,6 @@ div > .MuiDialog-paperWidthSm {
      color: red;
 }
 
-#header-background {
-     background-image: url('../images/background.jpg');
-     background-size: 100%;
-     padding-top: 50px;
-     min-height: 300px;
-     background-position: center center;
-}
 .separated {
      margin-right: 10px;
      margin-bottom: 10px;

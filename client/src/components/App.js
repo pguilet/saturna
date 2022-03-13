@@ -16,7 +16,6 @@ import ClientOpenedRentingCases from './agentInterface/clients/ClientOpenedRenti
 import ClientClosedRentingCases from './agentInterface/clients/ClientClosedRentingCases';
 import ClientOpenedRentingCase from './agentInterface/clients/ClientOpenedRentingCase';
 import ClientClosedRentingCase from './agentInterface/clients/ClientClosedRentingCase';
-import '../css/index.scss';
 import AgentsHome from './agentInterface/AgentsHome';
 import AgentsList from './agentInterface/AgentsList';
 import HomeAdsList from './agentInterface/HomeAdsList';

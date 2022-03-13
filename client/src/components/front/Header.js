@@ -2,15 +2,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { withRouter } from '../../utils/routing';
+import '../../css/front.scss';
 
 class Header extends Component {
      getClassNames(pageName) {
-          var className = 'nav-link';
+          var className = 'front-menu-link';
           if (
                this.props.location.pathname &&
                this.props.location.pathname === pageName
           ) {
-               className = className + ' active';
+               className = className + ' front-active-menu-item';
           }
           return className;
      }
@@ -38,63 +39,35 @@ class Header extends Component {
      }
      render() {
           return (
-               <div id="header-background">
-                    <div className="container">
-                         <h1 className="brand"> La Pierre Nantaise</h1>
-                         <p className="brand-description">
-                              Eu sint ipsum velit pariatur quis exercitation
-                              aliqua cupidatat ullamco aute anim ullamco. Fugiat
-                              consequat adipisicing mollit officia eiusmod aute
-                              Lorem. Sit quis aute eu consectetur. Duis est duis
-                              exercitation ut ipsum deserunt amet eu officia in
-                              qui incididunt. Eu cupidatat sint nostrud et
-                              eiusmod sunt deserunt nisi. Esse consequat amet
-                              est aliqua. Irure aliquip elit aliqua voluptate
-                              adipisicing.
-                         </p>
-
-                         <ul className="nav nav-fill">
-                              <li className="nav-item">
-                                   <Link
-                                        to="/"
-                                        className={this.getClassNames('/')}
-                                   >
-                                        Accueil
-                                   </Link>
-                              </li>
-                              <li className="nav-item">
-                                   <Link
-                                        to="/about"
-                                        className={this.getClassNames('/about')}
-                                   >
-                                        À Propos
-                                   </Link>
-                              </li>
-                              <li className="nav-item">
-                                   <Link
-                                        to="/services"
-                                        className={this.getClassNames(
-                                             '/services'
-                                        )}
-                                   >
-                                        Services
-                                   </Link>
-                              </li>
-                              <li className="nav-item">
-                                   <Link
-                                        to="/contact"
-                                        className={this.getClassNames(
-                                             '/contact'
-                                        )}
-                                   >
-                                        Nous Contacter
-                                   </Link>
-                              </li>
-                         </ul>
-
-                         <div id="hiddenLinkToLogin">
-                              <Link to="/login">Login</Link>
-                         </div>
+               <div className={this.props.className}>
+                    <div className="front-menu-logo-container">
+                         <img src={require('../../images/saturnaLogo.jpg')} />
+                    </div>
+                    <div className="front-menu">
+                         <Link to="/" className={this.getClassNames('/')}>
+                              Accueil
+                         </Link>
+                         <Link
+                              to="/about"
+                              className={this.getClassNames('/about')}
+                         >
+                              À Propos
+                         </Link>
+                         <Link
+                              to="/services"
+                              className={this.getClassNames('/services')}
+                         >
+                              Services
+                         </Link>
+                         <Link
+                              to="/contact"
+                              className={this.getClassNames('/contact')}
+                         >
+                              Nous Contacter
+                         </Link>
+                    </div>
+                    <div id="hiddenLinkToLogin">
+                         <Link to="/login">Login</Link>
                     </div>
                </div>
           );

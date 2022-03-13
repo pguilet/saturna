@@ -135,7 +135,54 @@ module.exports = (app) => {
                res.status(422).send(err);
           }
      });
-
+     app.post('/api/sendMailToOwner', requireLogin, async (req, res) => {
+          const firstName = req.body.firstName;
+          const lastName = req.body.lastName;
+          const email = req.body.email;
+          const phone = req.body.phone;
+          const message = req.body.message;
+          let config = {
+               to: keys.emailToSend,
+               from: keys.emailToSend,
+               subject: "Mail d'un client du site",
+          };
+          const mailer = new Mailer(
+               config,
+               'Prénom: ' +
+                    firstName +
+                    '<br/>' +
+                    'Nom: ' +
+                    lastName +
+                    '<br/>' +
+                    'Email: ' +
+                    email +
+                    '<br/>' +
+                    'Téléphone: ' +
+                    phone +
+                    '<br/>' +
+                    'Message: ' +
+                    message
+          );
+          try {
+               const sendGridResponse = await mailer.send();
+               if (sendGridResponse[0].statusCode === 202) {
+                    // receiptToSend.sent = true;
+                    // await RentingCases.updateOne(
+                    //      {
+                    //           _id: rentingCase._id,
+                    //           'rentReceipts._id': receiptToSend._id,
+                    //      },
+                    //      { 'rentReceipts.$': receiptToSend }
+                    // );
+                    // res.send(rentingCase);
+                    res.send({ sent: true });
+               } else {
+                    res.status(422).send(sendGridResponse[0].statusCode);
+               }
+          } catch (err) {
+               res.status(422).send(err);
+          }
+     });
      app.post('/api/sendMail', requireLogin, async (req, res) => {
           let mail = await NewsletterMails.findById(
                req.body.identifiants.modelInstanceId

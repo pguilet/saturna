@@ -22,10 +22,13 @@
      "author": "",
      "license": "ISC",
      "dependencies": {
+          "@googlemaps/react-wrapper": "^1.1.27",
           "@popperjs/core": "^2.10.1",
+          "@react-google-maps/api": "^2.7.0",
           "@sendgrid/mail": "^7.4.7",
           "@sentry/node": "^6.13.2",
           "@sentry/tracing": "^6.13.2",
+          "@types/google.maps": "^3.48.2",
           "aws-sdk": "^2.996.0",
           "bcrypt": "^5.0.1",
           "concurrently": "^6.2.2",
