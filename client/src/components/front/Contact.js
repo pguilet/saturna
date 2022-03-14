@@ -91,6 +91,7 @@ class Contact extends Component {
                                         className="front-input-ld"
                                         name="phone"
                                    ></input>
+                                   <div>&nbsp;&nbsp;</div>
                               </div>
                               <div className="front-inputs">
                                    <textarea
